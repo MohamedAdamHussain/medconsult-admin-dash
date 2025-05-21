@@ -11,6 +11,7 @@ import Notifications from "./pages/Notifications";
 import Financial from "./pages/Financial";
 import NotFound from "./pages/NotFound";
 import Specialties from "./pages/Specialties";
+import Doctors from "./pages/Doctors";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +27,7 @@ const App = () => (
           <Route path="/doctor-applications" element={<DoctorApplications />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/financial" element={<Financial />} />
-          <Route path="/doctors" element={<Index />} />
+          <Route path="/doctors" element={<Doctors />} />
           <Route path="/patients" element={<Index />} />
           <Route path="/complaints" element={<Index />} />
           <Route path="/charities" element={<Index />} />
