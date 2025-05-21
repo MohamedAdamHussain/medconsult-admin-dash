@@ -11,7 +11,9 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  LineChart,
+  Line
 } from 'recharts';
 
 interface ChartData {
@@ -25,21 +27,35 @@ interface BarChartData {
   value: number;
 }
 
+interface MultiLineData {
+  name: string;
+  [key: string]: string | number;
+}
+
 interface DashboardChartProps {
   title: string;
-  type: 'bar' | 'pie';
-  data: ChartData[] | BarChartData[];
+  type: 'bar' | 'pie' | 'line';
+  data: ChartData[] | BarChartData[] | MultiLineData[];
   colors?: string[];
+  height?: number;
+  dataKeys?: string[];
 }
 
 const defaultColors = ['#007BFF', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8'];
 
-const DashboardChart = ({ title, type, data, colors = defaultColors }: DashboardChartProps) => {
+const DashboardChart = ({ 
+  title, 
+  type, 
+  data, 
+  colors = defaultColors, 
+  height = 300,
+  dataKeys = ['value'] 
+}: DashboardChartProps) => {
   return (
     <div className="bg-white rounded-xl shadow-md p-4 h-full">
       <h3 className="text-lg font-medium mb-4 text-right">{title}</h3>
       
-      <div className="h-[300px]">
+      <div style={{ height: `${height}px` }}>
         <ResponsiveContainer width="100%" height="100%">
           {type === 'bar' ? (
             <BarChart
@@ -58,6 +74,33 @@ const DashboardChart = ({ title, type, data, colors = defaultColors }: Dashboard
               <Legend />
               <Bar dataKey="value" fill="#007BFF" />
             </BarChart>
+          ) : type === 'line' ? (
+            <LineChart
+              data={data}
+              margin={{
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              {dataKeys.map((key, index) => (
+                <Line 
+                  key={key}
+                  type="monotone" 
+                  dataKey={key} 
+                  stroke={colors[index % colors.length]} 
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              ))}
+            </LineChart>
           ) : (
             <PieChart>
               <Pie
