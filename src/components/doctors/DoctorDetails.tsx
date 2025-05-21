@@ -3,27 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Mail, Phone, User, MapPin, Calendar, Users, MessageCircle } from 'lucide-react';
-
-type Doctor = {
-  id: number;
-  name: string;
-  specialty: string;
-  rating: number;
-  status: string;
-  city: string;
-  joinDate: string;
-  patients: number;
-  consultations: number;
-  documents: {
-    certificate: string;
-    license: string;
-    id: string;
-  };
-  contacts: {
-    phone: string;
-    email: string;
-  };
-};
+import { Doctor } from '@/types/doctors';
 
 interface DoctorDetailsProps {
   doctor: Doctor;
