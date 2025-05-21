@@ -12,6 +12,8 @@ import Financial from "./pages/Financial";
 import NotFound from "./pages/NotFound";
 import Specialties from "./pages/Specialties";
 import Doctors from "./pages/Doctors";
+import KPI from "./pages/KPI";
+import ActivityLog from "./pages/ActivityLog";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +35,8 @@ const App = () => (
           <Route path="/charities" element={<Index />} />
           <Route path="/specialties" element={<Specialties />} />
           <Route path="/gallery" element={<Index />} />
+          <Route path="/kpi" element={<KPI />} />
+          <Route path="/activity-log" element={<ActivityLog />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
