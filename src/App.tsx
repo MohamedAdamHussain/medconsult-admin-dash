@@ -15,34 +15,38 @@ import Doctors from "./pages/Doctors";
 import KPI from "./pages/KPI";
 import ActivityLog from "./pages/ActivityLog";
 import Gallery from "./pages/Gallery";
+import { useState } from "react";
 
-const queryClient = new QueryClient();
+const App = () => {
+  // Create a new QueryClient instance within the component
+  const [queryClient] = useState(() => new QueryClient());
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/admins" element={<Admins />} />
-          <Route path="/doctor-applications" element={<DoctorApplications />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/financial" element={<Financial />} />
-          <Route path="/doctors" element={<Doctors />} />
-          <Route path="/patients" element={<Index />} />
-          <Route path="/complaints" element={<Index />} />
-          <Route path="/charities" element={<Index />} />
-          <Route path="/specialties" element={<Specialties />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/kpi" element={<KPI />} />
-          <Route path="/activity-log" element={<ActivityLog />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+  return (
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/admins" element={<Admins />} />
+            <Route path="/doctor-applications" element={<DoctorApplications />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/financial" element={<Financial />} />
+            <Route path="/doctors" element={<Doctors />} />
+            <Route path="/patients" element={<Index />} />
+            <Route path="/complaints" element={<Index />} />
+            <Route path="/charities" element={<Index />} />
+            <Route path="/specialties" element={<Specialties />} />
+            <Route path="/gallery" element={<Gallery />} />
+            <Route path="/kpi" element={<KPI />} />
+            <Route path="/activity-log" element={<ActivityLog />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
+  );
+};
 
 export default App;
