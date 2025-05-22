@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { CharityData, CharityFormData } from '@/types/charities';
 import { toast } from 'sonner';
@@ -111,6 +110,7 @@ export const useCharitiesData = () => {
   return {
     charities,
     selectedCharity,
+    setSelectedCharity,
     isDetailsDialogOpen,
     setIsDetailsDialogOpen,
     isAddEditDialogOpen,

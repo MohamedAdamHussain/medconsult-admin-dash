@@ -16,6 +16,7 @@ const Charities = () => {
   const {
     charities,
     selectedCharity,
+    setSelectedCharity,
     isDetailsDialogOpen,
     setIsDetailsDialogOpen,
     isAddEditDialogOpen,
