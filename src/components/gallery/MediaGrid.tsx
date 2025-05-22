@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { MediaItem } from '@/types/media';
-import { Eye, Trash2, Move } from 'lucide-react';
+import { Eye, Trash2, Move, FileVideo, File as FileIcon } from 'lucide-react';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import MediaPreview from './MediaPreview';
@@ -97,7 +97,7 @@ const MediaGrid = ({ items, isLoading, onDelete, onReorder }: MediaGridProps) =>
                             </div>
                           ) : (
                             <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                              <File className="h-10 w-10 text-gray-500" />
+                              <FileIcon className="h-10 w-10 text-gray-500" />
                             </div>
                           )}
                           
