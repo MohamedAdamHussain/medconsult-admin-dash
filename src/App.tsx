@@ -16,6 +16,7 @@ import KPI from "./pages/KPI";
 import ActivityLog from "./pages/ActivityLog";
 import Gallery from "./pages/Gallery";
 import Charities from "./pages/Charities";
+import Complaints from "./pages/Complaints";
 import { useState } from "react";
 
 const App = () => {
@@ -36,7 +37,7 @@ const App = () => {
             <Route path="/financial" element={<Financial />} />
             <Route path="/doctors" element={<Doctors />} />
             <Route path="/patients" element={<Index />} />
-            <Route path="/complaints" element={<Index />} />
+            <Route path="/complaints" element={<Complaints />} />
             <Route path="/charities" element={<Charities />} />
             <Route path="/specialties" element={<Specialties />} />
             <Route path="/gallery" element={<Gallery />} />
