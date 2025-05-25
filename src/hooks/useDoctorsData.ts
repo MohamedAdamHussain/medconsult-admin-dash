@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Doctor, FilterOption } from '../types/doctors';
 import { toast } from '@/hooks/use-toast';
@@ -151,6 +150,7 @@ export const useDoctorsData = () => {
   const [filters, setFilters] = useState<FilterOption[]>([]);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   // استخراج القيم الفريدة للفلاتر
   const specialties = [...new Set(doctorsData.map(doctor => doctor.specialty))];
@@ -220,6 +220,16 @@ export const useDoctorsData = () => {
     });
   };
 
+  // إضافة طبيب
+  const addDoctor = (newDoctorData: Omit<Doctor, 'id'>) => {
+    // Here you would typically send a request to your backend API
+    // For now, we'll just show a success message
+    toast({
+      title: "تم إضافة الطبيب بنجاح",
+      description: `تم إضافة الطبيب ${newDoctorData.name} إلى النظام`,
+    });
+  };
+
   const clearFilters = () => {
     setFilters([]);
   };
@@ -235,12 +245,15 @@ export const useDoctorsData = () => {
     setSelectedDoctor,
     detailsDialogOpen,
     setDetailsDialogOpen,
+    addDialogOpen,
+    setAddDialogOpen,
     addFilter,
     removeFilter,
     clearFilters,
     viewDoctorDetails,
     toggleDoctorStatus,
     sendNotification,
-    deleteDoctor
+    deleteDoctor,
+    addDoctor
   };
 };

@@ -7,9 +7,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 import DoctorDetails from '@/components/doctors/DoctorDetails';
 import DoctorsList from '@/components/doctors/DoctorsList';
 import SearchAndFilter from '@/components/doctors/SearchAndFilter';
+import AddDoctorDialog from '@/components/doctors/AddDoctorDialog';
 import { useDoctorsData } from '@/hooks/useDoctorsData';
 
 const Doctors = () => {
@@ -23,20 +26,34 @@ const Doctors = () => {
     selectedDoctor,
     detailsDialogOpen,
     setDetailsDialogOpen,
+    addDialogOpen,
+    setAddDialogOpen,
     addFilter,
     removeFilter,
     clearFilters,
     viewDoctorDetails,
     toggleDoctorStatus,
     sendNotification,
-    deleteDoctor
+    deleteDoctor,
+    addDoctor
   } = useDoctorsData();
 
   return (
     <DashboardLayout>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-right">إدارة الأطباء</h1>
-        <p className="text-gray-500 mt-1 text-right">إدارة وعرض معلومات الأطباء</p>
+        <div className="flex justify-between items-center">
+          <Button 
+            onClick={() => setAddDialogOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <Plus size={16} />
+            إضافة طبيب
+          </Button>
+          <div className="text-right">
+            <h1 className="text-3xl font-bold">إدارة الأطباء</h1>
+            <p className="text-gray-500 mt-1">إدارة وعرض معلومات الأطباء</p>
+          </div>
+        </div>
       </div>
       
       <SearchAndFilter 
@@ -70,6 +87,15 @@ const Doctors = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* مودال إضافة طبيب */}
+      <AddDoctorDialog
+        open={addDialogOpen}
+        onOpenChange={setAddDialogOpen}
+        onAddDoctor={addDoctor}
+        specialties={specialties}
+        cities={cities}
+      />
     </DashboardLayout>
   );
 };
