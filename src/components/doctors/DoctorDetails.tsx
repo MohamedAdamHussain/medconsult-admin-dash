@@ -10,6 +10,21 @@ interface DoctorDetailsProps {
 }
 
 const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
+  const getSocialIcon = (platform: string) => {
+    switch (platform) {
+      case 'facebook':
+        return '📘';
+      case 'twitter':
+        return '🐦';
+      case 'instagram':
+        return '📸';
+      case 'linkedin':
+        return '💼';
+      default:
+        return '🔗';
+    }
+  };
+
   return (
     <div className="space-y-6 pt-4 text-right">
       {/* معلومات أساسية */}
@@ -101,6 +116,68 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* مكان العيادة ووسائل التواصل الاجتماعي */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* مكان العيادة */}
+        {doctor.clinicLocation && (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <MapPin size={20} />
+                <span>مكان العيادة</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-start gap-2">
+                  <MapPin size={16} className="text-gray-400 mt-1" />
+                  <span className="text-gray-700">{doctor.clinicLocation.address}</span>
+                </div>
+                {doctor.clinicLocation.coordinates && (
+                  <Button variant="outline" size="sm" className="w-full">
+                    عرض على الخريطة
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* وسائل التواصل الاجتماعي */}
+        {doctor.socialMedia && Object.keys(doctor.socialMedia).length > 0 && (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <span>🌐</span>
+                <span>وسائل التواصل الاجتماعي</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {Object.entries(doctor.socialMedia).map(([platform, url]) => {
+                  if (!url) return null;
+                  return (
+                    <div key={platform} className="flex items-center justify-between">
+                      <span className="text-gray-500 flex items-center gap-2">
+                        <span>{getSocialIcon(platform)}</span>
+                        <span className="capitalize">{platform}</span>
+                      </span>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => window.open(url, '_blank')}
+                      >
+                        زيارة
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* المستندات */}

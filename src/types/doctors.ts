@@ -18,6 +18,19 @@ export interface Doctor {
     phone: string;
     email: string;
   };
+  socialMedia?: {
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    linkedin?: string;
+  };
+  clinicLocation?: {
+    address: string;
+    coordinates?: {
+      lat: number;
+      lng: number;
+    };
+  };
 }
 
 export type FilterOption = {

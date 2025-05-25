@@ -1,8 +1,9 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,27 +11,25 @@ import { X } from 'lucide-react';
 import { Patient } from '@/types/patients';
 
 interface PatientFormProps {
-  patient?: Patient | null;
-  onSubmit: (data: Omit<Patient, 'id' | 'registrationDate' | 'totalConsultations'>) => void;
+  patient?: Patient;
+  onSubmit: (data: Partial<Patient>) => void;
   onCancel: () => void;
 }
 
-const PatientForm = ({ patient, onSubmit, onCancel }: PatientFormProps) => {
+const PatientForm: React.FC<PatientFormProps> = ({ patient, onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    dateOfBirth: '',
-    gender: 'male' as 'male' | 'female',
-    status: 'active' as Patient['status'],
-    height: '',
-    weight: '',
-    generalDiseases: [] as string[],
-    chronicDiseases: [] as string[],
-    allergies: [] as string[],
-    permanentMedications: [] as string[],
-    previousSurgeries: [] as string[],
-    radiologyImages: [] as string[]
+    name: patient?.name || '',
+    email: patient?.email || '',
+    phone: patient?.phone || '',
+    dateOfBirth: patient?.dateOfBirth || '',
+    gender: patient?.gender || 'male',
+    height: patient?.height || '',
+    weight: patient?.weight || '',
+    generalDiseases: patient?.generalDiseases || [],
+    chronicDiseases: patient?.chronicDiseases || [],
+    allergies: patient?.allergies || [],
+    permanentMedications: patient?.permanentMedications || [],
+    previousSurgeries: patient?.previousSurgeries || [],
   });
 
   const [newItem, setNewItem] = useState({
@@ -38,107 +37,149 @@ const PatientForm = ({ patient, onSubmit, onCancel }: PatientFormProps) => {
     chronicDisease: '',
     allergy: '',
     medication: '',
-    surgery: ''
+    surgery: '',
   });
-
-  useEffect(() => {
-    if (patient) {
-      setFormData({
-        name: patient.name,
-        email: patient.email,
-        phone: patient.phone,
-        dateOfBirth: patient.dateOfBirth,
-        gender: patient.gender,
-        status: patient.status,
-        height: patient.height?.toString() || '',
-        weight: patient.weight?.toString() || '',
-        generalDiseases: patient.generalDiseases || [],
-        chronicDiseases: patient.chronicDiseases || [],
-        allergies: patient.allergies || [],
-        permanentMedications: patient.permanentMedications || [],
-        previousSurgeries: patient.previousSurgeries || [],
-        radiologyImages: patient.radiologyImages || []
-      });
-    }
-  }, [patient]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const addItemToArray = (arrayName: keyof typeof formData, itemKey: keyof typeof newItem) => {
-    const item = newItem[itemKey].trim();
-    if (item && !formData[arrayName].includes(item)) {
-      setFormData(prev => ({
-        ...prev,
-        [arrayName]: [...prev[arrayName], item]
-      }));
-      setNewItem(prev => ({ ...prev, [itemKey]: '' }));
+  const addArrayItem = (field: keyof typeof formData, value: string) => {
+    if (value.trim()) {
+      const currentArray = formData[field];
+      if (Array.isArray(currentArray)) {
+        setFormData(prev => ({
+          ...prev,
+          [field]: [...currentArray, value.trim()]
+        }));
+      }
     }
   };
 
-  const removeItemFromArray = (arrayName: keyof typeof formData, index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      [arrayName]: prev[arrayName].filter((_, i) => i !== index)
-    }));
+  const removeArrayItem = (field: keyof typeof formData, index: number) => {
+    const currentArray = formData[field];
+    if (Array.isArray(currentArray)) {
+      setFormData(prev => ({
+        ...prev,
+        [field]: currentArray.filter((_, i) => i !== index)
+      }));
+    }
+  };
+
+  const handleAddItem = (type: string) => {
+    const value = newItem[type as keyof typeof newItem];
+    if (value.trim()) {
+      const fieldMap = {
+        generalDisease: 'generalDiseases',
+        chronicDisease: 'chronicDiseases',
+        allergy: 'allergies',
+        medication: 'permanentMedications',
+        surgery: 'previousSurgeries',
+      };
+      
+      const field = fieldMap[type as keyof typeof fieldMap] as keyof typeof formData;
+      addArrayItem(field, value);
+      setNewItem(prev => ({ ...prev, [type]: '' }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const submitData = {
+    onSubmit({
       ...formData,
-      height: formData.height ? parseInt(formData.height) : undefined,
-      weight: formData.weight ? parseInt(formData.weight) : undefined,
-      lastConsultationDate: patient?.lastConsultationDate
-    };
+      height: formData.height ? Number(formData.height) : undefined,
+      weight: formData.weight ? Number(formData.weight) : undefined,
+    });
+  };
 
-    onSubmit(submitData);
+  const renderArraySection = (
+    title: string,
+    field: keyof typeof formData,
+    newItemKey: keyof typeof newItem,
+    placeholder: string
+  ) => {
+    const items = formData[field];
+    const arrayItems = Array.isArray(items) ? items : [];
+    
+    return (
+      <div className="space-y-3">
+        <Label className="text-sm font-medium">{title}</Label>
+        <div className="flex gap-2">
+          <Input
+            placeholder={placeholder}
+            value={newItem[newItemKey]}
+            onChange={(e) => setNewItem(prev => ({ ...prev, [newItemKey]: e.target.value }))}
+            className="text-right"
+          />
+          <Button 
+            type="button" 
+            onClick={() => handleAddItem(newItemKey)}
+            size="sm"
+          >
+            إضافة
+          </Button>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {arrayItems.map((item, index) => (
+            <Badge key={index} variant="secondary" className="flex items-center gap-1">
+              <span>{item}</span>
+              <X 
+                size={14} 
+                className="cursor-pointer" 
+                onClick={() => removeArrayItem(field, index)}
+              />
+            </Badge>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Personal Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>المعلومات الشخصية</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* البيانات الأساسية */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-right">البيانات الأساسية</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="name">الاسم *</Label>
+              <Label htmlFor="name">الاسم الكامل</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
+                className="text-right"
                 required
               />
             </div>
             
             <div>
-              <Label htmlFor="email">البريد الإلكتروني *</Label>
+              <Label htmlFor="email">البريد الإلكتروني</Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
+                className="text-right"
                 required
               />
             </div>
             
             <div>
-              <Label htmlFor="phone">رقم الهاتف *</Label>
+              <Label htmlFor="phone">رقم الهاتف</Label>
               <Input
                 id="phone"
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
+                className="text-right"
                 required
               />
             </div>
             
             <div>
-              <Label htmlFor="dateOfBirth">تاريخ الميلاد *</Label>
+              <Label htmlFor="dateOfBirth">تاريخ الميلاد</Label>
               <Input
                 id="dateOfBirth"
                 type="date"
@@ -149,9 +190,9 @@ const PatientForm = ({ patient, onSubmit, onCancel }: PatientFormProps) => {
             </div>
             
             <div>
-              <Label htmlFor="gender">الجنس *</Label>
+              <Label>الجنس</Label>
               <Select value={formData.gender} onValueChange={(value) => handleInputChange('gender', value)}>
-                <SelectTrigger>
+                <SelectTrigger className="text-right">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -160,31 +201,15 @@ const PatientForm = ({ patient, onSubmit, onCancel }: PatientFormProps) => {
                 </SelectContent>
               </Select>
             </div>
-            
-            <div>
-              <Label htmlFor="status">حالة الحساب</Label>
-              <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">نشط</SelectItem>
-                  <SelectItem value="suspended">معلق</SelectItem>
-                  <SelectItem value="blocked">محظور</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Medical Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>المعلومات الطبية</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        {/* البيانات الجسدية */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-right">البيانات الجسدية</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div>
               <Label htmlFor="height">الطول (سم)</Label>
               <Input
@@ -192,186 +217,74 @@ const PatientForm = ({ patient, onSubmit, onCancel }: PatientFormProps) => {
                 type="number"
                 value={formData.height}
                 onChange={(e) => handleInputChange('height', e.target.value)}
-                placeholder="170"
+                className="text-right"
               />
             </div>
             
             <div>
-              <Label htmlFor="weight">الوزن (كج)</Label>
+              <Label htmlFor="weight">الوزن (كيلو)</Label>
               <Input
                 id="weight"
                 type="number"
                 value={formData.weight}
                 onChange={(e) => handleInputChange('weight', e.target.value)}
-                placeholder="70"
+                className="text-right"
               />
             </div>
-          </div>
+          </CardContent>
+        </Card>
+      </div>
 
-          {/* General Diseases */}
-          <div>
-            <Label>الأمراض العامة</Label>
-            <div className="flex gap-2 mb-2">
-              <Input
-                value={newItem.generalDisease}
-                onChange={(e) => setNewItem(prev => ({ ...prev, generalDisease: e.target.value }))}
-                placeholder="أضف مرض عام"
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addItemToArray('generalDiseases', 'generalDisease'))}
-              />
-              <Button 
-                type="button" 
-                onClick={() => addItemToArray('generalDiseases', 'generalDisease')}
-                disabled={!newItem.generalDisease.trim()}
-              >
-                إضافة
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.generalDiseases.map((disease, index) => (
-                <Badge key={index} variant="outline" className="flex items-center gap-1">
-                  {disease}
-                  <X 
-                    className="h-3 w-3 cursor-pointer" 
-                    onClick={() => removeItemFromArray('generalDiseases', index)}
-                  />
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          {/* Chronic Diseases */}
-          <div>
-            <Label>الأمراض المزمنة</Label>
-            <div className="flex gap-2 mb-2">
-              <Input
-                value={newItem.chronicDisease}
-                onChange={(e) => setNewItem(prev => ({ ...prev, chronicDisease: e.target.value }))}
-                placeholder="أضف مرض مزمن"
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addItemToArray('chronicDiseases', 'chronicDisease'))}
-              />
-              <Button 
-                type="button" 
-                onClick={() => addItemToArray('chronicDiseases', 'chronicDisease')}
-                disabled={!newItem.chronicDisease.trim()}
-              >
-                إضافة
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.chronicDiseases.map((disease, index) => (
-                <Badge key={index} variant="outline" className="flex items-center gap-1 bg-orange-100 text-orange-800">
-                  {disease}
-                  <X 
-                    className="h-3 w-3 cursor-pointer" 
-                    onClick={() => removeItemFromArray('chronicDiseases', index)}
-                  />
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          {/* Allergies */}
-          <div>
-            <Label>الحساسية</Label>
-            <div className="flex gap-2 mb-2">
-              <Input
-                value={newItem.allergy}
-                onChange={(e) => setNewItem(prev => ({ ...prev, allergy: e.target.value }))}
-                placeholder="أضف حساسية"
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addItemToArray('allergies', 'allergy'))}
-              />
-              <Button 
-                type="button" 
-                onClick={() => addItemToArray('allergies', 'allergy')}
-                disabled={!newItem.allergy.trim()}
-              >
-                إضافة
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.allergies.map((allergy, index) => (
-                <Badge key={index} variant="outline" className="flex items-center gap-1 bg-red-100 text-red-800">
-                  {allergy}
-                  <X 
-                    className="h-3 w-3 cursor-pointer" 
-                    onClick={() => removeItemFromArray('allergies', index)}
-                  />
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          {/* Permanent Medications */}
-          <div>
-            <Label>الأدوية الدائمة</Label>
-            <div className="flex gap-2 mb-2">
-              <Input
-                value={newItem.medication}
-                onChange={(e) => setNewItem(prev => ({ ...prev, medication: e.target.value }))}
-                placeholder="أضف دواء دائم"
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addItemToArray('permanentMedications', 'medication'))}
-              />
-              <Button 
-                type="button" 
-                onClick={() => addItemToArray('permanentMedications', 'medication')}
-                disabled={!newItem.medication.trim()}
-              >
-                إضافة
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.permanentMedications.map((medication, index) => (
-                <Badge key={index} variant="outline" className="flex items-center gap-1 bg-blue-100 text-blue-800">
-                  {medication}
-                  <X 
-                    className="h-3 w-3 cursor-pointer" 
-                    onClick={() => removeItemFromArray('permanentMedications', index)}
-                  />
-                </Badge>
-              ))}
-            </div>
-          </div>
-
-          {/* Previous Surgeries */}
-          <div>
-            <Label>العمليات الجراحية السابقة</Label>
-            <div className="flex gap-2 mb-2">
-              <Input
-                value={newItem.surgery}
-                onChange={(e) => setNewItem(prev => ({ ...prev, surgery: e.target.value }))}
-                placeholder="أضف عملية جراحية"
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addItemToArray('previousSurgeries', 'surgery'))}
-              />
-              <Button 
-                type="button" 
-                onClick={() => addItemToArray('previousSurgeries', 'surgery')}
-                disabled={!newItem.surgery.trim()}
-              >
-                إضافة
-              </Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {formData.previousSurgeries.map((surgery, index) => (
-                <Badge key={index} variant="outline" className="flex items-center gap-1 bg-purple-100 text-purple-800">
-                  {surgery}
-                  <X 
-                    className="h-3 w-3 cursor-pointer" 
-                    onClick={() => removeItemFromArray('previousSurgeries', index)}
-                  />
-                </Badge>
-              ))}
-            </div>
-          </div>
+      {/* المعلومات الطبية */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-right">المعلومات الطبية</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {renderArraySection(
+            'الأمراض العامة',
+            'generalDiseases',
+            'generalDisease',
+            'أدخل مرض عام'
+          )}
+          
+          {renderArraySection(
+            'الأمراض المزمنة',
+            'chronicDiseases',
+            'chronicDisease',
+            'أدخل مرض مزمن'
+          )}
+          
+          {renderArraySection(
+            'الحساسية',
+            'allergies',
+            'allergy',
+            'أدخل نوع حساسية'
+          )}
+          
+          {renderArraySection(
+            'الأدوية الدائمة',
+            'permanentMedications',
+            'medication',
+            'أدخل دواء دائم'
+          )}
+          
+          {renderArraySection(
+            'العمليات الجراحية السابقة',
+            'previousSurgeries',
+            'surgery',
+            'أدخل عملية جراحية'
+          )}
         </CardContent>
       </Card>
 
-      {/* Form Actions */}
-      <div className="flex gap-4 justify-end">
+      {/* أزرار الحفظ والإلغاء */}
+      <div className="flex justify-end gap-4">
         <Button type="button" variant="outline" onClick={onCancel}>
           إلغاء
         </Button>
         <Button type="submit">
-          {patient ? 'تحديث المريض' : 'إضافة المريض'}
+          {patient ? 'تحديث' : 'إضافة'} المريض
         </Button>
       </div>
     </form>

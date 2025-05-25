@@ -23,6 +23,18 @@ const doctorsData = [
     contacts: {
       phone: '05xxxxxxxx',
       email: 'dr.mohamed@example.com',
+    },
+    socialMedia: {
+      facebook: 'https://facebook.com/dr.mohamed',
+      twitter: 'https://twitter.com/dr.mohamed',
+      linkedin: 'https://linkedin.com/in/dr.mohamed'
+    },
+    clinicLocation: {
+      address: 'شارع الملك فهد، الرياض 12345',
+      coordinates: {
+        lat: 24.7136,
+        lng: 46.6753
+      }
     }
   },
   {
@@ -43,6 +55,13 @@ const doctorsData = [
     contacts: {
       phone: '05xxxxxxxx',
       email: 'dr.fatima@example.com',
+    },
+    socialMedia: {
+      facebook: 'https://facebook.com/dr.fatima',
+      instagram: 'https://instagram.com/dr.fatima'
+    },
+    clinicLocation: {
+      address: 'شارع التحلية، جدة 21589'
     }
   },
   {
@@ -63,6 +82,12 @@ const doctorsData = [
     contacts: {
       phone: '05xxxxxxxx',
       email: 'dr.khaled@example.com',
+    },
+    socialMedia: {
+      linkedin: 'https://linkedin.com/in/dr.khaled'
+    },
+    clinicLocation: {
+      address: 'شارع الخليج، الدمام 31952'
     }
   },
   {
@@ -83,6 +108,13 @@ const doctorsData = [
     contacts: {
       phone: '05xxxxxxxx',
       email: 'dr.sarah@example.com',
+    },
+    socialMedia: {
+      twitter: 'https://twitter.com/dr.sarah',
+      instagram: 'https://instagram.com/dr.sarah'
+    },
+    clinicLocation: {
+      address: 'حي العليا، الرياض 11564'
     }
   },
   {
@@ -103,6 +135,13 @@ const doctorsData = [
     contacts: {
       phone: '05xxxxxxxx',
       email: 'dr.abdullah@example.com',
+    },
+    socialMedia: {
+      facebook: 'https://facebook.com/dr.abdullah',
+      linkedin: 'https://linkedin.com/in/dr.abdullah'
+    },
+    clinicLocation: {
+      address: 'حي الشوقية، مكة المكرمة 24231'
     }
   },
 ];
