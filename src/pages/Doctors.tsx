@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import {
@@ -14,6 +13,7 @@ import DoctorsList from '@/components/doctors/DoctorsList';
 import SearchAndFilter from '@/components/doctors/SearchAndFilter';
 import AddDoctorDialog from '@/components/doctors/AddDoctorDialog';
 import { useDoctorsData } from '@/hooks/useDoctorsData';
+import ExportButton from '@/components/shared/ExportButton';
 
 const Doctors = () => {
   const {
@@ -38,17 +38,39 @@ const Doctors = () => {
     addDoctor
   } = useDoctorsData();
 
+  // Export columns configuration for doctors
+  const doctorExportColumns = [
+    { key: 'name', title: 'اسم الطبيب' },
+    { key: 'specialty', title: 'التخصص' },
+    { key: 'city', title: 'المدينة' },
+    { key: 'status', title: 'الحالة' },
+    { key: 'rating', title: 'التقييم' },
+    { key: 'patients', title: 'عدد المرضى' },
+    { key: 'consultations', title: 'عدد الاستشارات' },
+    { key: 'joinDate', title: 'تاريخ الانضمام' },
+    { key: 'contacts.phone', title: 'الهاتف' },
+    { key: 'contacts.email', title: 'البريد الإلكتروني' }
+  ];
+
   return (
     <DashboardLayout>
       <div className="mb-6">
         <div className="flex justify-between items-center">
-          <Button 
-            onClick={() => setAddDialogOpen(true)}
-            className="flex items-center gap-2"
-          >
-            <Plus size={16} />
-            إضافة طبيب
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button 
+              onClick={() => setAddDialogOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <Plus size={16} />
+              إضافة طبيب
+            </Button>
+            <ExportButton
+              data={filteredDoctors}
+              columns={doctorExportColumns}
+              filename="doctors_list"
+              title="قائمة الأطباء"
+            />
+          </div>
           <div className="text-right">
             <h1 className="text-3xl font-bold">إدارة الأطباء</h1>
             <p className="text-gray-500 mt-1">إدارة وعرض معلومات الأطباء</p>

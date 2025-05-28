@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import ComplaintsList from '@/components/complaints/ComplaintsList';
@@ -11,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import ExportButton from '@/components/shared/ExportButton';
 
 const Complaints = () => {
   const {
@@ -26,11 +26,34 @@ const Complaints = () => {
     addComment
   } = useComplaintsData();
 
+  // Export columns configuration for complaints
+  const complaintExportColumns = [
+    { key: 'id', title: 'رقم الشكوى' },
+    { key: 'title', title: 'العنوان' },
+    { key: 'type', title: 'النوع' },
+    { key: 'status', title: 'الحالة' },
+    { key: 'priority', title: 'الأولوية' },
+    { key: 'patientName', title: 'المريض' },
+    { key: 'doctorName', title: 'الطبيب' },
+    { key: 'createdAt', title: 'تاريخ الإنشاء' },
+    { key: 'description', title: 'الوصف' }
+  ];
+
   return (
     <DashboardLayout>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-right">إدارة الشكاوى</h1>
-        <p className="text-gray-500 mt-1 text-right">متابعة وحل شكاوى المستخدمين</p>
+        <div className="flex justify-between items-center">
+          <ExportButton
+            data={complaints}
+            columns={complaintExportColumns}
+            filename="complaints_list"
+            title="قائمة الشكاوى"
+          />
+          <div className="text-right">
+            <h1 className="text-3xl font-bold">إدارة الشكاوى</h1>
+            <p className="text-gray-500 mt-1">متابعة وحل شكاوى المستخدمين</p>
+          </div>
+        </div>
       </div>
 
       <ComplaintsFilter 
