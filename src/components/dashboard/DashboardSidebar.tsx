@@ -15,10 +15,12 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Settings
+  Settings,
+  LogOut
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
 interface DashboardSidebarProps {
   isOpen: boolean;
@@ -42,6 +44,7 @@ const navItems = [
 
 const DashboardSidebar = ({ isOpen, setIsOpen }: DashboardSidebarProps) => {
   const location = useLocation();
+  const { logout, user } = useAuth();
   
   return (
     <>
@@ -113,13 +116,25 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: DashboardSidebarProps) => {
         
         {/* Sidebar Footer */}
         <div className="p-4 border-t border-sidebar-border">
-          <div className={cn("flex items-center", !isOpen && "md:justify-center")}>
-            <div className="w-8 h-8 rounded-full bg-sidebar-foreground flex items-center justify-center text-sidebar">
-              <span className="font-bold">A</span>
+          <div className={cn("flex items-center justify-between", !isOpen && "md:justify-center")}>
+            <div className="flex items-center">
+              <div className="w-8 h-8 rounded-full bg-sidebar-foreground flex items-center justify-center text-sidebar">
+                <span className="font-bold">A</span>
+              </div>
+              <div className={cn("mr-3", !isOpen && "md:hidden")}>
+                <p className="text-sm font-medium text-sidebar-foreground">{user?.name || "مدير النظام"}</p>
+              </div>
             </div>
-            <div className={cn("mr-3", !isOpen && "md:hidden")}>
-              <p className="text-sm font-medium text-sidebar-foreground">مدير النظام</p>
-            </div>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={logout}
+              className={cn("text-sidebar-foreground", !isOpen && "md:hidden")}
+              title="تسجيل الخروج"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </aside>

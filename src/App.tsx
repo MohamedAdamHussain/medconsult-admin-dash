@@ -4,7 +4,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
+import Login from "./pages/Login";
 import Admins from "./pages/Admins";
 import DoctorApplications from "./pages/DoctorApplications";
 import Notifications from "./pages/Notifications";
@@ -29,25 +32,84 @@ const App = () => {
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/admins" element={<Admins />} />
-            <Route path="/doctor-applications" element={<DoctorApplications />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/financial" element={<Financial />} />
-            <Route path="/doctors" element={<Doctors />} />
-            <Route path="/patients" element={<Patients />} />
-            <Route path="/complaints" element={<Complaints />} />
-            <Route path="/charities" element={<Charities />} />
-            <Route path="/specialties" element={<Specialties />} />
-            <Route path="/gallery" element={<Gallery />} />
-            <Route path="/kpi" element={<KPI />} />
-            <Route path="/activity-log" element={<ActivityLog />} />
-            <Route path="/account-settings" element={<AccountSettings />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              } />
+              <Route path="/admins" element={
+                <ProtectedRoute>
+                  <Admins />
+                </ProtectedRoute>
+              } />
+              <Route path="/doctor-applications" element={
+                <ProtectedRoute>
+                  <DoctorApplications />
+                </ProtectedRoute>
+              } />
+              <Route path="/notifications" element={
+                <ProtectedRoute>
+                  <Notifications />
+                </ProtectedRoute>
+              } />
+              <Route path="/financial" element={
+                <ProtectedRoute>
+                  <Financial />
+                </ProtectedRoute>
+              } />
+              <Route path="/doctors" element={
+                <ProtectedRoute>
+                  <Doctors />
+                </ProtectedRoute>
+              } />
+              <Route path="/patients" element={
+                <ProtectedRoute>
+                  <Patients />
+                </ProtectedRoute>
+              } />
+              <Route path="/complaints" element={
+                <ProtectedRoute>
+                  <Complaints />
+                </ProtectedRoute>
+              } />
+              <Route path="/charities" element={
+                <ProtectedRoute>
+                  <Charities />
+                </ProtectedRoute>
+              } />
+              <Route path="/specialties" element={
+                <ProtectedRoute>
+                  <Specialties />
+                </ProtectedRoute>
+              } />
+              <Route path="/gallery" element={
+                <ProtectedRoute>
+                  <Gallery />
+                </ProtectedRoute>
+              } />
+              <Route path="/kpi" element={
+                <ProtectedRoute>
+                  <KPI />
+                </ProtectedRoute>
+              } />
+              <Route path="/activity-log" element={
+                <ProtectedRoute>
+                  <ActivityLog />
+                </ProtectedRoute>
+              } />
+              <Route path="/account-settings" element={
+                <ProtectedRoute>
+                  <AccountSettings />
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
         </TooltipProvider>
       </QueryClientProvider>
     </BrowserRouter>
