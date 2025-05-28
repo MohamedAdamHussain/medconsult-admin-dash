@@ -14,7 +14,8 @@ import {
   DollarSign,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -36,6 +37,7 @@ const navItems = [
   { name: 'التخصصات الطبية', href: '/specialties', icon: FileBarChart },
   { name: 'إدارة الـ Gallery', href: '/gallery', icon: GalleryHorizontal },
   { name: 'الحسابات المالية', href: '/financial', icon: DollarSign },
+  { name: 'إدارة الحسابات', href: '/account-settings', icon: Settings },
 ];
 
 const DashboardSidebar = ({ isOpen, setIsOpen }: DashboardSidebarProps) => {
