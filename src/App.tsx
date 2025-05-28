@@ -18,6 +18,7 @@ import Gallery from "./pages/Gallery";
 import Charities from "./pages/Charities";
 import Complaints from "./pages/Complaints";
 import Patients from "./pages/Patients";
+import AccountSettings from "./pages/AccountSettings";
 import { useState } from "react";
 
 const App = () => {
@@ -44,6 +45,7 @@ const App = () => {
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/kpi" element={<KPI />} />
             <Route path="/activity-log" element={<ActivityLog />} />
+            <Route path="/account-settings" element={<AccountSettings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
