@@ -45,13 +45,17 @@ const AddDoctorDialog: React.FC<AddDoctorDialogProps> = ({
   const form = useForm({
     defaultValues: {
       name: '',
+      age: '',
+      gender: '',
       specialty: '',
       city: '',
       phone: '',
       email: '',
       certificate: '',
+      certificate2: '',
       license: '',
       idDocument: '',
+      syndicate: '',
       address: '',
       facebook: '',
       twitter: '',
@@ -61,6 +65,11 @@ const AddDoctorDialog: React.FC<AddDoctorDialogProps> = ({
   });
 
   const onSubmit = (data: any) => {
+    const certificates = [data.certificate];
+    if (data.certificate2) {
+      certificates.push(data.certificate2);
+    }
+
     const newDoctor: Omit<Doctor, 'id'> = {
       name: data.name,
       specialty: data.specialty,
@@ -78,13 +87,13 @@ const AddDoctorDialog: React.FC<AddDoctorDialogProps> = ({
       patients: 0,
       consultations: 0,
       activityPoints: 0,
-      age: 30,
-      gender: 'male',
+      age: parseInt(data.age) || 30,
+      gender: data.gender || 'male',
       documents: {
-        certificates: [data.certificate],
+        certificates: certificates,
         license: data.license,
         id: data.idDocument,
-        syndicate: '',
+        syndicate: data.syndicate,
       },
       contacts: {
         phone: data.phone,
@@ -134,13 +143,53 @@ const AddDoctorDialog: React.FC<AddDoctorDialogProps> = ({
                 )}
               />
 
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="age"
+                  rules={{ required: "العمر مطلوب" }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-right block">العمر</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="number" placeholder="35" className="text-right" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  rules={{ required: "الجنس مطلوب" }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-right block">الجنس</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="text-right">
+                            <SelectValue placeholder="اختر الجنس" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="male">ذكر</SelectItem>
+                          <SelectItem value="female">أنثى</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
                 name="specialty"
                 rules={{ required: "التخصص مطلوب" }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-right block">التخصص</FormLabel>
+                    <FormLabel className="text-right block">التخصص الرئيسي</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="text-right">
@@ -252,9 +301,23 @@ const AddDoctorDialog: React.FC<AddDoctorDialogProps> = ({
                 rules={{ required: "شهادة التخصص مطلوبة" }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-right block">شهادة التخصص</FormLabel>
+                    <FormLabel className="text-right block">شهادة التخصص الأولى</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="شهادة تخصص طب القلب" className="text-right" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="certificate2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-right block">شهادة التخصص الثانية (اختيارية)</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="شهادة تخصص إضافية" className="text-right" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -285,6 +348,21 @@ const AddDoctorDialog: React.FC<AddDoctorDialogProps> = ({
                     <FormLabel className="text-right block">بطاقة الهوية</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="بطاقة الهوية" className="text-right" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="syndicate"
+                rules={{ required: "بطاقة النقابة مطلوبة" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-right block">بطاقة النقابة</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="بطاقة النقابة" className="text-right" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

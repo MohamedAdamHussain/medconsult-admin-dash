@@ -10,7 +10,14 @@ import {
   X,
   MessageSquare,
   FileText,
-  User
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Star,
+  Trophy,
+  UserCheck
 } from 'lucide-react';
 import { 
   Card,
@@ -30,92 +37,215 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 // Sample data
 const applications = [
   {
     id: 1,
     name: 'د. أحمد محمد',
-    specialty: 'باطنية',
+    specialty: 'قلب وأوعية دموية',
+    specialties: [
+      {
+        id: '1',
+        name: 'قلب وأوعية دموية',
+        consultationPrice: 200,
+        experienceYears: 15,
+        description: 'خبرة واسعة في جراحة القلب والقسطرة القلبية'
+      },
+      {
+        id: '2',
+        name: 'طب الطوارئ',
+        consultationPrice: 150,
+        experienceYears: 8,
+        description: 'تخصص فرعي في حالات الطوارئ القلبية'
+      }
+    ],
     city: 'الرياض',
     status: 'new' as const,
     date: '2025-05-15',
+    age: 42,
+    gender: 'male' as const,
+    profileImage: '/api/placeholder/120/120',
+    activityPoints: 2450,
     documents: {
-      certificate: 'شهادة تخصص',
+      certificates: ['cert1.pdf', 'cert2.pdf'],
       license: 'ترخيص مزاولة المهنة',
       id: 'بطاقة هوية',
+      syndicate: 'بطاقة النقابة',
     },
     contacts: {
       phone: '05xxxxxxxx',
       email: 'ahmed@example.com',
+    },
+    socialMedia: {
+      facebook: 'https://facebook.com/dr.ahmed',
+      twitter: 'https://twitter.com/dr.ahmed',
+      linkedin: 'https://linkedin.com/in/dr.ahmed'
+    },
+    clinicLocation: {
+      address: 'شارع الملك فهد، الرياض 12345',
+      coordinates: {
+        lat: 24.7136,
+        lng: 46.6753
+      }
     }
   },
   {
     id: 2,
     name: 'د. سارة علي',
-    specialty: 'جلدية',
+    specialty: 'أمراض جلدية',
+    specialties: [
+      {
+        id: '3',
+        name: 'أمراض جلدية',
+        consultationPrice: 180,
+        experienceYears: 12,
+        description: 'تخصص في الأمراض الجلدية والتجميل'
+      }
+    ],
     city: 'جدة',
     status: 'pending' as const,
     date: '2025-05-10',
+    age: 38,
+    gender: 'female' as const,
+    profileImage: '/api/placeholder/120/120',
+    activityPoints: 1980,
     documents: {
-      certificate: 'شهادة تخصص',
+      certificates: ['derma_cert.pdf'],
       license: 'ترخيص مزاولة المهنة',
       id: 'بطاقة هوية',
+      syndicate: 'بطاقة النقابة',
     },
     contacts: {
       phone: '05xxxxxxxx',
       email: 'sara@example.com',
+    },
+    socialMedia: {
+      facebook: 'https://facebook.com/dr.sara',
+      instagram: 'https://instagram.com/dr.sara'
+    },
+    clinicLocation: {
+      address: 'شارع التحلية، جدة 21589'
     }
   },
   {
     id: 3,
     name: 'د. محمد خالد',
-    specialty: 'عظام',
+    specialty: 'طب أطفال',
+    specialties: [
+      {
+        id: '4',
+        name: 'طب أطفال',
+        consultationPrice: 160,
+        experienceYears: 10,
+        description: 'تخصص في رعاية الأطفال وحديثي الولادة'
+      }
+    ],
     city: 'الدمام',
     status: 'rejected' as const,
     date: '2025-05-05',
+    age: 35,
+    gender: 'male' as const,
+    activityPoints: 1120,
     documents: {
-      certificate: 'شهادة تخصص',
+      certificates: ['pediatric_cert.pdf'],
       license: 'ترخيص مزاولة المهنة',
       id: 'بطاقة هوية',
+      syndicate: 'بطاقة النقابة',
     },
     contacts: {
       phone: '05xxxxxxxx',
       email: 'mohamed@example.com',
+    },
+    socialMedia: {
+      linkedin: 'https://linkedin.com/in/dr.mohamed'
+    },
+    clinicLocation: {
+      address: 'شارع الخليج، الدمام 31952'
     }
   },
   {
     id: 4,
     name: 'د. نورة سعد',
-    specialty: 'أطفال',
+    specialty: 'طب نفسي',
+    specialties: [
+      {
+        id: '5',
+        name: 'طب نفسي',
+        consultationPrice: 220,
+        experienceYears: 8,
+        description: 'تخصص في العلاج النفسي والسلوكي'
+      }
+    ],
     city: 'الرياض',
     status: 'approved' as const,
     date: '2025-05-01',
+    age: 33,
+    gender: 'female' as const,
+    profileImage: '/api/placeholder/120/120',
+    activityPoints: 1760,
     documents: {
-      certificate: 'شهادة تخصص',
+      certificates: ['psych_cert.pdf'],
       license: 'ترخيص مزاولة المهنة',
       id: 'بطاقة هوية',
+      syndicate: 'بطاقة النقابة',
     },
     contacts: {
       phone: '05xxxxxxxx',
       email: 'nora@example.com',
+    },
+    socialMedia: {
+      twitter: 'https://twitter.com/dr.nora',
+      instagram: 'https://instagram.com/dr.nora'
+    },
+    clinicLocation: {
+      address: 'حي العليا، الرياض 11564'
     }
   },
   {
     id: 5,
     name: 'د. فيصل عبدالله',
-    specialty: 'نفسية',
+    specialty: 'جراحة العظام',
+    specialties: [
+      {
+        id: '6',
+        name: 'جراحة العظام',
+        consultationPrice: 250,
+        experienceYears: 18,
+        description: 'تخصص في جراحة العظام والمفاصل'
+      },
+      {
+        id: '7',
+        name: 'الطب الرياضي',
+        consultationPrice: 200,
+        experienceYears: 5,
+        description: 'تخصص فرعي في إصابات الرياضيين'
+      }
+    ],
     city: 'مكة',
     status: 'new' as const,
     date: '2025-05-18',
+    age: 48,
+    gender: 'male' as const,
+    activityPoints: 2210,
     documents: {
-      certificate: 'شهادة تخصص',
+      certificates: ['ortho_cert.pdf', 'sports_cert.pdf'],
       license: 'ترخيص مزاولة المهنة',
       id: 'بطاقة هوية',
+      syndicate: 'بطاقة النقابة',
     },
     contacts: {
       phone: '05xxxxxxxx',
       email: 'faisal@example.com',
+    },
+    socialMedia: {
+      facebook: 'https://facebook.com/dr.faisal',
+      linkedin: 'https://linkedin.com/in/dr.faisal'
+    },
+    clinicLocation: {
+      address: 'حي الشوقية، مكة المكرمة 24231'
     }
   },
 ];
@@ -208,51 +338,227 @@ const DoctorApplications = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {/* Doctor Info */}
+          <div className="space-y-6">
+            {/* الصورة الشخصية ومعلومات أساسية */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <User size={20} />
+                    <span>معلومات الطبيب</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* الصورة الشخصية */}
+                    <div className="flex items-center justify-center mb-4">
+                      <Avatar className="h-24 w-24">
+                        <AvatarImage src={selectedApplication?.profileImage} alt={selectedApplication?.name} />
+                        <AvatarFallback className="text-2xl">
+                          {selectedApplication?.name.split(' ')[1]?.charAt(0) || selectedApplication?.name.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">الاسم</span>
+                      <span className="font-medium">{selectedApplication?.name}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">العمر</span>
+                      <span>{selectedApplication?.age} سنة</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">الجنس</span>
+                      <span>{selectedApplication?.gender === 'male' ? 'ذكر' : 'أنثى'}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">التخصص الرئيسي</span>
+                      <span>{selectedApplication?.specialty}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">المدينة</span>
+                      <div className="flex items-center gap-1">
+                        <MapPin size={16} className="text-gray-400" />
+                        <span>{selectedApplication?.city}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">تاريخ التقديم</span>
+                      <div className="flex items-center gap-1">
+                        <Calendar size={16} className="text-gray-400" />
+                        <span>{selectedApplication?.date}</span>
+                      </div>
+                    </div>
+                    {selectedApplication?.activityPoints && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-500">نقاط النشاط</span>
+                        <div className="flex items-center gap-1">
+                          <Trophy size={16} className="text-blue-500" />
+                          <span className="font-semibold text-blue-600">{selectedApplication?.activityPoints}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* معلومات التواصل */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <Mail size={20} />
+                    <span>معلومات التواصل</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">البريد الإلكتروني</span>
+                      <div className="flex items-center gap-1">
+                        <Mail size={16} className="text-gray-400" />
+                        <span>{selectedApplication?.contacts.email}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">رقم الهاتف</span>
+                      <div className="flex items-center gap-1">
+                        <Phone size={16} className="text-gray-400" />
+                        <span>{selectedApplication?.contacts.phone}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* مكان العيادة ووسائل التواصل الاجتماعي */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* مكان العيادة */}
+              {selectedApplication?.clinicLocation && (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <MapPin size={20} />
+                      <span>مكان العيادة</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-2">
+                        <MapPin size={16} className="text-gray-400 mt-1" />
+                        <span className="text-gray-700">{selectedApplication?.clinicLocation.address}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* وسائل التواصل الاجتماعي */}
+              {selectedApplication?.socialMedia && Object.keys(selectedApplication.socialMedia).length > 0 && (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <span>🌐</span>
+                      <span>وسائل التواصل الاجتماعي</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {Object.entries(selectedApplication.socialMedia).map(([platform, url]) => {
+                        if (!url) return null;
+                        const getSocialIcon = (platform: string) => {
+                          switch (platform) {
+                            case 'facebook': return '📘';
+                            case 'twitter': return '🐦';
+                            case 'instagram': return '📸';
+                            case 'linkedin': return '💼';
+                            default: return '🔗';
+                          }
+                        };
+                        return (
+                          <div key={platform} className="flex items-center justify-between">
+                            <span className="text-gray-500 flex items-center gap-2">
+                              <span>{getSocialIcon(platform)}</span>
+                              <span className="capitalize">{platform}</span>
+                            </span>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => window.open(url, '_blank')}
+                            >
+                              زيارة
+                            </Button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            {/* قسم التخصصات */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User size={18} />
-                  <span>معلومات الطبيب</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div>
-                    <Label className="text-gray-500">البريد الإلكتروني</Label>
-                    <p>{selectedApplication?.contacts.email}</p>
-                  </div>
-                  <div>
-                    <Label className="text-gray-500">رقم الهاتف</Label>
-                    <p>{selectedApplication?.contacts.phone}</p>
-                  </div>
-                  <div>
-                    <Label className="text-gray-500">تخصص</Label>
-                    <p>{selectedApplication?.specialty}</p>
-                  </div>
-                  <div>
-                    <Label className="text-gray-500">المدينة</Label>
-                    <p>{selectedApplication?.city}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            {/* Documents */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText size={18} />
-                  <span>المستندات</span>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <UserCheck size={20} />
+                  <span>التخصصات</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="p-3 border rounded-md flex justify-between items-center">
-                    <div className="text-sm font-medium">شهادة التخصص</div>
-                    <Button variant="outline" size="sm">عرض</Button>
+                  {selectedApplication?.specialties?.map((specialty, index) => (
+                    <div key={specialty.id} className="border rounded-lg p-4 bg-gray-50">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="font-semibold">
+                              تخصص #{index + 1}
+                            </Badge>
+                            <h4 className="font-bold text-lg">{specialty.name}</h4>
+                          </div>
+                          <p className="text-gray-600">{specialty.description}</p>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-500">سعر الاستشارة</span>
+                            <span className="font-semibold text-green-600">{specialty.consultationPrice} ريال</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-500">سنوات الخبرة</span>
+                            <span className="font-semibold">{specialty.experienceYears} سنة</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            
+            {/* المستندات */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <FileText size={20} />
+                  <span>الوثائق المرفوعة</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {/* شهادات التخصص */}
+                  <div className="space-y-3">
+                    <h5 className="font-semibold text-sm text-gray-700">شهادات التخصص</h5>
+                    {selectedApplication?.documents.certificates?.map((cert, index) => (
+                      <div key={index} className="p-3 border rounded-md flex justify-between items-center">
+                        <div className="text-sm font-medium">شهادة التخصص #{index + 1}</div>
+                        <Button variant="outline" size="sm">عرض</Button>
+                      </div>
+                    ))}
                   </div>
+                  
+                  {/* باقي الوثائق */}
                   <div className="p-3 border rounded-md flex justify-between items-center">
                     <div className="text-sm font-medium">ترخيص مزاولة المهنة</div>
                     <Button variant="outline" size="sm">عرض</Button>
@@ -261,6 +567,12 @@ const DoctorApplications = () => {
                     <div className="text-sm font-medium">بطاقة الهوية</div>
                     <Button variant="outline" size="sm">عرض</Button>
                   </div>
+                  {selectedApplication?.documents.syndicate && (
+                    <div className="p-3 border rounded-md flex justify-between items-center">
+                      <div className="text-sm font-medium">بطاقة النقابة</div>
+                      <Button variant="outline" size="sm">عرض</Button>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
