@@ -64,16 +64,27 @@ const AddDoctorDialog: React.FC<AddDoctorDialogProps> = ({
     const newDoctor: Omit<Doctor, 'id'> = {
       name: data.name,
       specialty: data.specialty,
+      specialties: [{
+        id: '1',
+        name: data.specialty,
+        consultationPrice: 0,
+        experienceYears: 0,
+        description: ''
+      }],
       rating: 0,
       status: 'active',
       city: data.city,
       joinDate: new Date().toISOString().split('T')[0],
       patients: 0,
       consultations: 0,
+      activityPoints: 0,
+      age: 30,
+      gender: 'male',
       documents: {
-        certificate: data.certificate,
+        certificates: [data.certificate],
         license: data.license,
         id: data.idDocument,
+        syndicate: '',
       },
       contacts: {
         phone: data.phone,

@@ -18,27 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { UserCheck, UserX, Edit, Bell, Trash2 } from 'lucide-react';
 import StatusBadge from '@/components/dashboard/StatusBadge';
-
-interface Doctor {
-  id: number;
-  name: string;
-  specialty: string;
-  rating: number;
-  status: string;
-  city: string;
-  joinDate: string;
-  patients: number;
-  consultations: number;
-  documents: {
-    certificate: string;
-    license: string;
-    id: string;
-  };
-  contacts: {
-    phone: string;
-    email: string;
-  };
-}
+import { Doctor } from '@/types/doctors';
 
 interface DoctorsListProps {
   doctors: Doctor[];

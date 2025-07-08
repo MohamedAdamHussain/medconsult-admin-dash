@@ -1,18 +1,32 @@
 
+export interface Specialty {
+  id: string;
+  name: string;
+  consultationPrice: number;
+  experienceYears: number;
+  description: string;
+}
+
 export interface Doctor {
   id: number;
   name: string;
-  specialty: string;
+  specialty: string; // Main specialty for backward compatibility
+  specialties: Specialty[]; // Multiple specialties
   rating: number;
   status: string;
   city: string;
   joinDate: string;
   patients: number;
   consultations: number;
+  activityPoints: number;
+  age: number;
+  gender: 'male' | 'female';
+  profileImage?: string;
   documents: {
-    certificate: string;
+    certificates: string[]; // Multiple certificate images
     license: string;
     id: string;
+    syndicate: string; // بطاقة النقابة
   };
   contacts: {
     phone: string;

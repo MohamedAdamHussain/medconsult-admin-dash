@@ -8,16 +8,37 @@ const doctorsData = [
     id: 1,
     name: 'د. محمد أحمد',
     specialty: 'قلب وأوعية دموية',
+    specialties: [
+      {
+        id: '1',
+        name: 'قلب وأوعية دموية',
+        consultationPrice: 200,
+        experienceYears: 15,
+        description: 'خبرة واسعة في جراحة القلب والقسطرة القلبية'
+      },
+      {
+        id: '2',
+        name: 'طب الطوارئ',
+        consultationPrice: 150,
+        experienceYears: 8,
+        description: 'تخصص فرعي في حالات الطوارئ القلبية'
+      }
+    ],
     rating: 4.8,
     status: 'active',
     city: 'الرياض',
     joinDate: '2025-01-15',
     patients: 145,
     consultations: 278,
+    activityPoints: 2450,
+    age: 42,
+    gender: 'male' as const,
+    profileImage: '/api/placeholder/120/120',
     documents: {
-      certificate: 'شهادة تخصص قلب',
-      license: 'ترخيص مزاولة المهنة',
-      id: 'بطاقة الهوية',
+      certificates: ['cert1.pdf', 'cert2.pdf'],
+      license: 'license.pdf',
+      id: 'id.pdf',
+      syndicate: 'syndicate.pdf',
     },
     contacts: {
       phone: '05xxxxxxxx',
@@ -40,16 +61,30 @@ const doctorsData = [
     id: 2,
     name: 'د. فاطمة علي',
     specialty: 'أمراض جلدية',
+    specialties: [
+      {
+        id: '3',
+        name: 'أمراض جلدية',
+        consultationPrice: 180,
+        experienceYears: 12,
+        description: 'تخصص في الأمراض الجلدية والتجميل'
+      }
+    ],
     rating: 4.9,
     status: 'active',
     city: 'جدة',
     joinDate: '2025-02-10',
     patients: 198,
     consultations: 342,
+    activityPoints: 1980,
+    age: 38,
+    gender: 'female' as const,
+    profileImage: '/api/placeholder/120/120',
     documents: {
-      certificate: 'شهادة تخصص جلدية',
-      license: 'ترخيص مزاولة المهنة',
-      id: 'بطاقة الهوية',
+      certificates: ['derma_cert.pdf'],
+      license: 'license.pdf',
+      id: 'id.pdf',
+      syndicate: 'syndicate.pdf',
     },
     contacts: {
       phone: '05xxxxxxxx',
@@ -67,16 +102,29 @@ const doctorsData = [
     id: 3,
     name: 'د. خالد العمري',
     specialty: 'طب أطفال',
+    specialties: [
+      {
+        id: '4',
+        name: 'طب أطفال',
+        consultationPrice: 160,
+        experienceYears: 10,
+        description: 'تخصص في رعاية الأطفال وحديثي الولادة'
+      }
+    ],
     rating: 4.6,
     status: 'inactive',
     city: 'الدمام',
     joinDate: '2025-01-05',
     patients: 112,
     consultations: 203,
+    activityPoints: 1120,
+    age: 35,
+    gender: 'male' as const,
     documents: {
-      certificate: 'شهادة تخصص أطفال',
-      license: 'ترخيص مزاولة المهنة',
-      id: 'بطاقة الهوية',
+      certificates: ['pediatric_cert.pdf'],
+      license: 'license.pdf',
+      id: 'id.pdf',
+      syndicate: 'syndicate.pdf',
     },
     contacts: {
       phone: '05xxxxxxxx',
@@ -93,16 +141,30 @@ const doctorsData = [
     id: 4,
     name: 'د. سارة محمد',
     specialty: 'نفسية',
+    specialties: [
+      {
+        id: '5',
+        name: 'طب نفسي',
+        consultationPrice: 220,
+        experienceYears: 8,
+        description: 'تخصص في العلاج النفسي والسلوكي'
+      }
+    ],
     rating: 4.7,
     status: 'active',
     city: 'الرياض',
     joinDate: '2025-03-20',
     patients: 87,
     consultations: 176,
+    activityPoints: 1760,
+    age: 33,
+    gender: 'female' as const,
+    profileImage: '/api/placeholder/120/120',
     documents: {
-      certificate: 'شهادة تخصص نفسية',
-      license: 'ترخيص مزاولة المهنة',
-      id: 'بطاقة الهوية',
+      certificates: ['psych_cert.pdf'],
+      license: 'license.pdf',
+      id: 'id.pdf',
+      syndicate: 'syndicate.pdf',
     },
     contacts: {
       phone: '05xxxxxxxx',
@@ -120,16 +182,36 @@ const doctorsData = [
     id: 5,
     name: 'د. عبدالله الحربي',
     specialty: 'عظام',
+    specialties: [
+      {
+        id: '6',
+        name: 'جراحة العظام',
+        consultationPrice: 250,
+        experienceYears: 18,
+        description: 'تخصص في جراحة العظام والمفاصل'
+      },
+      {
+        id: '7',
+        name: 'الطب الرياضي',
+        consultationPrice: 200,
+        experienceYears: 5,
+        description: 'تخصص فرعي في إصابات الرياضيين'
+      }
+    ],
     rating: 4.5,
     status: 'active',
     city: 'مكة',
     joinDate: '2025-01-30',
     patients: 134,
     consultations: 255,
+    activityPoints: 2210,
+    age: 48,
+    gender: 'male' as const,
     documents: {
-      certificate: 'شهادة تخصص عظام',
-      license: 'ترخيص مزاولة المهنة',
-      id: 'بطاقة الهوية',
+      certificates: ['ortho_cert.pdf', 'sports_cert.pdf'],
+      license: 'license.pdf',
+      id: 'id.pdf',
+      syndicate: 'syndicate.pdf',
     },
     contacts: {
       phone: '05xxxxxxxx',
