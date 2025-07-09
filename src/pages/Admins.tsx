@@ -49,7 +49,6 @@ const admins = [
     id: 1,
     name: 'أحمد محمد',
     email: 'ahmed@medconsult.com',
-    role: 'super_admin',
     lastLogin: '2025-05-19 10:30',
     status: 'active',
   },
@@ -57,7 +56,6 @@ const admins = [
     id: 2,
     name: 'سارة علي',
     email: 'sara@medconsult.com',
-    role: 'content_admin',
     lastLogin: '2025-05-18 15:45',
     status: 'active',
   },
@@ -65,7 +63,6 @@ const admins = [
     id: 3,
     name: 'محمد أحمد',
     email: 'mohamed@medconsult.com',
-    role: 'support_admin',
     lastLogin: '2025-05-17 09:20',
     status: 'active',
   },
@@ -73,22 +70,10 @@ const admins = [
     id: 4,
     name: 'فاطمة حسن',
     email: 'fatima@medconsult.com',
-    role: 'financial_admin',
     lastLogin: '2025-05-15 14:10',
     status: 'inactive',
   },
 ];
-
-const roleOptions = [
-  { value: 'super_admin', label: 'مدير النظام' },
-  { value: 'content_admin', label: 'مدير المحتوى' },
-  { value: 'support_admin', label: 'مدير الدعم الفني' },
-  { value: 'financial_admin', label: 'مدير الحسابات' },
-];
-
-const getRoleName = (role: string) => {
-  return roleOptions.find(opt => opt.value === role)?.label || role;
-};
 
 const Admins = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -96,8 +81,7 @@ const Admins = () => {
   
   const filteredAdmins = admins.filter(admin => 
     admin.name.includes(searchQuery) || 
-    admin.email.includes(searchQuery) || 
-    getRoleName(admin.role).includes(searchQuery)
+    admin.email.includes(searchQuery)
   );
 
   return (
@@ -143,7 +127,6 @@ const Admins = () => {
                 <TableHead className="text-right">#</TableHead>
                 <TableHead className="text-right">اسم المشرف</TableHead>
                 <TableHead className="text-right">البريد الإلكتروني</TableHead>
-                <TableHead className="text-right">الصلاحية</TableHead>
                 <TableHead className="text-right">آخر دخول</TableHead>
                 <TableHead className="text-right">الحالة</TableHead>
                 <TableHead className="text-right">الإجراءات</TableHead>
@@ -155,7 +138,6 @@ const Admins = () => {
                   <TableCell>{admin.id}</TableCell>
                   <TableCell className="font-medium">{admin.name}</TableCell>
                   <TableCell>{admin.email}</TableCell>
-                  <TableCell>{getRoleName(admin.role)}</TableCell>
                   <TableCell>{admin.lastLogin}</TableCell>
                   <TableCell>
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
@@ -216,22 +198,6 @@ const Admins = () => {
             <div className="space-y-2">
               <Label htmlFor="password" className="text-right">كلمة المرور</Label>
               <Input id="password" type="password" placeholder="أدخل كلمة المرور" className="text-right" />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="role" className="text-right">الصلاحية</Label>
-              <Select>
-                <SelectTrigger className="text-right">
-                  <SelectValue placeholder="اختر الصلاحية" />
-                </SelectTrigger>
-                <SelectContent>
-                  {roleOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
           </div>
           

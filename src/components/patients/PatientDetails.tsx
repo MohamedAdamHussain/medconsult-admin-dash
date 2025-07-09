@@ -57,7 +57,13 @@ const PatientDetails = ({ patient, consultations }: PatientDetailsProps) => {
           </div>
         </CardHeader>
         <CardContent className="space-y-3 text-right">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 items-center">
+            {/* صورة شخصية */}
+            {patient.profileImage && (
+              <div className="col-span-2 flex justify-center mb-2">
+                <img src={patient.profileImage} alt="صورة المريض" className="w-28 h-28 rounded-full object-cover border" />
+              </div>
+            )}
             <div>
               <strong>الاسم:</strong> {patient.name}
             </div>
@@ -76,6 +82,12 @@ const PatientDetails = ({ patient, consultations }: PatientDetailsProps) => {
             <div>
               <strong>تاريخ التسجيل:</strong> {new Date(patient.registrationDate).toLocaleDateString('ar-SA')}
             </div>
+            {/* عنوان المنطقة */}
+            {patient.address && (
+              <div className="col-span-2">
+                <strong>العنوان:</strong> {patient.address}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -149,6 +161,17 @@ const PatientDetails = ({ patient, consultations }: PatientDetailsProps) => {
               <div className="flex flex-wrap gap-2 mt-2">
                 {patient.previousSurgeries.map((surgery, index) => (
                   <Badge key={index} variant="outline" className="bg-purple-100 text-purple-800">{surgery}</Badge>
+                ))}
+              </div>
+            </div>
+          )}
+          {/* صور طبية */}
+          {patient.medicalImages && patient.medicalImages.length > 0 && (
+            <div>
+              <strong>الصور الطبية:</strong>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {patient.medicalImages.map((img, idx) => (
+                  <img key={idx} src={img} alt={`صورة طبية ${idx + 1}`} className="w-24 h-24 object-cover border rounded" />
                 ))}
               </div>
             </div>

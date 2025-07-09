@@ -19,6 +19,11 @@ export interface Patient {
   previousSurgeries?: string[];
   radiologyImages?: string[];
   
+  // الحقول الجديدة
+  profileImage?: string; // صورة شخصية (Base64 أو URL مؤقت)
+  address?: string; // عنوان المنطقة
+  medicalImages?: string[]; // صور طبية (Base64 أو URL مؤقت)
+  
   // Statistics
   totalConsultations: number;
   lastConsultationDate?: string;

@@ -30,6 +30,10 @@ const PatientForm: React.FC<PatientFormProps> = ({ patient, onSubmit, onCancel }
     allergies: patient?.allergies || [],
     permanentMedications: patient?.permanentMedications || [],
     previousSurgeries: patient?.previousSurgeries || [],
+    // الحقول الجديدة
+    address: patient?.address || '',
+    profileImage: patient?.profileImage || '',
+    medicalImages: patient?.medicalImages || [],
   });
 
   const [newItem, setNewItem] = useState({
@@ -83,12 +87,54 @@ const PatientForm: React.FC<PatientFormProps> = ({ patient, onSubmit, onCancel }
     }
   };
 
+  // رفع صورة شخصية
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, profileImage: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // رفع صور طبية متعددة
+  const handleMedicalImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const readers: Promise<string>[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        readers.push(new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(file);
+        }));
+      }
+      Promise.all(readers).then(images => {
+        setFormData(prev => ({ ...prev, medicalImages: [...prev.medicalImages, ...images] }));
+      });
+    }
+  };
+
+  // حذف صورة طبية
+  const removeMedicalImage = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      medicalImages: prev.medicalImages.filter((_, i) => i !== index)
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
       ...formData,
       height: formData.height ? Number(formData.height) : undefined,
       weight: formData.weight ? Number(formData.weight) : undefined,
+      address: formData.address,
+      profileImage: formData.profileImage,
+      medicalImages: formData.medicalImages,
     });
   };
 
@@ -141,17 +187,28 @@ const PatientForm: React.FC<PatientFormProps> = ({ patient, onSubmit, onCancel }
         {/* البيانات الأساسية */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-right">البيانات الأساسية</CardTitle>
+            <CardTitle className="text-right">
+              البيانات الأساسية
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* صورة شخصية */}
             <div>
-              <Label htmlFor="name">الاسم الكامل</Label>
+              <Label htmlFor="profileImage">الصورة الشخصية</Label>
+              <Input id="profileImage" type="file" accept="image/*" onChange={handleProfileImageChange} />
+              {formData.profileImage && (
+                <img src={formData.profileImage} alt="صورة المريض" className="mt-2 w-24 h-24 rounded-full object-cover border" />
+              )}
+            </div>
+            {/* عنوان المنطقة */}
+            <div>
+              <Label htmlFor="address">عنوان المنطقة</Label>
               <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
+                id="address"
+                value={formData.address}
+                onChange={(e) => handleInputChange('address', e.target.value)}
                 className="text-right"
-                required
+                placeholder="مثال: دمشق - المزة"
               />
             </div>
             
@@ -240,7 +297,22 @@ const PatientForm: React.FC<PatientFormProps> = ({ patient, onSubmit, onCancel }
         <CardHeader>
           <CardTitle className="text-right">المعلومات الطبية</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4">
+            {/* رفع صور طبية */}
+            <div>
+              <Label htmlFor="medicalImages">صور طبية (شعاعية أو غيرها)</Label>
+              <Input id="medicalImages" type="file" accept="image/*" multiple onChange={handleMedicalImagesChange} />
+              {formData.medicalImages.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {formData.medicalImages.map((img, idx) => (
+                    <div key={idx} className="relative">
+                      <img src={img} alt={`صورة طبية ${idx + 1}`} className="w-20 h-20 object-cover border rounded" />
+                      <button type="button" onClick={() => removeMedicalImage(idx)} className="absolute top-0 left-0 bg-white bg-opacity-80 rounded-full p-1 text-xs">×</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           {renderArraySection(
             'الأمراض العامة',
             'generalDiseases',

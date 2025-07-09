@@ -19,10 +19,16 @@ export interface FAQ {
 export interface Specialty {
   id: string;
   name: string;
-  description: string;
-  iconName: string;
+  isActive: boolean;
+  questionIds: string[];
   doctorsCount: number;
-  faqs: FAQ[];
+}
+
+// نوع بيانات السؤال الطبي (نفس تعريف MedicalQuestions.tsx)
+interface MedicalQuestion {
+  id: string;
+  question: string;
+  specialty: string;
 }
 
 // بيانات افتراضية للتخصصات
@@ -30,42 +36,60 @@ const initialSpecialties: Specialty[] = [
   {
     id: '1',
     name: 'طب القلب',
-    description: 'تخصص في تشخيص وعلاج أمراض القلب والأوعية الدموية',
-    iconName: 'heart',
+    isActive: true,
+    questionIds: [],
     doctorsCount: 42,
-    faqs: [
-      { id: '1-1', question: 'ما هي أعراض النوبة القلبية؟', answer: 'تشمل الأعراض ألم في الصدر، ضيق في التنفس، تعرق بارد، غثيان وألم في الذراع اليسرى.' },
-      { id: '1-2', question: 'هل ارتفاع الكولسترول يسبب أمراض القلب؟', answer: 'نعم، ارتفاع الكولسترول يمكن أن يؤدي إلى تراكم اللويحات في الشرايين مما يزيد من خطر الإصابة بأمراض القلب.' }
-    ]
   },
   {
     id: '2',
     name: 'طب الأطفال',
-    description: 'رعاية صحية للأطفال منذ الولادة وحتى مرحلة المراهقة',
-    iconName: 'baby',
+    isActive: true,
+    questionIds: [],
     doctorsCount: 38,
-    faqs: [
-      { id: '2-1', question: 'متى يجب أن يحصل طفلي على اللقاحات الأساسية؟', answer: 'تبدأ اللقاحات الأساسية عادة من الشهر الثاني من العمر وتستمر حسب جدول محدد حتى سن المدرسة.' },
-      { id: '2-2', question: 'ما هي علامات الجفاف عند الأطفال؟', answer: 'تشمل قلة التبول، جفاف الفم واللسان، عدم وجود دموع عند البكاء، وخمول غير طبيعي.' }
-    ]
   },
   {
     id: '3',
     name: 'طب الأسنان',
-    description: 'علاج مشاكل الفم والأسنان واللثة',
-    iconName: 'tooth',
+    isActive: false,
+    questionIds: [],
     doctorsCount: 53,
-    faqs: [
-      { id: '3-1', question: 'كم مرة يجب تنظيف الأسنان بالفرشاة؟', answer: 'يُنصح بتنظيف الأسنان بالفرشاة مرتين يومياً، صباحاً ومساءً، لمدة لا تقل عن دقيقتين في كل مرة.' },
-      { id: '3-2', question: 'متى يجب زيارة طبيب الأسنان؟', answer: 'يُنصح بزيارة طبيب الأسنان مرتين سنوياً للفحص والتنظيف الدوري، أو عند الشعور بأي ألم أو مشكلة.' }
-    ]
   }
+];
+
+// بيانات افتراضية للأسئلة الطبية (يمكن تعديلها لاحقاً)
+const initialMedicalQuestions: MedicalQuestion[] = [
+  { id: '1', question: 'هل تعاني من أمراض مزمنة؟', specialty: 'cardiology' },
+  { id: '2', question: 'هل لديك حساسية من أدوية معينة؟', specialty: 'dermatology' },
+  { id: '3', question: 'هل تتناول أدوية بشكل دائم؟', specialty: 'cardiology' },
+  { id: '4', question: 'هل أجريت عمليات جراحية سابقة؟', specialty: 'orthopedics' },
+  { id: '5', question: 'هل تعاني من ارتفاع ضغط الدم؟', specialty: 'cardiology' },
+  { id: '6', question: 'هل لديك تاريخ عائلي مع أمراض القلب؟', specialty: 'cardiology' },
+  { id: '7', question: 'هل تعاني من مشاكل في التنفس؟', specialty: 'pediatrics' },
+  { id: '8', question: 'هل تعاني من آلام في المفاصل؟', specialty: 'orthopedics' },
+  { id: '9', question: 'هل لديك مشاكل في الرؤية أو السمع؟', specialty: 'neurology' },
+  { id: '10', question: 'هل تعاني من صداع متكرر؟', specialty: 'neurology' },
+  { id: '11', question: 'هل لديك مشاكل في الجهاز الهضمي؟', specialty: 'pediatrics' },
+  { id: '12', question: 'هل تعاني من طفح جلدي متكرر؟', specialty: 'dermatology' },
+  { id: '13', question: 'هل لديك مشاكل في النوم؟', specialty: 'neurology' },
+  { id: '14', question: 'هل تعاني من فقدان الوزن غير المبرر؟', specialty: 'pediatrics' },
+  { id: '15', question: 'هل لديك مشاكل في الأسنان أو اللثة؟', specialty: 'orthopedics' },
+  { id: '16', question: 'هل تعاني من دوار أو إغماء؟', specialty: 'cardiology' },
+  { id: '17', question: 'هل لديك مشاكل في الكلى أو الكبد؟', specialty: 'pediatrics' },
+  { id: '18', question: 'هل تعاني من التهابات متكررة؟', specialty: 'pediatrics' },
+  { id: '19', question: 'هل لديك مشاكل في التبول أو الإخراج؟', specialty: 'pediatrics' },
+  { id: '20', question: 'هل تعاني من مشاكل في الجلد أو الشعر؟', specialty: 'dermatology' },
+  { id: '21', question: 'هل لديك مشاكل في التركيز أو الذاكرة؟', specialty: 'neurology' },
+  { id: '22', question: 'هل تعاني من ألم في الصدر عند الجهد؟', specialty: 'cardiology' },
+  { id: '23', question: 'هل لديك مشاكل في الشهية؟', specialty: 'pediatrics' },
+  { id: '24', question: 'هل تعاني من تورم في الأطراف؟', specialty: 'cardiology' },
+  { id: '25', question: 'هل لديك مشاكل في التعرق الزائد؟', specialty: 'neurology' },
 ];
 
 const Specialties = () => {
   const [specialties, setSpecialties] = useState<Specialty[]>(initialSpecialties);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [selectedSpecialty, setSelectedSpecialty] = useState<Specialty | null>(null);
+  const [medicalQuestions] = useState<MedicalQuestion[]>(initialMedicalQuestions);
   
   // إضافة تخصص جديد
   const handleAddSpecialty = (specialty: Specialty) => {
@@ -134,7 +158,7 @@ const Specialties = () => {
                       </CardHeader>
                       <CardContent>
                         <p>عدد الأطباء: {specialty.doctorsCount}</p>
-                        <p>عدد الأسئلة الشائعة: {specialty.faqs.length}</p>
+                        <p>عدد الأسئلة الشائعة: {specialty.questionIds.length}</p>
                       </CardContent>
                     </Card>
                   ))}
@@ -157,6 +181,7 @@ const Specialties = () => {
             handleAddSpecialty(specialty);
           }
         }}
+        medicalQuestions={medicalQuestions}
       />
     </DashboardLayout>
   );

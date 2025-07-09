@@ -16,7 +16,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Settings,
-  LogOut
+  LogOut,
+  Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -32,11 +33,13 @@ const navItems = [
   { name: 'إدارة الأطباء', href: '/doctors', icon: Users },
   { name: 'إدارة المرضى', href: '/patients', icon: User },
   { name: 'طلبات تسجيل الأطباء', href: '/doctor-applications', icon: FileText },
+  { name: 'المواعيد', href: '/appointments', icon: Calendar },
   { name: 'الإشعارات', href: '/notifications', icon: Bell },
   { name: 'الشكاوى', href: '/complaints', icon: Shield },
   { name: 'المشرفين', href: '/admins', icon: Users },
   { name: 'الجمعيات الخيرية', href: '/charities', icon: Archive },
   { name: 'التخصصات الطبية', href: '/specialties', icon: FileBarChart },
+  { name: 'الأسئلة الطبية', href: '/medical-questions', icon: FileText },
   { name: 'إدارة الـ Gallery', href: '/gallery', icon: GalleryHorizontal },
   { name: 'الحسابات المالية', href: '/financial', icon: DollarSign },
   { name: 'إدارة الحسابات', href: '/account-settings', icon: Settings },

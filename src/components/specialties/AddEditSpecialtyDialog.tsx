@@ -8,33 +8,37 @@ import { Label } from '@/components/ui/label';
 import { Specialty, FAQ } from '@/pages/Specialties';
 import { Plus, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 interface AddEditSpecialtyDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   specialty: Specialty | null;
   onSave: (specialty: Specialty) => void;
+  medicalQuestions: { id: string; question: string }[];
 }
 
 const AddEditSpecialtyDialog = ({
   open,
   onOpenChange,
   specialty,
-  onSave
+  onSave,
+  medicalQuestions
 }: AddEditSpecialtyDialogProps) => {
   const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [iconName, setIconName] = useState('');
-  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [isActive, setIsActive] = useState(true);
+  const [questionIds, setQuestionIds] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [filterSpecialty, setFilterSpecialty] = useState('all');
+  const [search, setSearch] = useState('');
 
   // اعداد البيانات عند فتح النافذة للتعديل
   useEffect(() => {
     if (specialty) {
       setName(specialty.name);
-      setDescription(specialty.description);
-      setIconName(specialty.iconName);
-      setFaqs(specialty.faqs);
+      setIsActive(specialty.isActive);
+      setQuestionIds(specialty.questionIds || []);
     } else {
       resetForm();
     }
@@ -43,9 +47,8 @@ const AddEditSpecialtyDialog = ({
   // إعادة تعيين النموذج
   const resetForm = () => {
     setName('');
-    setDescription('');
-    setIconName('');
-    setFaqs([]);
+    setIsActive(true);
+    setQuestionIds([]);
     setErrors({});
   };
 
@@ -55,10 +58,6 @@ const AddEditSpecialtyDialog = ({
     
     if (!name.trim()) {
       newErrors.name = 'اسم التخصص مطلوب';
-    }
-    
-    if (!description.trim()) {
-      newErrors.description = 'الوصف مطلوب';
     }
     
     setErrors(newErrors);
@@ -72,10 +71,9 @@ const AddEditSpecialtyDialog = ({
     const newSpecialty: Specialty = {
       id: specialty?.id || Math.random().toString(36).substring(2, 11),
       name,
-      description,
-      iconName: iconName || 'medical-cross',
+      isActive,
+      questionIds,
       doctorsCount: specialty?.doctorsCount || 0,
-      faqs
     };
     
     onSave(newSpecialty);
@@ -90,19 +88,19 @@ const AddEditSpecialtyDialog = ({
       answer: ''
     };
     
-    setFaqs([...faqs, newFAQ]);
+    // setFaqs([...faqs, newFAQ]); // This state is removed, so this function is no longer relevant
   };
 
   // تحديث سؤال شائع
   const updateFAQ = (id: string, field: 'question' | 'answer', value: string) => {
-    setFaqs(faqs.map(faq => 
-      faq.id === id ? { ...faq, [field]: value } : faq
-    ));
+    // setFaqs(faqs.map(faq => 
+    //   faq.id === id ? { ...faq, [field]: value } : faq
+    // )); // This state is removed, so this function is no longer relevant
   };
 
   // حذف سؤال شائع
   const removeFAQ = (id: string) => {
-    setFaqs(faqs.filter(faq => faq.id !== id));
+    // setFaqs(faqs.filter(faq => faq.id !== id)); // This state is removed, so this function is no longer relevant
   };
 
   return (
@@ -125,81 +123,48 @@ const AddEditSpecialtyDialog = ({
             />
             {errors.name && <p className="text-destructive text-sm">{errors.name}</p>}
           </div>
-          
-          <div className="grid gap-2">
-            <Label htmlFor="description">وصف التخصص</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className={errors.description ? 'border-destructive' : ''}
-            />
-            {errors.description && <p className="text-destructive text-sm">{errors.description}</p>}
+          {/* Switch isActive */}
+          <div className="flex items-center gap-2">
+            <Switch checked={isActive} onCheckedChange={setIsActive} id="isActive" />
+            <Label htmlFor="isActive">مفعل</Label>
           </div>
-          
-          <div className="grid gap-2">
-            <Label htmlFor="iconName">اسم الأيقونة</Label>
+          {/* البحث عن الأسئلة الطبية بالكلمات */}
+          <div className="mb-2">
+            <Label>بحث عن سؤال طبي</Label>
             <Input
-              id="iconName"
-              value={iconName}
-              onChange={(e) => setIconName(e.target.value)}
-              placeholder="medical-cross"
+              type="text"
+              placeholder="اكتب كلمة للبحث..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="text-right"
             />
-            <p className="text-sm text-muted-foreground">
-              اسم الأيقونة من مكتبة الأيقونات، مثال: heart, baby, tooth
-            </p>
           </div>
-          
-          <div className="mt-4">
-            <div className="flex justify-between items-center">
-              <Label>الأسئلة الشائعة</Label>
-              <Button type="button" variant="outline" size="sm" onClick={addNewFAQ}>
-                <Plus className="h-4 w-4 ml-2" /> إضافة سؤال
-              </Button>
-            </div>
-            
-            <div className="space-y-4 mt-4 max-h-[300px] overflow-y-auto p-1">
-              {faqs.map((faq, index) => (
-                <Card key={faq.id} className="relative">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute left-2 top-2"
-                    onClick={() => removeFAQ(faq.id)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                  
-                  <CardContent className="pt-6">
-                    <div className="grid gap-3">
-                      <div className="grid gap-1">
-                        <Label htmlFor={`question-${index}`}>السؤال</Label>
-                        <Input
-                          id={`question-${index}`}
-                          value={faq.question}
-                          onChange={(e) => updateFAQ(faq.id, 'question', e.target.value)}
-                        />
-                      </div>
-                      
-                      <div className="grid gap-1">
-                        <Label htmlFor={`answer-${index}`}>الإجابة</Label>
-                        <Textarea
-                          id={`answer-${index}`}
-                          value={faq.answer}
-                          onChange={(e) => updateFAQ(faq.id, 'answer', e.target.value)}
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+          {/* اختيار الأسئلة الطبية */}
+          <div className="grid gap-2">
+            <Label>الأسئلة الطبية المرتبطة</Label>
+            <div className="flex flex-col gap-1 max-h-48 overflow-y-auto border rounded p-2">
+              {medicalQuestions.filter(q => !search || q.question.includes(search)).map(q => (
+                <label key={q.id} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={questionIds.includes(q.id)}
+                    onChange={e => {
+                      if (e.target.checked) {
+                        setQuestionIds([...questionIds, q.id]);
+                      } else {
+                        setQuestionIds(questionIds.filter(id => id !== q.id));
+                      }
+                    }}
+                  />
+                  <span>{q.question}</span>
+                </label>
               ))}
-              
-              {faqs.length === 0 && (
-                <p className="text-center text-muted-foreground py-4">
-                  لا توجد أسئلة شائعة. أضف سؤالاً باستخدام الزر أعلاه.
-                </p>
-              )}
+            </div>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {questionIds.map(id => {
+                const q = medicalQuestions.find(q => q.id === id);
+                return q ? <span key={id} className="bg-gray-100 px-2 py-1 rounded text-sm">{q.question}</span> : null;
+              })}
             </div>
           </div>
         </div>

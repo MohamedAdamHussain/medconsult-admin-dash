@@ -19,9 +19,10 @@ const SpecialtiesList = ({ specialties, onEdit, onDelete }: SpecialtiesListProps
         <TableHeader>
           <TableRow>
             <TableHead className="text-right">اسم التخصص</TableHead>
-            <TableHead className="text-right">الوصف</TableHead>
+            {/* حذف عمود الوصف */}
             <TableHead className="text-right">عدد الأطباء</TableHead>
-            <TableHead className="text-right">الأسئلة الشائعة</TableHead>
+            <TableHead className="text-right">عدد الأسئلة المرتبطة</TableHead>
+            <TableHead className="text-right">الحالة</TableHead>
             <TableHead className="text-center">الإجراءات</TableHead>
           </TableRow>
         </TableHeader>
@@ -29,9 +30,14 @@ const SpecialtiesList = ({ specialties, onEdit, onDelete }: SpecialtiesListProps
           {specialties.map((specialty) => (
             <TableRow key={specialty.id}>
               <TableCell className="font-medium">{specialty.name}</TableCell>
-              <TableCell className="max-w-xs truncate">{specialty.description}</TableCell>
+              {/* حذف حقل الوصف */}
               <TableCell>{specialty.doctorsCount}</TableCell>
-              <TableCell>{specialty.faqs.length}</TableCell>
+              <TableCell>{specialty.questionIds ? specialty.questionIds.length : 0}</TableCell>
+              <TableCell>
+                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${specialty.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                  {specialty.isActive ? 'مفعل' : 'غير مفعل'}
+                </span>
+              </TableCell>
               <TableCell>
                 <div className="flex justify-center gap-2">
                   <Button size="sm" variant="ghost" onClick={() => onEdit(specialty)}>
@@ -55,43 +61,6 @@ const SpecialtiesList = ({ specialties, onEdit, onDelete }: SpecialtiesListProps
           ))}
         </TableBody>
       </Table>
-
-      <h2 className="text-xl font-bold mt-8 mb-4">الأسئلة الشائعة حسب التخصص</h2>
-      
-      <Accordion type="single" collapsible className="w-full">
-        {specialties.map((specialty) => (
-          <AccordionItem key={specialty.id} value={specialty.id}>
-            <AccordionTrigger className="text-lg font-medium">
-              {specialty.name} <span className="text-sm text-muted-foreground mr-2">({specialty.faqs.length} سؤال)</span>
-            </AccordionTrigger>
-            <AccordionContent>
-              {specialty.faqs.length > 0 ? (
-                <div className="space-y-4">
-                  {specialty.faqs.map((faq) => (
-                    <div key={faq.id} className="border rounded-md p-4">
-                      <h3 className="text-md font-semibold flex items-center">
-                        <ChevronRight className="h-4 w-4 ml-2" />
-                        {faq.question}
-                      </h3>
-                      <p className="text-muted-foreground mt-2 pr-6">{faq.answer}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-muted-foreground">لا توجد أسئلة شائعة لهذا التخصص.</p>
-              )}
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="mt-4"
-                onClick={() => onEdit(specialty)}
-              >
-                تعديل الأسئلة الشائعة
-              </Button>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
     </div>
   );
 };
