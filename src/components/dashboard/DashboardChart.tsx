@@ -55,7 +55,7 @@ const DashboardChart = ({
     <div className="bg-white rounded-xl shadow-md p-4 h-full">
       <h3 className="text-lg font-medium mb-4 text-right">{title}</h3>
       
-      <div style={{ height: `${height}px` }}>
+      <div style={{ height: `${height}px` }} dir="ltr">
         <ResponsiveContainer width="100%" height="100%">
           {type === 'bar' ? (
             <BarChart

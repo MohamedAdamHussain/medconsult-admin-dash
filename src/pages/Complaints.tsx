@@ -42,16 +42,16 @@ const Complaints = () => {
   return (
     <DashboardLayout>
       <div className="mb-6">
-        <div className="flex justify-between items-center">
-          <ExportButton
-            data={complaints}
-            columns={complaintExportColumns}
-            filename="complaints_list"
-            title="قائمة الشكاوى"
-          />
-          <div className="text-right">
-            <h1 className="text-3xl font-bold">إدارة الشكاوى</h1>
-            <p className="text-gray-500 mt-1">متابعة وحل شكاوى المستخدمين</p>
+        <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4 md:gap-0">
+          <h1 className="text-3xl font-bold text-right w-full md:w-auto">إدارة الشكاوى</h1>
+          <div className="flex flex-row-reverse gap-2 w-full md:w-auto justify-start md:justify-end">
+            <ExportButton
+              data={complaints}
+              columns={complaintExportColumns}
+              filename="complaints_list"
+              title="قائمة الشكاوى"
+            />
+            {/* أزرار أخرى إن وجدت */}
           </div>
         </div>
       </div>

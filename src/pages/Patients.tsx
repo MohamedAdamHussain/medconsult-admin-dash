@@ -65,16 +65,16 @@ const Patients = () => {
   return (
     <DashboardLayout>
       <div className="mb-6">
-        <div className="flex justify-between items-center">
-          <ExportButton
-            data={patients}
-            columns={patientExportColumns}
-            filename="patients_list"
-            title="قائمة المرضى"
-          />
-          <div className="text-right">
-            <h1 className="text-3xl font-bold">إدارة المرضى</h1>
-            <p className="text-gray-500 mt-1">متابعة حسابات المرضى واستشاراتهم</p>
+        <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4 md:gap-0">
+          <h1 className="text-3xl font-bold text-right w-full md:w-auto">إدارة المرضى</h1>
+          <div className="flex flex-row-reverse gap-2 w-full md:w-auto justify-start md:justify-end">
+            <ExportButton
+              data={patients}
+              columns={patientExportColumns}
+              filename="patients_list"
+              title="قائمة المرضى"
+            />
+            {/* أزرار أخرى إن وجدت */}
           </div>
         </div>
       </div>

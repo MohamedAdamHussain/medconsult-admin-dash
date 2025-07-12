@@ -40,19 +40,21 @@ const DoctorsList: React.FC<DoctorsListProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-right">الطبيب</TableHead>
+            <TableHead className="text-right">اسم الطبيب</TableHead>
+            <TableHead className="text-right">البريد الإلكتروني</TableHead>
             <TableHead className="text-right">التخصص</TableHead>
             <TableHead className="text-right">التقييم</TableHead>
             <TableHead className="text-right">المدينة</TableHead>
             <TableHead className="text-right">الحالة</TableHead>
-            <TableHead className="text-right">الإجراءات</TableHead>
+            <TableHead className="text-left">الإجراءات</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {doctors.map((doctor) => (
             <TableRow key={doctor.id}>
-              <TableCell className="font-medium">{doctor.name}</TableCell>
-              <TableCell>{doctor.specialty}</TableCell>
+              <TableCell className="text-right">{doctor.name}</TableCell>
+              <TableCell className="text-right">{doctor.email}</TableCell>
+              <TableCell className="text-right">{doctor.specialty}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-1">
                   <span className="text-amber-500">★</span>
@@ -60,14 +62,14 @@ const DoctorsList: React.FC<DoctorsListProps> = ({
                 </div>
               </TableCell>
               <TableCell>{doctor.city}</TableCell>
-              <TableCell>
+              <TableCell className="text-right">
                 <StatusBadge 
                   status={doctor.status === 'active' ? 'approved' : 'rejected'} 
                   text={doctor.status === 'active' ? 'مفعل' : 'موقوف'} 
                 />
               </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
+              <TableCell className="text-left">
+                <div className="flex flex-row-reverse gap-2 justify-start">
                   <Button 
                     variant="outline" 
                     size="sm" 

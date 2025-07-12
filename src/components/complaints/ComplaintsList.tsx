@@ -84,7 +84,7 @@ const ComplaintsList = ({ complaints, onViewDetails }: ComplaintsListProps) => {
                 <TableHead className="text-right">تاريخ الإنشاء</TableHead>
                 <TableHead className="text-right">التعليقات</TableHead>
                 <TableHead className="text-right">المرفقات</TableHead>
-                <TableHead className="text-right">الإجراءات</TableHead>
+                <TableHead className="text-left">الإجراءات</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -138,15 +138,17 @@ const ComplaintsList = ({ complaints, onViewDetails }: ComplaintsListProps) => {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => onViewDetails(complaint)}
-                    >
-                      <Eye className="h-4 w-4 ml-1" />
-                      عرض
-                    </Button>
+                  <TableCell className="text-left">
+                    <div className="flex flex-row-reverse gap-2 justify-start">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onViewDetails(complaint)}
+                      >
+                        <Eye className="h-4 w-4 ml-1" />
+                        عرض
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

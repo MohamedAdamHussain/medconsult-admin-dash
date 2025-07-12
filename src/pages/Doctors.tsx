@@ -54,27 +54,22 @@ const Doctors = () => {
 
   return (
     <DashboardLayout>
-      <div className="mb-6">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <Button 
-              onClick={() => setAddDialogOpen(true)}
-              className="flex items-center gap-2"
-            >
-              <Plus size={16} />
-              إضافة طبيب
-            </Button>
-            <ExportButton
-              data={filteredDoctors}
-              columns={doctorExportColumns}
-              filename="doctors_list"
-              title="قائمة الأطباء"
-            />
-          </div>
-          <div className="text-right">
-            <h1 className="text-3xl font-bold">إدارة الأطباء</h1>
-            <p className="text-gray-500 mt-1">إدارة وعرض معلومات الأطباء</p>
-          </div>
+      <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4 md:gap-0">
+        <h1 className="text-3xl font-bold text-right w-full md:w-auto">إدارة الأطباء</h1>
+        <div className="flex flex-row-reverse gap-2 w-full md:w-auto justify-start md:justify-end">
+          <Button 
+            onClick={() => setAddDialogOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <Plus size={16} />
+            إضافة طبيب
+          </Button>
+          <ExportButton
+            data={filteredDoctors}
+            columns={doctorExportColumns}
+            filename="doctors_list"
+            title="قائمة الأطباء"
+          />
         </div>
       </div>
       

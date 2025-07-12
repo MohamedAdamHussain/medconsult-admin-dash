@@ -22,6 +22,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
+import logo from '/public/favicon.ico';
 
 interface DashboardSidebarProps {
   isOpen: boolean;
@@ -45,6 +46,8 @@ const navItems = [
   { name: 'إدارة الحسابات', href: '/account-settings', icon: Settings },
 ];
 
+const dividerIndex = 5; // ضع الفاصل بعد القسم الخامس (عدّل حسب الحاجة)
+
 const DashboardSidebar = ({ isOpen, setIsOpen }: DashboardSidebarProps) => {
   const location = useLocation();
   const { logout, user } = useAuth();
@@ -60,86 +63,46 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: DashboardSidebarProps) => {
       )}
       
       {/* Sidebar */}
-      <aside 
+      <aside
         className={cn(
-          "bg-sidebar fixed md:relative inset-y-0 right-0 z-40 flex flex-col h-full w-64 transition-transform duration-300 ease-in-out",
-          !isOpen && "translate-x-full md:translate-x-0 md:w-20"
+          "bg-white border-l shadow h-full w-64 flex flex-col transition-all duration-300",
+          !isOpen && "md:w-20 w-20"
         )}
       >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
-          <h2 className={cn("text-sidebar-foreground font-bold text-lg", !isOpen && "md:hidden")}>
-            {isOpen ? "منصة MedConsult" : ""}
-          </h2>
-          
-          <div className="flex items-center">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="text-sidebar-foreground md:hidden"
-              onClick={() => setIsOpen(false)}
-            >
-              <X className="h-5 w-5" />
-            </Button>
-            
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="text-sidebar-foreground hidden md:flex"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              {isOpen ? (
-                <ChevronRight className="h-5 w-5" />
-              ) : (
-                <ChevronLeft className="h-5 w-5" />
-              )}
-            </Button>
-          </div>
+        {/* شعار واسم التطبيق */}
+        <div className="flex items-center justify-center py-4 border-b">
+          <img src={logo} alt="الشعار" className="h-8" />
+          {isOpen && <span className="font-bold text-lg mr-2 text-primary">MedConsult</span>}
         </div>
-        
-        {/* Navigation Links */}
-        <nav className="flex-1 overflow-y-auto p-2 space-y-1 text-right">
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.href}
-              className={cn(
-                "sidebar-link",
-                location.pathname === item.href && "active",
-                !isOpen && "md:justify-center"
-              )}
-            >
-              <item.icon className="h-5 w-5 flex-shrink-0" />
-              <span className={cn("flex-1", !isOpen && "md:hidden")}>
-                {item.name}
-              </span>
-            </Link>
+        {/* روابط التنقل */}
+        <nav className="flex-1 p-2 space-y-1 text-right">
+          {navItems.map((item, idx) => (
+            <React.Fragment key={item.name}>
+              {idx === dividerIndex && <hr className="my-2 border-t border-gray-200" />}
+              <Link
+                to={item.href}
+                className={cn(
+                  "sidebar-link flex flex-row-reverse items-center rounded-lg px-3 py-2 transition font-medium text-base",
+                  location.pathname === item.href
+                    ? "bg-primary/10 text-primary font-bold"
+                    : "hover:bg-primary/5 text-gray-700",
+                  !isOpen && "md:justify-center"
+                )}
+              >
+                <item.icon className="h-5 w-5 ml-2" />
+                {isOpen && <span className="flex-1">{item.name}</span>}
+              </Link>
+            </React.Fragment>
           ))}
         </nav>
-        
-        {/* Sidebar Footer */}
-        <div className="p-4 border-t border-sidebar-border">
-          <div className={cn("flex items-center justify-between", !isOpen && "md:justify-center")}>
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-sidebar-foreground flex items-center justify-center text-sidebar">
-                <span className="font-bold">A</span>
-              </div>
-              <div className={cn("mr-3", !isOpen && "md:hidden")}>
-                <p className="text-sm font-medium text-sidebar-foreground">{user?.name || "مدير النظام"}</p>
-              </div>
-            </div>
-            
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={logout}
-              className={cn("text-sidebar-foreground", !isOpen && "md:hidden")}
-              title="تسجيل الخروج"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+        {/* زر تصغير/توسيع */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="p-2 text-gray-500 hover:text-primary transition border-t"
+          title={isOpen ? 'تصغير' : 'توسيع'}
+        >
+          {isOpen ? <ChevronLeft /> : <ChevronRight />}
+        </button>
       </aside>
     </>
   );
