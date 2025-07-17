@@ -15,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Heart } from 'lucide-react';
 import { CharityData } from '@/types/charities';
 
 interface CharityDetailsProps {
@@ -25,55 +24,55 @@ interface CharityDetailsProps {
 const CharityDetails: React.FC<CharityDetailsProps> = ({ charity }) => {
   return (
     <div className="space-y-6">
-      {/* Charity Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl text-right">معلومات الجمعية</CardTitle>
+      {/* معلومات الجمعية */}
+      <Card className="unified-card">
+        <CardHeader className="unified-card-header">
+          <CardTitle className="unified-card-title">معلومات الجمعية</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground text-right">اسم الجمعية</h3>
-              <p className="text-right">{charity.name}</p>
+        <CardContent className="unified-card-content space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="form-field">
+              <h3 className="form-label">اسم الجمعية</h3>
+              <p className="text-foreground font-medium">{charity.name}</p>
             </div>
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground text-right">نسبة التخفيض</h3>
-              <p className="text-right">{charity.discountPercentage}%</p>
+            <div className="form-field">
+              <h3 className="form-label">نسبة التخفيض</h3>
+              <p className="text-foreground font-medium">{charity.discountPercentage}%</p>
             </div>
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground text-right">الحالة</h3>
+            <div className="form-field">
+              <h3 className="form-label">الحالة</h3>
               <span className={`status-badge ${charity.isActive ? 'status-badge-approved' : 'status-badge-rejected'}`}>
                 {charity.isActive ? 'نشطة' : 'غير نشطة'}
               </span>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-2 text-right">شروط الشراكة</h3>
-            <div className="bg-gray-50 p-3 rounded-md text-right">
-              {charity.partnershipTerms || 'لا توجد شروط محددة'}
+          <div className="form-field">
+            <h3 className="form-label">شروط الشراكة</h3>
+            <div className="bg-muted/50 p-4 rounded-lg border border-border">
+              <p className="text-foreground">{charity.partnershipTerms || 'لا توجد شروط محددة'}</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Beneficiaries */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl text-right">المرضى المستفيدون</CardTitle>
-          <CardDescription className="text-right">
+      {/* المستفيدون */}
+      <Card className="unified-card">
+        <CardHeader className="unified-card-header">
+          <CardTitle className="unified-card-title">المرضى المستفيدون</CardTitle>
+          <CardDescription className="unified-card-description">
             عدد المستفيدين: {charity.beneficiaries?.length || 0}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="rounded-md border">
+        <CardContent className="unified-card-content">
+          <div className="overflow-hidden rounded-lg border border-border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-right">اسم المريض</TableHead>
-                  <TableHead className="text-right">رقم الملف</TableHead>
-                  <TableHead className="text-right">تاريخ الاستفادة</TableHead>
-                  <TableHead className="text-right">قيمة التخفيض</TableHead>
+                  <TableHead>اسم المريض</TableHead>
+                  <TableHead>رقم الملف</TableHead>
+                  <TableHead>تاريخ الاستفادة</TableHead>
+                  <TableHead>قيمة التخفيض</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -86,10 +85,10 @@ const CharityDetails: React.FC<CharityDetailsProps> = ({ charity }) => {
                 ) : (
                   charity.beneficiaries.map((beneficiary) => (
                     <TableRow key={beneficiary.id}>
-                      <TableCell className="text-right font-medium">{beneficiary.name}</TableCell>
-                      <TableCell className="text-right">{beneficiary.fileNumber}</TableCell>
-                      <TableCell className="text-right">{beneficiary.benefitDate}</TableCell>
-                      <TableCell className="text-right">{beneficiary.discountAmount} ريال</TableCell>
+                      <TableCell className="font-medium">{beneficiary.name}</TableCell>
+                      <TableCell>{beneficiary.fileNumber}</TableCell>
+                      <TableCell>{beneficiary.benefitDate}</TableCell>
+                      <TableCell>{beneficiary.discountAmount} ريال</TableCell>
                     </TableRow>
                   ))
                 )}
