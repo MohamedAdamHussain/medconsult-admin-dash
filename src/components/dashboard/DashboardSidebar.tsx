@@ -22,7 +22,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
-import logo from '/public/favicon.ico';
+import logo from '/public/icons8-dashboard-layout-32.png';
 
 interface DashboardSidebarProps {
   isOpen: boolean;
@@ -65,7 +65,7 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: DashboardSidebarProps) => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "bg-white border-l shadow h-full w-64 flex flex-col transition-all duration-300",
+          "bg-white border-l shadow h-full w-64 flex flex-col transition-all duration-300 overflow-y-auto", // أضفت overflow-y-auto
           !isOpen && "md:w-20 w-20"
         )}
       >
@@ -74,35 +74,37 @@ const DashboardSidebar = ({ isOpen, setIsOpen }: DashboardSidebarProps) => {
           <img src={logo} alt="الشعار" className="h-8" />
           {isOpen && <span className="font-bold text-lg mr-2 text-primary">MedConsult</span>}
         </div>
-        {/* روابط التنقل */}
-        <nav className="flex-1 p-2 space-y-1 text-right">
-          {navItems.map((item, idx) => (
-            <React.Fragment key={item.name}>
-              {idx === dividerIndex && <hr className="my-2 border-t border-gray-200" />}
-              <Link
-                to={item.href}
-                className={cn(
-                  "sidebar-link flex flex-row-reverse items-center rounded-lg px-3 py-2 transition font-medium text-base",
-                  location.pathname === item.href
-                    ? "bg-primary/10 text-primary font-bold"
-                    : "hover:bg-primary/5 text-gray-700",
-                  !isOpen && "md:justify-center"
-                )}
-              >
-                <item.icon className="h-5 w-5 ml-2" />
-                {isOpen && <span className="flex-1">{item.name}</span>}
-              </Link>
-            </React.Fragment>
-          ))}
-        </nav>
-        {/* زر تصغير/توسيع */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="p-2 text-gray-500 hover:text-primary transition border-t"
-          title={isOpen ? 'تصغير' : 'توسيع'}
-        >
-          {isOpen ? <ChevronLeft /> : <ChevronRight />}
-        </button>
+        {/* روابط التنقل + زر التوسيع/التصغير في الأسفل */}
+        <div className="flex flex-col flex-1 justify-between min-h-0">
+          <nav className="flex-1 p-2 space-y-1 text-right overflow-y-auto">
+            {navItems.map((item, idx) => (
+              <React.Fragment key={item.name}>
+                {idx === dividerIndex && <hr className="my-2 border-t border-gray-200" />}
+                <Link
+                  to={item.href}
+                  className={cn(
+                    "sidebar-link flex flex-row-reverse items-center rounded-lg px-3 py-2 transition font-medium text-base",
+                    location.pathname === item.href
+                      ? "bg-primary/10 text-primary font-bold"
+                      : "hover:bg-primary/5 text-gray-700",
+                    !isOpen && "md:justify-center"
+                  )}
+                >
+                  <item.icon className="h-5 w-5 ml-2" />
+                  {isOpen && <span className="flex-1">{item.name}</span>}
+                </Link>
+              </React.Fragment>
+            ))}
+          </nav>
+          {/* زر تصغير/توسيع */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 text-gray-500 hover:text-primary transition border-t w-full"
+            title={isOpen ? 'تصغير' : 'توسيع'}
+          >
+            {isOpen ? <ChevronLeft /> : <ChevronRight />}
+          </button>
+        </div>
       </aside>
     </>
   );

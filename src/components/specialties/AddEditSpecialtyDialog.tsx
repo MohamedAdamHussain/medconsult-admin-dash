@@ -126,7 +126,9 @@ const AddEditSpecialtyDialog = ({
           {/* Switch isActive */}
           <div className="flex items-center gap-2">
             <Switch checked={isActive} onCheckedChange={setIsActive} id="isActive" />
-            <Label htmlFor="isActive">مفعل</Label>
+            <Label htmlFor="isActive" className="select-none cursor-pointer">
+              {isActive ? <span className="text-green-600 font-bold">نشط</span> : <span className="text-red-500 font-bold">غير نشط</span>}
+            </Label>
           </div>
           {/* البحث عن الأسئلة الطبية بالكلمات */}
           <div className="mb-2">

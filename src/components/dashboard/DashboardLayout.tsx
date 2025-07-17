@@ -29,6 +29,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           >
             <Menu className="h-4 w-4" />
           </Button>
+          {/* شعار المنصة */}
+          <div className="flex items-center gap-2">
+            {/* يمكنك استبدال النص بصورة شعار لاحقًا */}
+            <span className="font-bold text-xl text-primary">منصة مد كونسلت</span>
+          </div>
           <div className="md:flex-1 flex justify-end">
             <GlobalSearch />
           </div>

@@ -117,13 +117,17 @@ const Specialties = () => {
   return (
     <DashboardLayout>
       <div className="container mx-auto p-4">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">إدارة التخصصات الطبية</h1>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-primary-main text-right w-full md:w-auto">إدارة التخصصات الطبية</h1>
+            <p className="text-gray-500 mt-2 text-right w-full">إدارة وإضافة وتعديل التخصصات الطبية المعتمدة في المنصة</p>
+          </div>
           <Button 
             onClick={() => {
               setSelectedSpecialty(null);
               setOpenAddDialog(true);
             }}
+            className="bg-primary-main text-white hover:bg-blue-700"
           >
             <Plus className="ml-2" />
             إضافة تخصص جديد

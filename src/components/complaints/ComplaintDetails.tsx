@@ -77,7 +77,6 @@ const ComplaintDetails = ({ complaint, onStatusChange, onAddComment }: Complaint
             </div>
             <div className="flex gap-2">
               <Badge variant="outline">{getTypeLabel(complaint.type)}</Badge>
-              <Badge variant="destructive">{getPriorityLabel(complaint.priority)}</Badge>
             </div>
           </div>
         </CardHeader>

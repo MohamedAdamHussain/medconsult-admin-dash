@@ -77,7 +77,6 @@ const ComplaintsList = ({ complaints, onViewDetails }: ComplaintsListProps) => {
                 <TableHead className="text-right">الرقم</TableHead>
                 <TableHead className="text-right">العنوان</TableHead>
                 <TableHead className="text-right">النوع</TableHead>
-                <TableHead className="text-right">الأولوية</TableHead>
                 <TableHead className="text-right">الحالة</TableHead>
                 <TableHead className="text-right">المريض</TableHead>
                 <TableHead className="text-right">الطبيب</TableHead>
@@ -101,11 +100,6 @@ const ComplaintsList = ({ complaints, onViewDetails }: ComplaintsListProps) => {
                   <TableCell className="text-right">
                     <Badge variant="outline">
                       {getTypeLabel(complaint.type)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Badge variant={getPriorityBadgeVariant(complaint.priority)}>
-                      {getPriorityLabel(complaint.priority)}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">

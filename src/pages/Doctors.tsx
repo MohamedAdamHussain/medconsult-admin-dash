@@ -54,22 +54,28 @@ const Doctors = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4 md:gap-0">
-        <h1 className="text-3xl font-bold text-right w-full md:w-auto">إدارة الأطباء</h1>
+      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          {/* تنبيه وهمي */}
+          <div className="bg-warning/10 text-warning border border-warning px-4 py-2 rounded mb-4">
+            يرجى مراجعة بيانات الأطباء المعلقة.
+          </div>
+          <h1 className="text-3xl font-bold text-primary-main text-right w-full md:w-auto">إدارة الأطباء</h1>
+          <h2 className="text-xl font-semibold text-secondary-main mt-2 text-right">قائمة الأطباء المسجلين</h2>
+          <p className="text-muted mt-2 text-right w-full">يمكنك هنا إضافة، تعديل، أو حذف بيانات الأطباء.</p>
+        </div>
         <div className="flex flex-row-reverse gap-2 w-full md:w-auto justify-start md:justify-end">
           <Button 
             onClick={() => setAddDialogOpen(true)}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 bg-primary-main text-white hover:bg-blue-700 px-4 py-2 rounded-lg shadow"
           >
             <Plus size={16} />
             إضافة طبيب
           </Button>
-          <ExportButton
-            data={filteredDoctors}
-            columns={doctorExportColumns}
-            filename="doctors_list"
-            title="قائمة الأطباء"
-          />
+          {/* زر ثانوي */}
+          <Button className="bg-secondary-main text-white hover:bg-green-600 px-4 py-2 rounded-lg">تصدير القائمة</Button>
+          {/* زر تحذير */}
+          <Button className="bg-danger text-white hover:bg-red-700 px-4 py-2 rounded-lg">حذف المحدد</Button>
         </div>
       </div>
       

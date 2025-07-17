@@ -27,16 +27,32 @@ const LoginForm = () => {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    try {
-      await login(data.email, data.password);
+    const result = await login(data.email, data.password);
+    if (result.success) {
       toast({
         title: "تم تسجيل الدخول بنجاح",
         description: "مرحباً بك في لوحة التحكم",
       });
-    } catch (error) {
+    } else {
+      // دعم أنواع الأخطاء القادمة من safePost
+      let description = "حدث خطأ غير متوقع";
+      const error = result.error;
+      if (error && error.type) {
+        if (error.type === 'network') {
+          description = "تعذر الاتصال بالخادم. يرجى المحاولة لاحقًا.";
+        } else if (error.type === 'response' && (error.status === 401 || error.status === 422)) {
+          description = "البريد الإلكتروني أو كلمة المرور غير صحيحة";
+        } else if (error.type === 'response' && error.status >= 500) {
+          description = "حدث خطأ في الخادم. يرجى المحاولة لاحقًا.";
+        } else {
+          description = error.message || description;
+        }
+      } else if (error && error.message) {
+        description = error.message;
+      }
       toast({
         title: "خطأ في تسجيل الدخول",
-        description: "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+        description,
         variant: "destructive",
       });
     }

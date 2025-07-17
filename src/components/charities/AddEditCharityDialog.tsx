@@ -134,8 +134,10 @@ const AddEditCharityDialog: React.FC<AddEditCharityDialogProps> = ({
               control={form.control}
               name="isActive"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between">
-                  <FormLabel className="text-right">حالة الشراكة (نشطة)</FormLabel>
+                <FormItem className="flex flex-row items-center justify-between gap-2">
+                  <FormLabel className="text-right select-none cursor-pointer">
+                    {field.value ? <span className="text-green-600 font-bold">نشطة</span> : <span className="text-red-500 font-bold">غير نشطة</span>}
+                  </FormLabel>
                   <FormControl>
                     <Switch 
                       checked={field.value}

@@ -330,7 +330,7 @@ const DoctorApplications = () => {
       
       {/* Details Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-3xl text-right">
+        <DialogContent className="max-w-3xl text-right max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl">{selectedApplication?.name}</DialogTitle>
             <DialogDescription>
@@ -338,10 +338,10 @@ const DoctorApplications = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* الصورة الشخصية ومعلومات أساسية */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full min-w-0">
+              <Card className="rounded-lg shadow-sm min-h-[120px]">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <User size={20} />
@@ -404,7 +404,7 @@ const DoctorApplications = () => {
               </Card>
 
               {/* معلومات التواصل */}
-              <Card>
+              <Card className="rounded-lg shadow-sm min-h-[120px]">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <Mail size={20} />
@@ -433,10 +433,10 @@ const DoctorApplications = () => {
             </div>
 
             {/* مكان العيادة ووسائل التواصل الاجتماعي */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full min-w-0">
               {/* مكان العيادة */}
               {selectedApplication?.clinicLocation && (
-                <Card>
+                <Card className="rounded-lg shadow-sm min-h-[120px]">
                   <CardHeader className="pb-3">
                     <CardTitle className="flex items-center gap-2 text-xl">
                       <MapPin size={20} />
@@ -456,7 +456,7 @@ const DoctorApplications = () => {
 
               {/* وسائل التواصل الاجتماعي */}
               {selectedApplication?.socialMedia && Object.keys(selectedApplication.socialMedia).length > 0 && (
-                <Card>
+                <Card className="rounded-lg shadow-sm min-h-[120px]">
                   <CardHeader className="pb-3">
                     <CardTitle className="flex items-center gap-2 text-xl">
                       <span>🌐</span>
@@ -499,7 +499,7 @@ const DoctorApplications = () => {
             </div>
 
             {/* قسم التخصصات */}
-            <Card>
+            <Card className="rounded-lg shadow-sm min-h-[120px]">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <UserCheck size={20} />
@@ -538,7 +538,7 @@ const DoctorApplications = () => {
             </Card>
             
             {/* المستندات */}
-            <Card>
+            <Card className="rounded-lg shadow-sm min-h-[120px]">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <FileText size={20} />

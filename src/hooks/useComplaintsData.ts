@@ -1,7 +1,8 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Complaint, ComplaintComment, ComplaintFilters } from '@/types/complaints';
 import { v4 as uuidv4 } from 'uuid';
+import { safeGet } from '@/lib/api';
 
 // Mock data for demonstration
 const mockComplaints: Complaint[] = [
@@ -9,7 +10,6 @@ const mockComplaints: Complaint[] = [
     id: '1',
     type: 'technical',
     status: 'open',
-    priority: 'high',
     title: 'مشكلة في تحميل الصفحة',
     description: 'لا يمكنني الوصول إلى صفحة الاستشارات الطبية',
     patientName: 'أحمد محمد',
@@ -34,7 +34,6 @@ const mockComplaints: Complaint[] = [
     id: '2',
     type: 'doctor_behavior',
     status: 'in_progress',
-    priority: 'medium',
     title: 'تأخر في الرد على الاستشارة',
     description: 'الطبيب لم يرد على استشارتي منذ 3 أيام',
     patientName: 'فاطمة علي',
@@ -49,7 +48,6 @@ const mockComplaints: Complaint[] = [
     id: '3',
     type: 'payment',
     status: 'closed',
-    priority: 'low',
     title: 'مشكلة في استرداد المبلغ',
     description: 'لم يتم استرداد المبلغ بعد إلغاء الاستشارة',
     patientName: 'خالد حسن',
@@ -74,6 +72,37 @@ export const useComplaintsData = () => {
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [filters, setFilters] = useState<ComplaintFilters>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<any>(null);
+
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+    // جلب الشكاوى من الـ API
+    safeGet('/complaints').then(({ data, error }) => {
+      if (data && Array.isArray(data.data)) {
+        // تحويل بيانات الـ API إلى الشكل المطلوب
+        const mapped = data.data.map((item: any) => ({
+          id: String(item.id),
+          type: item.type || 'other',
+          status: item.type === 'resolved' ? 'closed' : (item.type === 'pending' ? 'open' : item.type),
+          title: item.header,
+          description: item.content,
+          patientName: '---', // لا يوجد اسم مريض في الـ API
+          patientId: String(item.user_id),
+          doctorName: '', // لا يوجد اسم طبيب في الـ API
+          doctorId: '',
+          createdAt: item.created_at,
+          updatedAt: item.updated_at,
+          attachments: item.media ? JSON.parse(item.media) : [],
+          comments: [], // لا يوجد تعليقات في الـ API
+        }));
+        setComplaints(mapped);
+      }
+      setIsLoading(false);
+      setError(error);
+    });
+  }, []);
 
   const viewComplaintDetails = (complaint: Complaint) => {
     setSelectedComplaint(complaint);
@@ -121,7 +150,6 @@ export const useComplaintsData = () => {
   const filteredComplaints = complaints.filter(complaint => {
     if (filters.type && complaint.type !== filters.type) return false;
     if (filters.status && complaint.status !== filters.status) return false;
-    if (filters.priority && complaint.priority !== filters.priority) return false;
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       return (
@@ -144,6 +172,8 @@ export const useComplaintsData = () => {
     setFilters,
     viewComplaintDetails,
     updateComplaintStatus,
-    addComment
+    addComment,
+    isLoading,
+    error
   };
 };

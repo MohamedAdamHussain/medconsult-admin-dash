@@ -27,11 +27,13 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
+					foreground: 'hsl(var(--primary-foreground))',
+					main: '#2563eb',
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					foreground: 'hsl(var(--secondary-foreground))',
+					main: '#10b981',
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
@@ -72,7 +74,12 @@ export default {
 					danger: '#dc3545',
 					warning: '#ffc107',
 					gray: '#f8f9fa',
-				}
+				},
+				warning: '#f59e42',
+				danger: '#ef4444',
+				'background-light': '#f9fafb',
+				'text-main': '#1e293b',
+				'text-muted': '#64748b',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -112,6 +119,7 @@ export default {
 			},
 			fontFamily: {
 				cairo: ['Cairo', 'sans-serif'],
+				sans: ['Cairo', 'sans-serif'],
 			}
 		}
 	},

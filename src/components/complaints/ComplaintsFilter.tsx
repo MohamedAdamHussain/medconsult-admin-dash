@@ -70,6 +70,7 @@ const ComplaintsFilter = ({ filters, onFiltersChange }: ComplaintsFilterProps) =
           </Select>
 
           {/* Priority Filter */}
+          {/*
           <Select value={filters.priority || 'all'} onValueChange={(value) => handleFilterChange('priority', value)}>
             <SelectTrigger>
               <SelectValue placeholder="الأولوية" />
@@ -82,6 +83,7 @@ const ComplaintsFilter = ({ filters, onFiltersChange }: ComplaintsFilterProps) =
               <SelectItem value="urgent">عاجلة</SelectItem>
             </SelectContent>
           </Select>
+          */}
 
           {/* Clear Filters */}
           {hasActiveFilters && (

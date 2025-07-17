@@ -1,6 +1,7 @@
 
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api, { safePost } from '@/lib/api';
 
 interface User {
   id: string;
@@ -10,7 +11,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ success: boolean; error: any; }>;
   logout: () => void;
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -45,26 +46,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Simple authentication check (in real app, this would be API call)
-    if (email === 'admin@medconsult.com' && password === 'admin123') {
+    try {
+      const { data, error } = await safePost('http://127.0.0.1:8000/api/login', { email, password });
+      if (error) {
+        return { success: false, error };
+      }
+      // يفترض أن الـ API يرجع توكن وبيانات المستخدم
+      // عدل حسب استجابة الـ API الفعلية
       const userData = {
-        id: '1',
-        email: email,
-        name: 'مدير النظام'
+        id: data.user?.id || '',
+        email: data.user?.email || email,
+        name: data.user?.name || '',
+        token: data.token.token || '',
       };
-      
       setUser(userData);
       localStorage.setItem('medconsult_user', JSON.stringify(userData));
+      localStorage.setItem('medconsult_token', userData.token);
       navigate('/');
-    } else {
-      throw new Error('Invalid credentials');
+      return { success: true, error: null };
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const logout = () => {

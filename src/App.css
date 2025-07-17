@@ -42,5 +42,7 @@
 }
 
 body {
-  font-family: 'Cairo', 'Tajawal', 'Noto Kufi Arabic', Arial, sans-serif;
+  font-family: 'Cairo', sans-serif;
+  background-color: #f9fafb;
+  color: #1e293b;
 }
