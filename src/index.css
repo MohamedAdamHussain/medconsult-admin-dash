@@ -16,26 +16,34 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 210 100% 50%; /* Medical blue */
+    --primary: 210 100% 55%; /* Enhanced medical blue */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 142 76% 36%; /* Medical green */
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
+    --muted: 210 40% 98%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
+    --accent: 210 40% 95%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
+    --border: 214.3 31.8% 88%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+
+    /* Enhanced medical theme variables */
+    --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    --gradient-secondary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
     --sidebar-background: 210 100% 50%;
     --sidebar-foreground: 0 0% 100%;
@@ -93,72 +101,176 @@
   }
 
   body {
-    @apply bg-background text-foreground font-cairo;
+    @apply bg-gradient-to-br from-slate-50 to-blue-50/30 text-foreground font-cairo;
     direction: rtl;
     text-align: right;
+    min-height: 100vh;
   }
 
   html {
     direction: rtl;
+    scroll-behavior: smooth;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply text-foreground font-semibold;
+    @apply text-foreground font-semibold tracking-tight;
   }
 
   p {
-    @apply text-muted-foreground leading-relaxed;
+    @apply text-muted-foreground leading-relaxed tracking-wide;
+  }
+
+  /* Enhanced scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full hover:bg-gray-400;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
   }
 }
 
 @layer components {
+  /* Enhanced animations */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
+  }
+
+  .animate-bounce-subtle {
+    animation: bounceSubtle 2s infinite;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(20px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  @keyframes scaleIn {
+    from { 
+      opacity: 0; 
+      transform: scale(0.95); 
+    }
+    to { 
+      opacity: 1; 
+      transform: scale(1); 
+    }
+  }
+
+  @keyframes bounceSubtle {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-3px);
+    }
+    60% {
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Enhanced gradient backgrounds */
+  .bg-gradient-medical {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 50%, #1d4ed8 100%);
+  }
+
+  .bg-gradient-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  }
+
+  .bg-gradient-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  }
+
+  .bg-gradient-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  }
+
   .stats-card {
-    @apply bg-card border border-border rounded-xl shadow-sm p-6 hover:shadow-md transition-all duration-200;
+    @apply bg-card/80 backdrop-blur-sm border border-border/50 rounded-xl shadow-soft p-6 hover:shadow-medium hover:scale-[1.02] transition-all duration-300 animate-fade-in;
+    background: linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+    border: 1px solid rgba(255,255,255,0.2);
   }
   
   .sidebar-link {
-    @apply flex items-center gap-3 px-3 py-2 text-sidebar-foreground rounded-md hover:bg-sidebar-accent transition-colors duration-200;
+    @apply flex items-center gap-3 px-3 py-3 text-sidebar-foreground rounded-lg hover:bg-sidebar-accent hover:scale-[1.02] transition-all duration-300 group;
+  }
+
+  .sidebar-link:hover {
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  }
+
+  .sidebar-link .lucide {
+    @apply group-hover:scale-110 transition-transform duration-200;
   }
   
   .sidebar-link.active {
-    @apply bg-sidebar-accent;
+    @apply bg-sidebar-accent shadow-medium;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
   }
 
   .status-badge {
-    @apply px-3 py-1 rounded-full text-xs font-semibold inline-flex items-center justify-center;
+    @apply px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105;
   }
   
   .status-badge-new {
-    @apply bg-blue-50 text-blue-700 border border-blue-200;
+    @apply bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 border border-blue-200/50;
   }
   
   .status-badge-pending {
-    @apply bg-amber-50 text-amber-700 border border-amber-200;
+    @apply bg-gradient-to-r from-amber-50 to-amber-100 text-amber-700 border border-amber-200/50;
   }
   
   .status-badge-rejected {
-    @apply bg-red-50 text-red-700 border border-red-200;
+    @apply bg-gradient-to-r from-red-50 to-red-100 text-red-700 border border-red-200/50;
   }
   
   .status-badge-approved {
-    @apply bg-green-50 text-green-700 border border-green-200;
+    @apply bg-gradient-to-r from-green-50 to-green-100 text-green-700 border border-green-200/50;
   }
 
   /* توحيد تصميم الجداول */
   .unified-table {
-    @apply w-full border-collapse;
+    @apply w-full border-collapse rounded-lg overflow-hidden;
   }
 
   .unified-table th {
-    @apply bg-muted/50 border-b border-border px-4 py-3 text-right text-sm font-semibold text-muted-foreground;
+    @apply bg-gradient-to-r from-slate-50 to-slate-100 border-b border-border/30 px-6 py-4 text-right text-sm font-semibold text-slate-700 tracking-wide;
   }
 
   .unified-table td {
-    @apply border-b border-border px-4 py-3 text-right text-sm text-foreground;
+    @apply border-b border-border/20 px-6 py-4 text-right text-sm text-foreground;
   }
 
   .unified-table tr:hover {
-    @apply bg-muted/30 transition-colors;
+    @apply bg-gradient-to-r from-blue-50/30 to-transparent transition-all duration-200;
   }
 
   .unified-table tr:last-child td {
@@ -167,90 +279,176 @@
 
   /* تحسين تصميم الكروت */
   .unified-card {
-    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
+    @apply bg-card/90 backdrop-blur-sm border border-border/30 rounded-xl shadow-soft hover:shadow-large hover:-translate-y-1 transition-all duration-300 animate-slide-up;
+    background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
   }
 
   .unified-card-header {
-    @apply p-6 border-b border-border;
+    @apply p-6 border-b border-border/20 bg-gradient-to-r from-slate-50/50 to-transparent;
   }
 
   .unified-card-content {
-    @apply p-6;
+    @apply p-6 space-y-4;
   }
 
   .unified-card-title {
-    @apply text-lg font-semibold text-foreground mb-2;
+    @apply text-xl font-bold text-foreground mb-2 tracking-tight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent;
   }
 
   .unified-card-description {
-    @apply text-sm text-muted-foreground;
+    @apply text-sm text-muted-foreground leading-relaxed;
   }
 
   /* تحسين الأزرار */
   .action-button {
-    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200;
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md;
   }
 
   .action-button-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm;
+    @apply bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-blue-200/50;
   }
 
   .action-button-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border;
+    @apply bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 shadow-green-200/50;
   }
 
   .action-button-ghost {
-    @apply hover:bg-muted text-muted-foreground hover:text-foreground;
+    @apply hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 text-muted-foreground hover:text-foreground backdrop-blur-sm;
   }
 
   .action-button-destructive {
-    @apply bg-destructive text-destructive-foreground hover:bg-destructive/90;
+    @apply bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 shadow-red-200/50;
   }
 
   /* تحسين النماذج */
   .form-section {
-    @apply space-y-4 p-6 bg-card border border-border rounded-lg;
+    @apply space-y-6 p-8 bg-card/90 backdrop-blur-sm border border-border/30 rounded-xl shadow-soft hover:shadow-medium transition-all duration-300;
+    background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
   }
 
   .form-section-title {
-    @apply text-base font-semibold text-foreground mb-4 pb-2 border-b border-border;
+    @apply text-lg font-bold text-foreground mb-6 pb-3 border-b border-border/30 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent;
   }
 
   .form-field {
-    @apply space-y-2;
+    @apply space-y-3;
   }
 
   .form-label {
-    @apply text-sm font-medium text-foreground;
+    @apply text-sm font-semibold text-slate-700 tracking-wide;
   }
 
   .form-input {
-    @apply w-full px-3 py-2 bg-background border border-input rounded-md text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent;
+    @apply w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-input/50 rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all duration-200 hover:border-blue-300;
   }
 
   /* تحسين القوائم المنسدلة */
   .dropdown-content {
-    @apply bg-popover border border-border rounded-md shadow-lg p-1;
+    @apply bg-popover/95 backdrop-blur-md border border-border/30 rounded-xl shadow-large p-2 animate-scale-in;
   }
 
   .dropdown-item {
-    @apply flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-muted rounded-sm cursor-pointer transition-colors;
+    @apply flex items-center gap-3 px-4 py-3 text-sm text-foreground hover:bg-gradient-to-r hover:from-blue-50 hover:to-transparent rounded-lg cursor-pointer transition-all duration-200 hover:scale-[1.02];
   }
 
   /* تحسين التنبيهات */
   .alert-info {
-    @apply bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-lg;
+    @apply bg-gradient-to-r from-blue-50 to-blue-100/50 border border-blue-200/50 text-blue-800 p-6 rounded-xl shadow-soft backdrop-blur-sm;
   }
 
   .alert-success {
-    @apply bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg;
+    @apply bg-gradient-to-r from-green-50 to-green-100/50 border border-green-200/50 text-green-800 p-6 rounded-xl shadow-soft backdrop-blur-sm;
   }
 
   .alert-warning {
-    @apply bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-lg;
+    @apply bg-gradient-to-r from-amber-50 to-amber-100/50 border border-amber-200/50 text-amber-800 p-6 rounded-xl shadow-soft backdrop-blur-sm;
   }
 
   .alert-error {
-    @apply bg-red-50 border border-red-200 text-red-800 p-4 rounded-lg;
+    @apply bg-gradient-to-r from-red-50 to-red-100/50 border border-red-200/50 text-red-800 p-6 rounded-xl shadow-soft backdrop-blur-sm;
+  }
+
+  /* Enhanced hover effects */
+  .hover-lift {
+    @apply hover:-translate-y-1 hover:shadow-large transition-all duration-300;
+  }
+
+  .hover-glow {
+    @apply hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-white/20 backdrop-blur-md border border-white/30;
+  }
+
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-large;
+  }
+
+  /* Enhanced focus states */
+  .focus-enhanced:focus {
+    @apply ring-4 ring-blue-500/20 border-blue-400 outline-none;
+  }
+
+  /* Improved loading states */
+  .loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  /* Enhanced typography */
+  .text-gradient {
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent;
+  }
+
+  .text-medical {
+    @apply text-blue-700 font-semibold;
+  }
+
+  /* Improved spacing and layout */
+  .section-spacing {
+    @apply space-y-8;
+  }
+
+  .content-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Enhanced interactive elements */
+  .interactive-element {
+    @apply cursor-pointer select-none hover:scale-105 active:scale-95 transition-transform duration-150;
+  }
+
+  /* Improved visual hierarchy */
+  .page-title {
+    @apply text-3xl font-bold text-gradient mb-2;
+  }
+
+  .page-subtitle {
+    @apply text-lg text-muted-foreground mb-8 leading-relaxed;
+  }
+
+  .section-title {
+    @apply text-xl font-semibold text-slate-800 mb-4 tracking-tight;
+  }
+
+  /* Enhanced borders and dividers */
+  .divider {
+    @apply border-t border-gradient-to-r from-transparent via-border to-transparent;
+  }
+
+  .border-gradient {
+    border-image: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent) 1;
   }
 }

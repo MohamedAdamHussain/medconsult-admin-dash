@@ -63,20 +63,20 @@ const Dashboard = () => {
   }, []);
   return (
     <DashboardLayout>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-right">لوحة التحكم</h1>
-        <p className="text-gray-500 mt-1 text-right">مرحبًا بك في لوحة تحكم منصة الاستشارات الطبية</p>
+      <div className="mb-8 animate-fade-in">
+        <h1 className="text-4xl font-bold text-right bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">لوحة التحكم</h1>
+        <p className="text-gray-600 mt-2 text-right text-lg leading-relaxed">مرحبًا بك في لوحة تحكم منصة الاستشارات الطبية</p>
       </div>
       
       {/* عرض نتيجة استدعاء الـ API */}
-      <div className="mb-4">
+      <div className="mb-6">
         {apiError && (
-          <div className="bg-red-100 text-red-700 p-2 rounded mb-2 text-right">
+          <div className="bg-gradient-to-r from-red-50 to-red-100/50 text-red-700 p-4 rounded-xl mb-3 text-right shadow-sm border border-red-200/50 animate-slide-up">
             {apiError.message}
           </div>
         )}
         {apiData && (
-          <div className="bg-green-100 text-green-700 p-2 rounded mb-2 text-right">
+          <div className="bg-gradient-to-r from-green-50 to-green-100/50 text-green-700 p-4 rounded-xl mb-3 text-right shadow-sm border border-green-200/50 animate-slide-up">
             نتيجة الـ API: {typeof apiData === 'object' ? JSON.stringify(apiData) : String(apiData)}
           </div>
         )}
@@ -84,13 +84,13 @@ const Dashboard = () => {
       
       {/* عرض رسالة خطأ في حال فشل جلب الإحصائيات */}
       {userCountsError && (
-        <div className="bg-red-100 text-red-700 p-2 rounded mb-2 text-right">
+        <div className="bg-gradient-to-r from-red-50 to-red-100/50 text-red-700 p-4 rounded-xl mb-4 text-right shadow-sm border border-red-200/50 animate-slide-up">
           {userCountsError.message}
         </div>
       )}
       
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
         <StatsCard 
           title="الأطباء النشطين" 
           value={userCounts.doctor} 
@@ -123,9 +123,9 @@ const Dashboard = () => {
       </div>
       
       {/* Charts and Alerts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Charts Section */}
-        <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Complaints by Type chart moved to the top */}
           <DashboardChart 
             title="الشكاوى حسب النوع" 
@@ -151,10 +151,10 @@ const Dashboard = () => {
         
         {/* Alerts Section */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl shadow-md p-6 h-full">
-            <h3 className="text-xl font-medium mb-4 text-right">تنبيهات مهمة</h3>
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-large p-8 h-full border border-border/20 hover:shadow-xl transition-all duration-300">
+            <h3 className="text-2xl font-bold mb-6 text-right bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">تنبيهات مهمة</h3>
             
-            <div className="space-y-4">
+            <div className="space-y-5">
               <AlertItem 
                 type="info"
                 title="طلبات تسجيل جديدة"

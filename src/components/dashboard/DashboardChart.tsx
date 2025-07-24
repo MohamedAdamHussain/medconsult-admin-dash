@@ -52,8 +52,8 @@ const DashboardChart = ({
   dataKeys = ['value'] 
 }: DashboardChartProps) => {
   return (
-    <div className="bg-white rounded-xl shadow-md p-4 h-full">
-      <h3 className="text-lg font-medium mb-4 text-right">{title}</h3>
+    <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-large p-6 h-full border border-border/20 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+      <h3 className="text-xl font-bold mb-6 text-right bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent tracking-tight">{title}</h3>
       
       <div style={{ height: `${height}px` }} dir="ltr">
         <ResponsiveContainer width="100%" height="100%">
@@ -72,7 +72,13 @@ const DashboardChart = ({
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="value" fill="#007BFF" />
+              <Bar dataKey="value" fill="url(#blueGradient)" radius={[4, 4, 0, 0]} />
+              <defs>
+                <linearGradient id="blueGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#3b82f6" />
+                  <stop offset="100%" stopColor="#1d4ed8" />
+                </linearGradient>
+              </defs>
             </BarChart>
           ) : type === 'line' ? (
             <LineChart
@@ -95,9 +101,9 @@ const DashboardChart = ({
                   type="monotone" 
                   dataKey={key} 
                   stroke={colors[index % colors.length]} 
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  activeDot={{ r: 6 }}
+                  strokeWidth={3}
+                  dot={{ r: 5, strokeWidth: 2, fill: '#fff' }}
+                  activeDot={{ r: 7, strokeWidth: 2, fill: colors[index % colors.length] }}
                 />
               ))}
             </LineChart>
@@ -108,7 +114,8 @@ const DashboardChart = ({
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                outerRadius={100}
+                outerRadius={110}
+                innerRadius={40}
                 fill="#8884d8"
                 dataKey="value"
                 nameKey="name"
