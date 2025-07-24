@@ -68,7 +68,7 @@ const mockComplaints: Complaint[] = [
 ];
 
 export const useComplaintsData = () => {
-  const [complaints, setComplaints] = useState<Complaint[]>(mockComplaints);
+  const [complaints, setComplaints] = useState<Complaint[]>();
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [filters, setFilters] = useState<ComplaintFilters>({});
@@ -80,21 +80,23 @@ export const useComplaintsData = () => {
     setError(null);
     // جلب الشكاوى من الـ API
     safeGet('/complaints').then(({ data, error }) => {
+      console.log(data.data[1].data.id+"<<<<<");
       if (data && Array.isArray(data.data)) {
+        
         // تحويل بيانات الـ API إلى الشكل المطلوب
         const mapped = data.data.map((item: any) => ({
-          id: String(item.id),
-          type: item.type || 'other',
-          status: item.type === 'resolved' ? 'closed' : (item.type === 'pending' ? 'open' : item.type),
-          title: item.header,
-          description: item.content,
-          patientName: '---', // لا يوجد اسم مريض في الـ API
-          patientId: String(item.user_id),
+          id: String(item.data.id),
+          type: item.data.type || 'other',
+          status: item.data.type === 'resolved' ? 'closed' : (item.data.type === 'pending' ? 'open' : item.data.type),
+          title: item.data.header,
+          description: item.data.content,
+          patientName: item.data.user.fullName, // لا يوجد اسم مريض في الـ API
+          patientId: String(item.data.user_id),
           doctorName: '', // لا يوجد اسم طبيب في الـ API
           doctorId: '',
-          createdAt: item.created_at,
-          updatedAt: item.updated_at,
-          attachments: item.media ? JSON.parse(item.media) : [],
+          createdAt: item.data.created_at,
+          updatedAt: item.data.updated_at,
+          attachments: item.data.media ? JSON.parse(item.data.media) : [],
           comments: [], // لا يوجد تعليقات في الـ API
         }));
         setComplaints(mapped);

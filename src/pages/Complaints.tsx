@@ -35,8 +35,7 @@ const Complaints = () => {
     { key: 'title', title: 'العنوان' },
     { key: 'type', title: 'النوع' },
     { key: 'status', title: 'الحالة' },
-    { key: 'patientName', title: 'المريض' },
-    { key: 'doctorName', title: 'الطبيب' },
+    { key: 'patientName', title: 'اسم المستخدم' },
     { key: 'createdAt', title: 'تاريخ الإنشاء' },
     { key: 'description', title: 'الوصف' }
   ];
