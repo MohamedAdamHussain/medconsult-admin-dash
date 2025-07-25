@@ -1,4 +1,3 @@
-import React from 'react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import ComplaintsList from '@/components/complaints/ComplaintsList';
 import ComplaintDetails from '@/components/complaints/ComplaintDetails';

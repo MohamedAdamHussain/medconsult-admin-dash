@@ -4,71 +4,71 @@ import { Complaint, ComplaintComment, ComplaintFilters } from '@/types/complaint
 import { v4 as uuidv4 } from 'uuid';
 import { safeGet } from '@/lib/api';
 
-// Mock data for demonstration
-const mockComplaints: Complaint[] = [
-  {
-    id: '1',
-    type: 'technical',
-    status: 'open',
-    title: 'مشكلة في تحميل الصفحة',
-    description: 'لا يمكنني الوصول إلى صفحة الاستشارات الطبية',
-    patientName: 'أحمد محمد',
-    patientId: 'pat-001',
-    doctorName: 'د. سارة أحمد',
-    doctorId: 'doc-001',
-    createdAt: '2024-01-15T10:30:00Z',
-    updatedAt: '2024-01-15T10:30:00Z',
-    attachments: ['screenshot.png'],
-    comments: [
-      {
-        id: 'c1',
-        complaintId: '1',
-        authorName: 'مدير التقنية',
-        authorRole: 'admin',
-        content: 'تم استلام الشكوى وسيتم النظر فيها',
-        createdAt: '2024-01-15T11:00:00Z'
-      }
-    ]
-  },
-  {
-    id: '2',
-    type: 'doctor_behavior',
-    status: 'in_progress',
-    title: 'تأخر في الرد على الاستشارة',
-    description: 'الطبيب لم يرد على استشارتي منذ 3 أيام',
-    patientName: 'فاطمة علي',
-    patientId: 'pat-002',
-    doctorName: 'د. محمد سالم',
-    doctorId: 'doc-002',
-    createdAt: '2024-01-14T14:20:00Z',
-    updatedAt: '2024-01-15T09:15:00Z',
-    comments: []
-  },
-  {
-    id: '3',
-    type: 'payment',
-    status: 'closed',
-    title: 'مشكلة في استرداد المبلغ',
-    description: 'لم يتم استرداد المبلغ بعد إلغاء الاستشارة',
-    patientName: 'خالد حسن',
-    patientId: 'pat-003',
-    createdAt: '2024-01-10T16:45:00Z',
-    updatedAt: '2024-01-12T10:30:00Z',
-    comments: [
-      {
-        id: 'c2',
-        complaintId: '3',
-        authorName: 'مدير المالية',
-        authorRole: 'admin',
-        content: 'تم استرداد المبلغ بنجاح',
-        createdAt: '2024-01-12T10:30:00Z'
-      }
-    ]
-  }
-];
+// // Mock data for demonstration
+// const mockComplaints: Complaint[] = [
+//   {
+//     id: '1',
+//     type: 'technical',
+//     status: 'open',
+//     title: 'مشكلة في تحميل الصفحة',
+//     description: 'لا يمكنني الوصول إلى صفحة الاستشارات الطبية',
+//     patientName: 'أحمد محمد',
+//     patientId: 'pat-001',
+//     doctorName: 'د. سارة أحمد',
+//     doctorId: 'doc-001',
+//     createdAt: '2024-01-15T10:30:00Z',
+//     updatedAt: '2024-01-15T10:30:00Z',
+//     attachments: ['screenshot.png'],
+//     comments: [
+//       {
+//         id: 'c1',
+//         complaintId: '1',
+//         authorName: 'مدير التقنية',
+//         authorRole: 'admin',
+//         content: 'تم استلام الشكوى وسيتم النظر فيها',
+//         createdAt: '2024-01-15T11:00:00Z'
+//       }
+//     ]
+//   },
+//   {
+//     id: '2',
+//     type: 'doctor_behavior',
+//     status: 'in_progress',
+//     title: 'تأخر في الرد على الاستشارة',
+//     description: 'الطبيب لم يرد على استشارتي منذ 3 أيام',
+//     patientName: 'فاطمة علي',
+//     patientId: 'pat-002',
+//     doctorName: 'د. محمد سالم',
+//     doctorId: 'doc-002',
+//     createdAt: '2024-01-14T14:20:00Z',
+//     updatedAt: '2024-01-15T09:15:00Z',
+//     comments: []
+//   },
+//   {
+//     id: '3',
+//     type: 'payment',
+//     status: 'closed',
+//     title: 'مشكلة في استرداد المبلغ',
+//     description: 'لم يتم استرداد المبلغ بعد إلغاء الاستشارة',
+//     patientName: 'خالد حسن',
+//     patientId: 'pat-003',
+//     createdAt: '2024-01-10T16:45:00Z',
+//     updatedAt: '2024-01-12T10:30:00Z',
+//     comments: [
+//       {
+//         id: 'c2',
+//         complaintId: '3',
+//         authorName: 'مدير المالية',
+//         authorRole: 'admin',
+//         content: 'تم استرداد المبلغ بنجاح',
+//         createdAt: '2024-01-12T10:30:00Z'
+//       }
+//     ]
+//   }
+// ];
 
 export const useComplaintsData = () => {
-  const [complaints, setComplaints] = useState<Complaint[]>();
+  const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [filters, setFilters] = useState<ComplaintFilters>({});
@@ -80,7 +80,6 @@ export const useComplaintsData = () => {
     setError(null);
     // جلب الشكاوى من الـ API
     safeGet('/complaints').then(({ data, error }) => {
-      console.log(data.data[1].data.id+"<<<<<");
       if (data && Array.isArray(data.data)) {
         
         // تحويل بيانات الـ API إلى الشكل المطلوب

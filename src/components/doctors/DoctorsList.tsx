@@ -35,6 +35,7 @@ const DoctorsList: React.FC<DoctorsListProps> = ({
   onSendNotification,
   onDeleteDoctor
 }) => {
+  console.log(doctors)
   return (
     <div className="unified-card">
       <div className="overflow-hidden rounded-lg border border-border">
@@ -54,7 +55,7 @@ const DoctorsList: React.FC<DoctorsListProps> = ({
             {doctors.map((doctor) => (
               <TableRow key={doctor.id}>
                 <TableCell className="font-medium">{doctor.name}</TableCell>
-                <TableCell>{doctor.email}</TableCell>
+                <TableCell>{doctor.contacts.email}</TableCell>
                 <TableCell>{doctor.specialty}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">

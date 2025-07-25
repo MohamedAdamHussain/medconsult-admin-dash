@@ -72,6 +72,7 @@ function handleApiError(error: any) {
 export async function safeGet(url: string, config?: any) {
   try {
     const response = await api.get(url, config);
+    console.log(response.data)
     return { data: response.data, error: null };
   } catch (error: any) {
     return { data: null, error: handleApiError(error) };
