@@ -55,8 +55,8 @@ const DoctorsList: React.FC<DoctorsListProps> = ({
             {doctors.map((doctor) => (
               <TableRow key={doctor.id}>
                 <TableCell className="font-medium">{doctor.name}</TableCell>
-                <TableCell>{doctor.contacts.email}</TableCell>
-                <TableCell>{doctor.specialty}</TableCell>
+                <TableCell>{doctor.contacts?.email || doctor.email}</TableCell>
+                <TableCell>{doctor.specialty || 'غير محدد'}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">
                     <span className="text-amber-500">★</span>
@@ -67,7 +67,7 @@ const DoctorsList: React.FC<DoctorsListProps> = ({
                 <TableCell>
                   <StatusBadge 
                     status={doctor.status === 'active' ? 'approved' : 'rejected'} 
-                    text={doctor.status === 'active' ? 'مفعل' : 'موقوف'} 
+                    text={doctor.status === 'active' ? 'مفعل' : 'غير مفعل'} 
                   />
                 </TableCell>
                 <TableCell>

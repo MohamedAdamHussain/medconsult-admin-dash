@@ -237,32 +237,58 @@ export const useDoctorsData = () => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalDoctors, setTotalDoctors] = useState(0);
+  const [perPage, setPerPage] = useState(20);
 
-
-  useEffect(() => {
+  // جلب بيانات الأطباء مع دعم الصفحات
+  const fetchDoctors = async (page: number = 1) => {
     setIsLoading(true);
     setError(null);
-    // جلب الشكاوى من الـ API
-    safeGet('/admin/doctors').then(({ data, error }) => {
-      console.log(data.data)
+    
+    try {
+      const { data, error } = await safeGet(`/admin/doctors?page=${page}`);
+      
+      if (error) {
+        setError(error);
+        setIsLoading(false);
+        return;
+      }
+      
       if (data && Array.isArray(data.data)) {
-        console.log(data && Array.isArray(data.data))
         // تحويل بيانات الـ API إلى الشكل المطلوب
-        const mapped = data.data.map((item: any) => ({
+        const mapped = data.data.map((item: any, index: number) => ({
+          id: index + 1 + ((page - 1) * perPage), // إنشاء معرف مؤقت
           name: item.name,
-          contacts: { email: item.email }
-          ,
+          contacts: { email: item.email },
+          email: item.email,
           specialty: item.specialty,
           city: item.city,
-          status: item.status,
+          status: item.status === 'مفعل' ? 'active' : 'inactive',
           rating: item.rating
         }));
+        
         setDoctors(mapped);
+        setCurrentPage(data.current_page || page);
+        setTotalPages(data.last_page || 1);
+        setTotalDoctors(data.total || 0);
+        setPerPage(data.per_page || 20);
       }
+    } catch (err) {
+      setError({
+        message: 'حدث خطأ أثناء جلب بيانات الأطباء',
+        details: err
+      });
+    } finally {
       setIsLoading(false);
-      setError(error);
-    });
-  }, []);
+    }
+  };
+
+  // جلب البيانات عند تحميل المكون أو تغيير الصفحة
+  useEffect(() => {
+    fetchDoctors(currentPage);
+  }, [currentPage]);
 
   // استخراج القيم الفريدة للفلاتر
   const specialties = [...new Set(doctors.map(doctor => doctor.specialty))];
@@ -346,6 +372,25 @@ export const useDoctorsData = () => {
     setFilters([]);
   };
 
+  // وظائف التنقل بين الصفحات
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return {
     searchQuery,
     setSearchQuery,
@@ -369,6 +414,15 @@ export const useDoctorsData = () => {
     addDoctor,
     doctors,
     isLoading,
-    error
+    error,
+    // إضافة معلومات الصفحات
+    currentPage,
+    totalPages,
+    totalDoctors,
+    perPage,
+    goToNextPage,
+    goToPreviousPage,
+    goToPage,
+    fetchDoctors
   };
 };

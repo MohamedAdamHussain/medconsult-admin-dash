@@ -42,14 +42,14 @@ const Dashboard = () => {
   const [userCounts, setUserCounts] = useState<{ doctor: number; patient: number; admin: number }>({ doctor: 0, patient: 0, admin: 0 });
   const [userCountsError, setUserCountsError] = useState<any>(null);
 
-  useEffect(() => {
-    // مثال عملي لاستدعاء API مع معالجة الأخطاء
-    safeGet('/test') // غيّر المسار حسب ما هو متاح في الـ API لديك
-      .then(({ data, error }) => {
-        setApiData(data);
-        setApiError(error);
-      });
-  }, []);
+  // useEffect(() => {
+  //   // مثال عملي لاستدعاء API مع معالجة الأخطاء
+  //   safeGet('/test') // غيّر المسار حسب ما هو متاح في الـ API لديك
+  //     .then(({ data, error }) => {
+  //       setApiData(data);
+  //       setApiError(error);
+  //     });
+  // }, []);
 
   useEffect(() => {
     // جلب إحصائيات المستخدمين حسب الدور

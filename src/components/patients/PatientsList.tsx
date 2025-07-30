@@ -14,14 +14,16 @@ interface PatientsListProps {
 }
 
 const PatientsList = ({ patients, onViewDetails, onEditPatient, onUpdateStatus }: PatientsListProps) => {
-  const getStatusBadge = (status: Patient['status']) => {
-    const statusConfig = {
+  const getStatusBadge = (status: string) => {
+    const statusConfig: Record<string, { label: string, className: string }> = {
       active: { label: 'نشط', className: 'bg-green-100 text-green-800' },
       blocked: { label: 'محظور', className: 'bg-red-100 text-red-800' },
-      suspended: { label: 'معلق', className: 'bg-yellow-100 text-yellow-800' }
+      suspended: { label: 'معلق', className: 'bg-yellow-100 text-yellow-800' },
+      'مفعل': { label: 'نشط', className: 'bg-green-100 text-green-800' },
+      'غير مفعل': { label: 'محظور', className: 'bg-red-100 text-red-800' }
     };
 
-    const config = statusConfig[status];
+    const config = statusConfig[status] || statusConfig.blocked;
     return <Badge className={config.className}>{config.label}</Badge>;
   };
 
@@ -29,17 +31,23 @@ const PatientsList = ({ patients, onViewDetails, onEditPatient, onUpdateStatus }
     return gender === 'male' ? 'ذكر' : 'أنثى';
   };
 
-  const calculateAge = (dateOfBirth: string) => {
-    const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
+  const calculateAge = (dateOfBirth?: string) => {
+    if (!dateOfBirth) return 'غير محدد';
     
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
+    try {
+      const today = new Date();
+      const birthDate = new Date(dateOfBirth);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      
+      return age;
+    } catch (error) {
+      return 'غير محدد';
     }
-    
-    return age;
   };
 
   if (patients.length === 0) {
@@ -67,10 +75,17 @@ const PatientsList = ({ patients, onViewDetails, onEditPatient, onUpdateStatus }
           <CardContent className="space-y-3">
             <div className="text-sm text-gray-600 text-right space-y-1">
               <div>الجنس: {getGenderLabel(patient.gender)}</div>
-              <div>العمر: {calculateAge(patient.dateOfBirth)} سنة</div>
-              <div>الهاتف: {patient.phone}</div>
-              <div>تاريخ التسجيل: {new Date(patient.registrationDate).toLocaleDateString('ar-SA')}</div>
-              <div>عدد الاستشارات: {patient.totalConsultations}</div>
+              <div>العمر: {calculateAge(patient.dateOfBirth || patient.birthday)} {calculateAge(patient.dateOfBirth || patient.birthday) !== 'غير محدد' ? 'سنة' : ''}</div>
+              {patient.phone && <div>الهاتف: {patient.phone}</div>}
+              {patient.address && <div>العنوان: {patient.address}</div>}
+              {patient.height && <div>الطول: {patient.height} سم</div>}
+              {patient.weight && <div>الوزن: {patient.weight} كجم</div>}
+              {patient.registrationDate && (
+                <div>تاريخ التسجيل: {new Date(patient.registrationDate).toLocaleDateString('ar-SA')}</div>
+              )}
+              {patient.totalConsultations !== undefined && (
+                <div>عدد الاستشارات: {patient.totalConsultations}</div>
+              )}
               {patient.lastConsultationDate && (
                 <div>آخر استشارة: {new Date(patient.lastConsultationDate).toLocaleDateString('ar-SA')}</div>
               )}

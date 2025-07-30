@@ -13,6 +13,7 @@ import SearchAndFilter from "@/components/doctors/SearchAndFilter";
 import AddDoctorDialog from "@/components/doctors/AddDoctorDialog";
 import { useDoctorsData } from "@/hooks/useDoctorsData";
 import ExportButton from "@/components/shared/ExportButton";
+import Pagination from "@/components/shared/Pagination";
 
 const Doctors = () => {
   const {
@@ -38,6 +39,12 @@ const Doctors = () => {
     doctors,
     isLoading,
     error,
+    // معلومات الصفحات
+    currentPage,
+    totalPages,
+    totalDoctors,
+    perPage,
+    goToPage,
   } = useDoctorsData();
   console.log(doctors)
   // Export columns configuration for doctors
@@ -76,6 +83,12 @@ const Doctors = () => {
             <Plus size={16} />
             إضافة طبيب
           </Button>
+          <ExportButton
+            data={doctors}
+            columns={doctorExportColumns}
+            filename="doctors_list"
+            title="قائمة الأطباء"
+          />
           {/* زر ثانوي */}
           {/* <Button className="bg-secondary-main text-white hover:bg-green-600 px-4 py-2 rounded-lg">تصدير القائمة</Button>
           {/* زر تحذير */}
@@ -116,13 +129,24 @@ const Doctors = () => {
 
       {/* قائمة الأطباء */}
       {!isLoading && !error && (
-        <DoctorsList
-          doctors={doctors}
-          onViewDetails={viewDoctorDetails}
-          onToggleStatus={toggleDoctorStatus}
-          onSendNotification={sendNotification}
-          onDeleteDoctor={deleteDoctor}
-        />
+        <>
+          <DoctorsList
+            doctors={doctors}
+            onViewDetails={viewDoctorDetails}
+            onToggleStatus={toggleDoctorStatus}
+            onSendNotification={sendNotification}
+            onDeleteDoctor={deleteDoctor}
+          />
+          
+          {/* مكون التنقل بين الصفحات */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={goToPage}
+            totalItems={totalDoctors}
+            itemsPerPage={perPage}
+          />
+        </>
       )}
 
       {/* مودال تفاصيل الطبيب */}

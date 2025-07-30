@@ -8,28 +8,28 @@ export interface Specialty {
 }
 
 export interface Doctor {
-  id: number;
+  id?: number;
   name: string;
-  specialty: string; // Main specialty for backward compatibility
-  specialties: Specialty[]; // Multiple specialties
+  specialty: string | null; // Main specialty for backward compatibility
+  specialties?: Specialty[]; // Multiple specialties
   rating: number;
   status: string;
   city: string;
-  joinDate: string;
-  patients: number;
-  consultations: number;
-  activityPoints: number;
-  age: number;
-  gender: 'male' | 'female';
+  joinDate?: string;
+  patients?: number;
+  consultations?: number;
+  activityPoints?: number;
+  age?: number;
+  gender?: 'male' | 'female';
   profileImage?: string;
-  documents: {
+  documents?: {
     certificates: string[]; // Multiple certificate images
     license: string;
     id: string;
     syndicate: string; // بطاقة النقابة
   };
   contacts: {
-    phone: string;
+    phone?: string;
     email: string;
   };
   socialMedia?: {
@@ -45,6 +45,7 @@ export interface Doctor {
       lng: number;
     };
   };
+  email?: string; // لدعم البيانات القادمة من API
 }
 
 export type FilterOption = {

@@ -171,7 +171,7 @@
   }
 
   .unified-card-header {
-    @apply p-6 border-b border-border;
+    @apply p-6  border-border;
   }
 
   .unified-card-content {

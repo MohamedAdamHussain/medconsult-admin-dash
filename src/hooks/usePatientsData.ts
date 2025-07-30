@@ -1,6 +1,7 @@
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Patient, PatientConsultation, PatientFilters } from '@/types/patients';
+import { safeGet } from '@/lib/api';
 
 export const usePatientsData = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -8,44 +9,66 @@ export const usePatientsData = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [filters, setFilters] = useState<PatientFilters>({});
+  const [patients, setPatientsData] = useState<Patient[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalPatients, setTotalPatients] = useState(0);
+  const [perPage, setPerPage] = useState(20);
 
-  // Mock data for patients
-  const [patients, setPatientsData] = useState<Patient[]>([
-    {
-      id: '1',
-      name: 'أحمد محمد علي',
-      email: 'ahmed@example.com',
-      phone: '+966501234567',
-      dateOfBirth: '1985-03-15',
-      gender: 'male',
-      registrationDate: '2024-01-15',
-      status: 'active',
-      height: 175,
-      weight: 80,
-      generalDiseases: ['ضغط الدم'],
-      chronicDiseases: ['السكري النوع الثاني'],
-      allergies: ['البنسلين'],
-      permanentMedications: ['ميتفورمين', 'أملوديبين'],
-      previousSurgeries: ['استئصال الزائدة الدودية'],
-      totalConsultations: 5,
-      lastConsultationDate: '2024-05-20'
-    },
-    {
-      id: '2',
-      name: 'فاطمة أحمد',
-      email: 'fatima@example.com',
-      phone: '+966507654321',
-      dateOfBirth: '1990-08-22',
-      gender: 'female',
-      registrationDate: '2024-02-10',
-      status: 'active',
-      height: 165,
-      weight: 65,
-      allergies: ['المكسرات'],
-      totalConsultations: 3,
-      lastConsultationDate: '2024-05-18'
+  // جلب بيانات المرضى مع دعم الصفحات
+  const fetchPatients = async (page: number = 1) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const { data, error } = await safeGet(`/admin/patients?page=${page}`);
+      
+      if (error) {
+        setError(error);
+        setIsLoading(false);
+        return;
+      }
+      
+      if (data && Array.isArray(data.data)) {
+        // تحويل بيانات الـ API إلى الشكل المطلوب
+        const mapped = data.data.map((item: any, index: number) => ({
+          id: (index + 1 + ((page - 1) * perPage)).toString(), // إنشاء معرف مؤقت
+          name: item.name,
+          email: item.email,
+          address: item.address,
+          gender: item.gender,
+          dateOfBirth: item.birthday,
+          birthday: item.birthday,
+          height: item.height,
+          weight: item.weight,
+          status: item.status === 'مفعل' ? 'active' : 'blocked',
+          // إضافة بيانات افتراضية للحقول المطلوبة
+          registrationDate: new Date().toISOString().split('T')[0],
+          totalConsultations: 0
+        }));
+        
+        setPatientsData(mapped);
+        setCurrentPage(data.current_page || page);
+        setTotalPages(data.last_page || 1);
+        setTotalPatients(data.total || 0);
+        setPerPage(data.per_page || 20);
+      }
+    } catch (err) {
+      setError({
+        message: 'حدث خطأ أثناء جلب بيانات المرضى',
+        details: err
+      });
+    } finally {
+      setIsLoading(false);
     }
-  ]);
+  };
+
+  // جلب البيانات عند تحميل المكون أو تغيير الصفحة
+  useEffect(() => {
+    fetchPatients(currentPage);
+  }, [currentPage]);
 
   // Mock consultations data
   const patientConsultations: PatientConsultation[] = [
@@ -152,8 +175,27 @@ export const usePatientsData = () => {
     return patientConsultations.filter(consultation => consultation.patientId === patientId);
   };
 
+  // وظائف التنقل بين الصفحات
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return {
-    patients: filteredPatients,
+    patients: isLoading ? [] : filteredPatients,
     selectedPatient,
     setSelectedPatient,
     isDetailsDialogOpen,
@@ -169,6 +211,17 @@ export const usePatientsData = () => {
     updatePatientStatus,
     addPatient,
     updatePatient,
-    getPatientConsultations
+    getPatientConsultations,
+    // إضافة معلومات الصفحات
+    currentPage,
+    totalPages,
+    totalPatients,
+    perPage,
+    goToNextPage,
+    goToPreviousPage,
+    goToPage,
+    fetchPatients,
+    isLoading,
+    error
   };
 };
