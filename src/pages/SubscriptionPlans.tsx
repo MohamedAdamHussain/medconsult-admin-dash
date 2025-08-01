@@ -7,6 +7,7 @@ import { useSubscriptionPlans } from '@/hooks/useSubscriptionPlans';
 import { SubscriptionPlan } from '@/types/subscriptions';
 import PlansList from '@/components/subscription-plans/PlansList';
 import AddEditPlanDialog from '@/components/subscription-plans/AddEditPlanDialog';
+import PlanDetailsDialog from '@/components/subscription-plans/PlanDetailsDialog';
 import { toast } from '@/hooks/use-toast';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 
@@ -14,6 +15,8 @@ const SubscriptionPlans: React.FC = () => {
   const { plans, addPlan, updatePlan, deletePlan, togglePlanStatus } = useSubscriptionPlans();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<SubscriptionPlan | null>(null);
+  const [viewingPlan, setViewingPlan] = useState<SubscriptionPlan | null>(null);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
@@ -73,8 +76,8 @@ const SubscriptionPlans: React.FC = () => {
   };
 
   const handleViewPlan = (plan: SubscriptionPlan) => {
-    // يمكن إضافة مودال لعرض تفاصيل الخطة
-    console.log('View plan:', plan);
+    setViewingPlan(plan);
+    setIsDetailsDialogOpen(true);
   };
 
   const handleCopyPlan = (plan: SubscriptionPlan) => {
@@ -171,6 +174,13 @@ const SubscriptionPlans: React.FC = () => {
           onClose={() => setIsDialogOpen(false)}
           onSave={handleSavePlan}
           editingPlan={editingPlan}
+        />
+
+        {/* Plan Details Dialog */}
+        <PlanDetailsDialog
+          isOpen={isDetailsDialogOpen}
+          onClose={() => setIsDetailsDialogOpen(false)}
+          plan={viewingPlan}
         />
       </div>
     </DashboardLayout>
