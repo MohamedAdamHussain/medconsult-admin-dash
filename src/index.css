@@ -284,7 +284,7 @@
   }
 
   .unified-card-header {
-    @apply p-6 border-b border-border/20 bg-gradient-to-r from-slate-50/50 to-transparent;
+    @apply p-6 border-b border-border;
   }
 
   .unified-card-content {

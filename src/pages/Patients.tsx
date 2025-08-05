@@ -12,6 +12,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import ExportButton from '@/components/shared/ExportButton';
+import Pagination from '@/components/shared/Pagination';
+import { AlertTriangle, Loader2 } from 'lucide-react';
 
 const Patients = () => {
   const {
@@ -31,7 +33,15 @@ const Patients = () => {
     updatePatientStatus,
     addPatient,
     updatePatient,
-    getPatientConsultations
+    getPatientConsultations,
+    // معلومات الصفحات
+    currentPage,
+    totalPages,
+    totalPatients,
+    perPage,
+    goToPage,
+    isLoading,
+    error
   } = usePatientsData();
 
   // Export columns configuration for patients
@@ -86,12 +96,47 @@ const Patients = () => {
         onAddPatient={handleAddPatient}
       />
 
-      <PatientsList 
-        patients={patients}
-        onViewDetails={viewPatientDetails}
-        onEditPatient={handleEditPatient}
-        onUpdateStatus={updatePatientStatus}
-      />
+      {/* رسالة تحميل */}
+      {isLoading && (
+        <div className="flex flex-col items-center justify-center py-8 text-blue-600 font-bold gap-2">
+          <Loader2 className="animate-spin h-8 w-8 mb-2" />
+          <span>يتم الآن تحميل المرضى، يرجى الانتظار...</span>
+        </div>
+      )}
+
+      {/* رسالة خطأ */}
+      {error && (
+        <div className="flex flex-col items-center justify-center py-8 text-red-600 font-bold gap-2">
+          <AlertTriangle className="h-8 w-8 mb-2" />
+          <span>
+            تعذر تحميل المرضى. تحقق من اتصالك أو حاول مرة أخرى لاحقًا.
+          </span>
+          {error.message && (
+            <span className="text-xs text-red-400 mt-1">{error.message}</span>
+          )}
+        </div>
+      )}
+
+      {/* قائمة المرضى */}
+      {!isLoading && !error && (
+        <>
+          <PatientsList 
+            patients={patients}
+            onViewDetails={viewPatientDetails}
+            onEditPatient={handleEditPatient}
+            onUpdateStatus={updatePatientStatus}
+          />
+          
+          {/* مكون التنقل بين الصفحات */}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={goToPage}
+            totalItems={totalPatients}
+            itemsPerPage={perPage}
+          />
+        </>
+      )}
 
       {/* Patient Details Dialog */}
       <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>

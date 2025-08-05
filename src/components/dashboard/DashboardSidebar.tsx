@@ -42,6 +42,8 @@ const navItems = [
   { name: 'التخصصات الطبية', href: '/specialties', icon: FileBarChart },
   { name: 'الأسئلة الطبية', href: '/medical-questions', icon: FileText },
   { name: 'إدارة الـ Gallery', href: '/gallery', icon: GalleryHorizontal },
+  { name: 'الخطط', href: '/subscription-plans', icon: Archive },
+  { name: 'الاشتراكات', href: '/subscriptions', icon: Users },
   { name: 'الحسابات المالية', href: '/financial', icon: DollarSign },
   { name: 'إدارة الحسابات', href: '/account-settings', icon: Settings },
 ];

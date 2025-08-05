@@ -78,8 +78,7 @@ const ComplaintsList = ({ complaints, onViewDetails }: ComplaintsListProps) => {
                 <TableHead className="text-right">العنوان</TableHead>
                 <TableHead className="text-right">النوع</TableHead>
                 <TableHead className="text-right">الحالة</TableHead>
-                <TableHead className="text-right">المريض</TableHead>
-                <TableHead className="text-right">الطبيب</TableHead>
+                <TableHead className="text-right">اسم المستخدم</TableHead>
                 <TableHead className="text-right">تاريخ الإنشاء</TableHead>
                 <TableHead className="text-right">التعليقات</TableHead>
                 <TableHead className="text-right">المرفقات</TableHead>
@@ -109,9 +108,6 @@ const ComplaintsList = ({ complaints, onViewDetails }: ComplaintsListProps) => {
                   </TableCell>
                   <TableCell className="text-right">
                     {complaint.patientName}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {complaint.doctorName || '-'}
                   </TableCell>
                   <TableCell className="text-right">
                     {format(new Date(complaint.createdAt), 'dd/MM/yyyy', { locale: ar })}

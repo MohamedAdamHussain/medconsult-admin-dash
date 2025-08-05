@@ -1,13 +1,14 @@
 
 export interface Patient {
-  id: string;
+  id?: string;
   name: string;
   email: string;
-  phone: string;
-  dateOfBirth: string;
+  phone?: string;
+  dateOfBirth?: string;
+  birthday?: string; // للتوافق مع API
   gender: 'male' | 'female';
-  registrationDate: string;
-  status: 'active' | 'blocked' | 'suspended';
+  registrationDate?: string;
+  status: string; // 'مفعل' | 'غير مفعل' من API أو 'active' | 'blocked' | 'suspended' داخليًا
   
   // Medical Information
   height?: number; // in cm
@@ -25,7 +26,7 @@ export interface Patient {
   medicalImages?: string[]; // صور طبية (Base64 أو URL مؤقت)
   
   // Statistics
-  totalConsultations: number;
+  totalConsultations?: number;
   lastConsultationDate?: string;
 }
 

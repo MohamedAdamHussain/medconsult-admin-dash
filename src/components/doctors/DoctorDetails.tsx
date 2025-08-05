@@ -27,6 +27,8 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
     }
   };
 
+  console.log(doctor.name+"Lll")
+
   return (
     <div className="space-y-6 pt-4 text-right">
       {/* الصورة الشخصية ومعلومات أساسية */}
@@ -119,7 +121,7 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
                 <span className="text-gray-500">رقم الهاتف</span>
                 <div className="flex items-center gap-1">
                   <Phone size={16} className="text-gray-400" />
-                  <span>{doctor.contacts.phone}</span>
+                  <span>{doctor?.contacts.phone}</span>
                 </div>
               </div>
               <div className="mt-8 pt-4 border-t">
@@ -217,7 +219,8 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {doctor.specialties.map((specialty, index) => (
+            {doctor.specialty ? doctor.specialty : "لا يوجد"}
+            {doctor?.specialties?.map((specialty, index) => (
               <div key={specialty.id} className="border rounded-lg p-4 bg-gray-50">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-3">
@@ -259,7 +262,7 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
             {/* شهادات التخصص */}
             <div className="space-y-3">
               <h5 className="font-semibold text-sm text-gray-700">شهادات التخصص</h5>
-              {doctor.documents.certificates.map((cert, index) => (
+              {doctor?.documents?.certificates.map((cert, index) => (
                 <div key={index} className="p-3 border rounded-md flex justify-between items-center">
                   <div className="text-sm font-medium">شهادة التخصص #{index + 1}</div>
                   <Button variant="outline" size="sm">عرض</Button>
@@ -276,7 +279,7 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
               <div className="text-sm font-medium">بطاقة الهوية</div>
               <Button variant="outline" size="sm">عرض</Button>
             </div>
-            {doctor.documents.syndicate && (
+            {doctor?.documents?.syndicate && (
               <div className="p-3 border rounded-md flex justify-between items-center">
                 <div className="text-sm font-medium">بطاقة النقابة</div>
                 <Button variant="outline" size="sm">عرض</Button>
