@@ -15,6 +15,7 @@ import Financial from "./pages/Financial";
 import NotFound from "./pages/NotFound";
 import Specialties from "./pages/Specialties";
 import Doctors from "./pages/Doctors";
+
 import KPI from "./pages/KPI";
 import ActivityLog from "./pages/ActivityLog";
 import Gallery from "./pages/Gallery";
@@ -129,3 +130,6 @@ const App = () => {
 };
 
 export default App;
+
+
+

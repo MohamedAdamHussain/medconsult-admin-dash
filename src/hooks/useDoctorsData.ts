@@ -359,13 +359,30 @@ export const useDoctorsData = () => {
   };
 
   // إضافة طبيب
-  const addDoctor = (newDoctorData: Omit<Doctor, 'id'>) => {
-    // Here you would typically send a request to your backend API
-    // For now, we'll just show a success message
-    toast({
-      title: "تم إضافة الطبيب بنجاح",
-      description: `تم إضافة الطبيب ${newDoctorData.name} إلى النظام`,
-    });
+  const addDoctor = async (newDoctorData: Omit<Doctor, 'id'>) => {
+    try {
+      // ملاحظة: هذا للإضافة المباشرة من Admin Panel
+      // يحتاج إلى endpoint مخصص في الـ backend
+      console.log('Adding doctor:', newDoctorData);
+      
+      // مؤقتاً نعرض رسالة نجاح
+      toast({
+        title: "تم إضافة الطبيب بنجاح",
+        description: `تم إضافة الطبيب ${newDoctorData.name} إلى النظام`,
+      });
+      
+      // TODO: إضافة استدعاء API هنا عندما يتوفر endpoint
+      // const response = await api.post('/admin/doctors', newDoctorData);
+      // if (response.data) {
+      //   fetchDoctors(); // تحديث قائمة الأطباء
+      // }
+    } catch (error: any) {
+      toast({
+        title: "خطأ في إضافة الطبيب",
+        description: error.response?.data?.message || "حدث خطأ أثناء إضافة الطبيب",
+        variant: "destructive",
+      });
+    }
   };
 
   const clearFilters = () => {

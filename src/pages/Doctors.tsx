@@ -1,3 +1,4 @@
+import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import {
   Dialog,
@@ -6,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Loader2, Plus } from "lucide-react";
+import { AlertTriangle, Loader2, Plus, UserPlus } from "lucide-react";
 import DoctorDetails from "@/components/doctors/DoctorDetails";
 import DoctorsList from "@/components/doctors/DoctorsList";
 import SearchAndFilter from "@/components/doctors/SearchAndFilter";
@@ -14,8 +15,15 @@ import AddDoctorDialog from "@/components/doctors/AddDoctorDialog";
 import { useDoctorsData } from "@/hooks/useDoctorsData";
 import ExportButton from "@/components/shared/ExportButton";
 import Pagination from "@/components/shared/Pagination";
+import DoctorRegistrationStep1Dialog, { DoctorRegistrationStep1Data } from "@/components/doctors/registration/DoctorRegistrationStep1Dialog";
+import { toast } from "@/hooks/use-toast";
+import api from "@/lib/api";
 
 const Doctors = () => {
+  // حالة نوافذ تسجيل الطبيب
+  const [isRegistrationDialogOpen, setIsRegistrationDialogOpen] = useState(false);
+  const [isRegistrationLoading, setIsRegistrationLoading] = useState(false);
+
   const {
     searchQuery,
     setSearchQuery,
@@ -46,7 +54,7 @@ const Doctors = () => {
     perPage,
     goToPage,
   } = useDoctorsData();
-  console.log(doctors)
+
   // Export columns configuration for doctors
   const doctorExportColumns = [
     { key: "name", title: "اسم الطبيب" },
@@ -60,6 +68,65 @@ const Doctors = () => {
     { key: "contacts.phone", title: "الهاتف" },
     { key: "contacts.email", title: "البريد الإلكتروني" },
   ];
+
+  // معالجة إرسال بيانات تسجيل الطبيب
+  const handleDoctorRegistration = async (data: DoctorRegistrationStep1Data) => {
+    setIsRegistrationLoading(true);
+    
+    try {
+      // إنشاء FormData لإرسال الملفات
+      const formData = new FormData();
+      formData.append('email', data.email);
+      formData.append('password', data.password);
+      formData.append('medical_tag_id', data.medical_tag_id);
+      
+      // تنسيق التاريخ والوقت للـ backend (Y-m-d H:i:s)
+      const formatDateTime = (dateTimeLocal: string) => {
+        if (!dateTimeLocal) return '';
+        const date = new Date(dateTimeLocal);
+        return date.toISOString().slice(0, 19).replace('T', ' ');
+      };
+      
+      formData.append('start_time', formatDateTime(data.start_time));
+      formData.append('end_time', formatDateTime(data.end_time));
+      
+      // إضافة الشهادات
+      if (data.certificate_images && data.certificate_images.length > 0) {
+        for (let i = 0; i < data.certificate_images.length; i++) {
+          formData.append('certificate_images[]', data.certificate_images[i]);
+        }
+      };
+      
+      // إرسال البيانات إلى API
+      const response = await api.post('/register-ductor', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      console.log(response.data);
+      
+      if (response.data) {
+        toast({
+          title: "تم التسجيل بنجاح",
+          description: "تم تسجيل الطبيب بنجاح",
+        });
+        
+        // إغلاق النافذة وتحديث قائمة الأطباء
+        setIsRegistrationDialogOpen(false);
+        // يمكن إضافة استدعاء لتحديث قائمة الأطباء هنا
+      }
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      toast({
+        title: "خطأ في التسجيل",
+        description: error.response?.data?.message || "حدث خطأ أثناء تسجيل الطبيب",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRegistrationLoading(false);
+    }
+  };
 
   return (
     <DashboardLayout>
@@ -76,6 +143,13 @@ const Doctors = () => {
           </p>
         </div>
         <div className="flex flex-row-reverse gap-2 w-full md:w-auto justify-start md:justify-end">
+          <Button
+            onClick={() => setIsRegistrationDialogOpen(true)}
+            className="flex items-center gap-2 bg-secondary-main text-white hover:bg-green-600 px-4 py-2 rounded-lg shadow"
+          >
+            <UserPlus size={16} />
+            تسجيل طبيب جديد
+          </Button>
           <Button
             onClick={() => setAddDialogOpen(true)}
             className="flex items-center gap-2 bg-primary-main text-white hover:bg-blue-700 px-4 py-2 rounded-lg shadow"
@@ -169,6 +243,14 @@ const Doctors = () => {
         onAddDoctor={addDoctor}
         specialties={specialties}
         cities={cities}
+      />
+
+      {/* مودال تسجيل طبيب */}
+      <DoctorRegistrationStep1Dialog
+        open={isRegistrationDialogOpen}
+        onOpenChange={setIsRegistrationDialogOpen}
+        onSubmit={handleDoctorRegistration}
+        isLoading={isRegistrationLoading}
       />
     </DashboardLayout>
   );
