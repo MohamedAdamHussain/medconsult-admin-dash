@@ -1,36 +1,31 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Plus, Search } from "lucide-react";
-import { useSubscriptionPlans } from "@/hooks/useSubscriptionPlans.ts";
-import { SubscriptionPlan } from "@/types/subscriptions.ts";
-import PlansList from "@/components/subscription-plans/PlansList.tsx";
-import AddEditPlanDialog from "@/components/subscription-plans/AddEditPlanDialog.tsx";
-import { toast } from "@/hooks/use-toast";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Search } from 'lucide-react';
+import { useSubscriptionPlans } from '@/hooks/useSubscriptionPlans';
+import { SubscriptionPlan } from '@/types/subscriptions';
+import PlansList from '@/components/subscription-plans/PlansList';
+import AddEditPlanDialog from '@/components/subscription-plans/AddEditPlanDialog';
+import PlanDetailsDialog from '@/components/subscription-plans/PlanDetailsDialog';
+import { toast } from '@/hooks/use-toast';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
+
 const SubscriptionPlans: React.FC = () => {
-  const { plans, addPlan, updatePlan, deletePlan, togglePlanStatus } =
-    useSubscriptionPlans();
+  const { plans, addPlan, updatePlan, deletePlan, togglePlanStatus } = useSubscriptionPlans();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<SubscriptionPlan | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [viewingPlan, setViewingPlan] = useState<SubscriptionPlan | null>(null);
+  const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
-  const filteredPlans = plans.filter((plan) => {
-    const matchesSearch =
-      plan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plan.nameEn.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "active" && plan.isActive) ||
-      (statusFilter === "inactive" && !plan.isActive);
+  const filteredPlans = plans.filter(plan => {
+    const matchesSearch = plan.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         plan.nameEn.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || 
+                         (statusFilter === 'active' && plan.isActive) ||
+                         (statusFilter === 'inactive' && !plan.isActive);
     return matchesSearch && matchesStatus;
   });
 
@@ -44,32 +39,30 @@ const SubscriptionPlans: React.FC = () => {
     setIsDialogOpen(true);
   };
 
-  const handleSavePlan = (
-    planData: Omit<SubscriptionPlan, "id" | "createdAt" | "updatedAt">
-  ) => {
+  const handleSavePlan = (planData: Omit<SubscriptionPlan, 'id' | 'createdAt' | 'updatedAt'>) => {
     if (editingPlan) {
       updatePlan(editingPlan.id, planData);
       toast({
-        title: "تم التحديث",
-        description: "تم تحديث الخطة بنجاح",
+        title: 'تم التحديث',
+        description: 'تم تحديث الخطة بنجاح',
       });
     } else {
       addPlan(planData);
       toast({
-        title: "تمت الإضافة",
-        description: "تم إضافة الخطة بنجاح",
+        title: 'تمت الإضافة',
+        description: 'تم إضافة الخطة بنجاح',
       });
     }
     setIsDialogOpen(false);
   };
 
   const handleDeletePlan = (id: string) => {
-    if (confirm("هل أنت متأكد من حذف هذه الخطة؟")) {
+    if (confirm('هل أنت متأكد من حذف هذه الخطة؟')) {
       deletePlan(id);
       toast({
-        title: "تم الحذف",
-        description: "تم حذف الخطة بنجاح",
-        variant: "destructive",
+        title: 'تم الحذف',
+        description: 'تم حذف الخطة بنجاح',
+        variant: 'destructive',
       });
     }
   };
@@ -77,14 +70,14 @@ const SubscriptionPlans: React.FC = () => {
   const handleToggleStatus = (id: string) => {
     togglePlanStatus(id);
     toast({
-      title: "تم التحديث",
-      description: "تم تحديث حالة الخطة بنجاح",
+      title: 'تم التحديث',
+      description: 'تم تحديث حالة الخطة بنجاح',
     });
   };
 
   const handleViewPlan = (plan: SubscriptionPlan) => {
-    // يمكن إضافة مودال لعرض تفاصيل الخطة
-    console.log("View plan:", plan);
+    setViewingPlan(plan);
+    setIsDetailsDialogOpen(true);
   };
 
   const handleCopyPlan = (plan: SubscriptionPlan) => {
@@ -92,16 +85,16 @@ const SubscriptionPlans: React.FC = () => {
       ...plan,
       name: `${plan.name} - نسخة`,
       nameEn: `${plan.nameEn} - Copy`,
-      isActive: false,
+      isActive: false
     };
     delete (copiedPlan as any).id;
     delete (copiedPlan as any).createdAt;
     delete (copiedPlan as any).updatedAt;
-
+    
     addPlan(copiedPlan);
     toast({
-      title: "تم النسخ",
-      description: "تم نسخ الخطة بنجاح",
+      title: 'تم النسخ',
+      description: 'تم نسخ الخطة بنجاح',
     });
   };
 
@@ -119,6 +112,7 @@ const SubscriptionPlans: React.FC = () => {
             إضافة خطة جديدة
           </Button>
         </div>
+
         {/* Search and Filter */}
         <div className="flex gap-4 items-center">
           <div className="relative flex-1">
@@ -141,34 +135,26 @@ const SubscriptionPlans: React.FC = () => {
             </SelectContent>
           </Select>
         </div>
+
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="stats-card">
-            <div className="text-2xl font-bold text-primary">
-              {plans.length}
-            </div>
+            <div className="text-2xl font-bold text-primary">{plans.length}</div>
             <div className="text-sm text-muted-foreground">إجمالي الخطط</div>
           </div>
           <div className="stats-card">
-            <div className="text-2xl font-bold text-green-600">
-              {plans.filter((p) => p.isActive).length}
-            </div>
+            <div className="text-2xl font-bold text-green-600">{plans.filter(p => p.isActive).length}</div>
             <div className="text-sm text-muted-foreground">الخطط النشطة</div>
           </div>
           <div className="stats-card">
-            <div className="text-2xl font-bold text-orange-600">
-              {plans.filter((p) => !p.isActive).length}
-            </div>
+            <div className="text-2xl font-bold text-orange-600">{plans.filter(p => !p.isActive).length}</div>
             <div className="text-sm text-muted-foreground">الخطط المعطلة</div>
           </div>
           <div className="stats-card">
             <div className="text-2xl font-bold text-purple-600">
-              {Math.round(
-                plans.reduce((sum, p) => sum + p.price, 0) / plans.length || 0
-              )}{" "}
-              ر.س
+              {Math.round(plans.reduce((sum, p) => sum + p.price, 0) / plans.length || 0)} ر.س
             </div>
-            <div className="text-sm text-muted-foreground">متوسط السعر</div>{" "}
+            <div className="text-sm text-muted-foreground">متوسط السعر</div>
           </div>
         </div>
 
@@ -188,6 +174,13 @@ const SubscriptionPlans: React.FC = () => {
           onClose={() => setIsDialogOpen(false)}
           onSave={handleSavePlan}
           editingPlan={editingPlan}
+        />
+
+        {/* Plan Details Dialog */}
+        <PlanDetailsDialog
+          isOpen={isDetailsDialogOpen}
+          onClose={() => setIsDetailsDialogOpen(false)}
+          plan={viewingPlan}
         />
       </div>
     </DashboardLayout>
