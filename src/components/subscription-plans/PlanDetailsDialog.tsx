@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Calendar, CheckCircle, DollarSign, Users, Clock } from 'lucide-react';
-import { SubscriptionPlan } from '@/types/subscriptions';
+import { SubscriptionPlan } from '@/types/subscriptions.ts';
 
 interface PlanDetailsDialogProps {
   isOpen: boolean;
