@@ -6,113 +6,52 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SpecialtiesList from '@/components/specialties/SpecialtiesList';
 import AddEditSpecialtyDialog from '@/components/specialties/AddEditSpecialtyDialog';
-import { Plus } from 'lucide-react';
-
-// نوع البيانات للأسئلة الشائعة
-export interface FAQ {
-  id: string;
-  question: string;
-  answer: string;
-}
-
-// نوع البيانات للتخصصات الطبية
-export interface Specialty {
-  id: string;
-  name: string;
-  isActive: boolean;
-  questionIds: string[];
-  doctorsCount: number;
-}
-
-// نوع بيانات السؤال الطبي (نفس تعريف MedicalQuestions.tsx)
-interface MedicalQuestion {
-  id: string;
-  question: string;
-  specialty: string;
-}
-
-// بيانات افتراضية للتخصصات
-const initialSpecialties: Specialty[] = [
-  {
-    id: '1',
-    name: 'طب القلب',
-    isActive: true,
-    questionIds: [],
-    doctorsCount: 42,
-  },
-  {
-    id: '2',
-    name: 'طب الأطفال',
-    isActive: true,
-    questionIds: [],
-    doctorsCount: 38,
-  },
-  {
-    id: '3',
-    name: 'طب الأسنان',
-    isActive: false,
-    questionIds: [],
-    doctorsCount: 53,
-  }
-];
-
-// بيانات افتراضية للأسئلة الطبية (يمكن تعديلها لاحقاً)
-const initialMedicalQuestions: MedicalQuestion[] = [
-  { id: '1', question: 'هل تعاني من أمراض مزمنة؟', specialty: 'cardiology' },
-  { id: '2', question: 'هل لديك حساسية من أدوية معينة؟', specialty: 'dermatology' },
-  { id: '3', question: 'هل تتناول أدوية بشكل دائم؟', specialty: 'cardiology' },
-  { id: '4', question: 'هل أجريت عمليات جراحية سابقة؟', specialty: 'orthopedics' },
-  { id: '5', question: 'هل تعاني من ارتفاع ضغط الدم؟', specialty: 'cardiology' },
-  { id: '6', question: 'هل لديك تاريخ عائلي مع أمراض القلب؟', specialty: 'cardiology' },
-  { id: '7', question: 'هل تعاني من مشاكل في التنفس؟', specialty: 'pediatrics' },
-  { id: '8', question: 'هل تعاني من آلام في المفاصل؟', specialty: 'orthopedics' },
-  { id: '9', question: 'هل لديك مشاكل في الرؤية أو السمع؟', specialty: 'neurology' },
-  { id: '10', question: 'هل تعاني من صداع متكرر؟', specialty: 'neurology' },
-  { id: '11', question: 'هل لديك مشاكل في الجهاز الهضمي؟', specialty: 'pediatrics' },
-  { id: '12', question: 'هل تعاني من طفح جلدي متكرر؟', specialty: 'dermatology' },
-  { id: '13', question: 'هل لديك مشاكل في النوم؟', specialty: 'neurology' },
-  { id: '14', question: 'هل تعاني من فقدان الوزن غير المبرر؟', specialty: 'pediatrics' },
-  { id: '15', question: 'هل لديك مشاكل في الأسنان أو اللثة؟', specialty: 'orthopedics' },
-  { id: '16', question: 'هل تعاني من دوار أو إغماء؟', specialty: 'cardiology' },
-  { id: '17', question: 'هل لديك مشاكل في الكلى أو الكبد؟', specialty: 'pediatrics' },
-  { id: '18', question: 'هل تعاني من التهابات متكررة؟', specialty: 'pediatrics' },
-  { id: '19', question: 'هل لديك مشاكل في التبول أو الإخراج؟', specialty: 'pediatrics' },
-  { id: '20', question: 'هل تعاني من مشاكل في الجلد أو الشعر؟', specialty: 'dermatology' },
-  { id: '21', question: 'هل لديك مشاكل في التركيز أو الذاكرة؟', specialty: 'neurology' },
-  { id: '22', question: 'هل تعاني من ألم في الصدر عند الجهد؟', specialty: 'cardiology' },
-  { id: '23', question: 'هل لديك مشاكل في الشهية؟', specialty: 'pediatrics' },
-  { id: '24', question: 'هل تعاني من تورم في الأطراف؟', specialty: 'cardiology' },
-  { id: '25', question: 'هل لديك مشاكل في التعرق الزائد؟', specialty: 'neurology' },
-];
+import { Plus, Loader2, RefreshCw } from 'lucide-react';
+import { useMedicalTags } from '@/hooks/useMedicalTags';
+import { MedicalTag, CreateMedicalTagRequest, UpdateMedicalTagRequest } from '@/types/specialties';
 
 const Specialties = () => {
-  const [specialties, setSpecialties] = useState<Specialty[]>(initialSpecialties);
   const [openAddDialog, setOpenAddDialog] = useState(false);
-  const [selectedSpecialty, setSelectedSpecialty] = useState<Specialty | null>(null);
-  const [medicalQuestions] = useState<MedicalQuestion[]>(initialMedicalQuestions);
+  const [selectedSpecialty, setSelectedSpecialty] = useState<MedicalTag | null>(null);
   
-  // إضافة تخصص جديد
-  const handleAddSpecialty = (specialty: Specialty) => {
-    setSpecialties([...specialties, specialty]);
-  };
-  
-  // تحديث تخصص موجود
-  const handleUpdateSpecialty = (updatedSpecialty: Specialty) => {
-    setSpecialties(specialties.map(specialty => 
-      specialty.id === updatedSpecialty.id ? updatedSpecialty : specialty
-    ));
-  };
-  
-  // حذف تخصص
-  const handleDeleteSpecialty = (id: string) => {
-    setSpecialties(specialties.filter(specialty => specialty.id !== id));
-  };
+  const {
+    medicalTags,
+    isLoading,
+    error,
+    refetch,
+    createMedicalTag,
+    updateMedicalTag,
+    deleteMedicalTag,
+    isCreating,
+    isUpdating,
+    isDeleting,
+  } = useMedicalTags();
   
   // فتح نافذة التعديل مع بيانات التخصص المحدد
-  const handleEditSpecialty = (specialty: Specialty) => {
+  const handleEditSpecialty = (specialty: MedicalTag) => {
     setSelectedSpecialty(specialty);
     setOpenAddDialog(true);
   };
+
+  // معالجة حفظ التخصص (إنشاء أو تحديث)
+  const handleSaveSpecialty = (data: CreateMedicalTagRequest | { id: number; data: UpdateMedicalTagRequest }) => {
+    if ('id' in data) {
+      // تحديث تخصص موجود
+      updateMedicalTag(data);
+    } else {
+      // إنشاء تخصص جديد
+      createMedicalTag(data);
+    }
+  };
+
+  // معالجة حذف التخصص
+  const handleDeleteSpecialty = (id: number) => {
+    deleteMedicalTag(id);
+  };
+
+  // إحصائيات التخصصات
+  const activeSpecialties = medicalTags.filter(specialty => specialty.is_active).length;
+  const inactiveSpecialties = medicalTags.filter(specialty => !specialty.is_active).length;
 
   return (
     <DashboardLayout>
@@ -122,17 +61,43 @@ const Specialties = () => {
             <h1 className="text-2xl font-bold text-primary-main text-right w-full md:w-auto">إدارة التخصصات الطبية</h1>
             <p className="text-gray-500 mt-2 text-right w-full">إدارة وإضافة وتعديل التخصصات الطبية المعتمدة في المنصة</p>
           </div>
-          <Button 
-            onClick={() => {
-              setSelectedSpecialty(null);
-              setOpenAddDialog(true);
-            }}
-            className="bg-primary-main text-white hover:bg-blue-700"
-          >
-            <Plus className="ml-2" />
-            إضافة تخصص جديد
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => refetch()}
+              variant="outline"
+              disabled={isLoading}
+            >
+              <RefreshCw className={`ml-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              تحديث
+            </Button>
+            <Button 
+              onClick={() => {
+                setSelectedSpecialty(null);
+                setOpenAddDialog(true);
+              }}
+              className="bg-primary-main text-white hover:bg-blue-700"
+              disabled={isCreating}
+            >
+              {isCreating ? (
+                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Plus className="ml-2" />
+              )}
+              إضافة تخصص جديد
+            </Button>
+          </div>
         </div>
+
+        {/* عرض الأخطاء */}
+        {error && (
+          <Card className="mb-6 border-red-200 bg-red-50">
+            <CardContent className="pt-6">
+              <p className="text-red-600 text-center">
+                حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.
+              </p>
+            </CardContent>
+          </Card>
+        )}
         
         <Card>
           <CardHeader>
@@ -141,28 +106,103 @@ const Specialties = () => {
           <CardContent>
             <Tabs defaultValue="list">
               <TabsList className="mb-4">
-                <TabsTrigger value="list">كل التخصصات</TabsTrigger>
+                <TabsTrigger value="list">كل التخصصات ({medicalTags.length})</TabsTrigger>
                 <TabsTrigger value="stats">إحصائيات</TabsTrigger>
               </TabsList>
               
               <TabsContent value="list">
-                <SpecialtiesList 
-                  specialties={specialties}
-                  onEdit={handleEditSpecialty}
-                  onDelete={handleDeleteSpecialty}
-                />
+                {isLoading ? (
+                  <div className="flex justify-center items-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <span className="mr-2">جاري تحميل التخصصات...</span>
+                  </div>
+                ) : (
+                  <SpecialtiesList 
+                    specialties={medicalTags}
+                    onEdit={handleEditSpecialty}
+                    onDelete={handleDeleteSpecialty}
+                    isDeleting={isDeleting}
+                  />
+                )}
               </TabsContent>
               
               <TabsContent value="stats">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-gray-600">إجمالي التخصصات</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-blue-600">{medicalTags.length}</div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-gray-600">التخصصات النشطة</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-green-600">{activeSpecialties}</div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-gray-600">التخصصات غير النشطة</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-red-600">{inactiveSpecialties}</div>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-gray-600">معدل النشاط</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-purple-600">
+                        {medicalTags.length > 0 ? Math.round((activeSpecialties / medicalTags.length) * 100) : 0}%
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {specialties.map((specialty) => (
+                  {medicalTags.map((specialty) => (
                     <Card key={specialty.id}>
-                      <CardHeader>
-                        <CardTitle>{specialty.name}</CardTitle>
+                      <CardHeader className="pb-2">
+                        <div className="flex items-center gap-2">
+                          {specialty.icon && (
+                            <img 
+                              src={specialty.icon} 
+                              alt={specialty.name}
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
+                          )}
+                          <CardTitle className="text-base">{specialty.name}</CardTitle>
+                        </div>
                       </CardHeader>
                       <CardContent>
-                        <p>عدد الأطباء: {specialty.doctorsCount}</p>
-                        <p>عدد الأسئلة الشائعة: {specialty.questionIds.length}</p>
+                        <div className="space-y-1 text-sm">
+                          {specialty.name_ar && (
+                            <p><span className="font-medium">الاسم العربي:</span> {specialty.name_ar}</p>
+                          )}
+                          {specialty.description && (
+                            <p><span className="font-medium">الوصف:</span> {specialty.description}</p>
+                          )}
+                          <p>
+                            <span className="font-medium">الحالة:</span> 
+                            <span className={`mr-1 ${specialty.is_active ? 'text-green-600' : 'text-red-600'}`}>
+                              {specialty.is_active ? 'نشط' : 'غير نشط'}
+                            </span>
+                          </p>
+                          {specialty.created_at && (
+                            <p>
+                              <span className="font-medium">تاريخ الإنشاء:</span> 
+                              {new Date(specialty.created_at).toLocaleDateString('ar-SA')}
+                            </p>
+                          )}
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
@@ -176,16 +216,15 @@ const Specialties = () => {
       {/* نافذة إضافة/تعديل التخصص */}
       <AddEditSpecialtyDialog
         open={openAddDialog}
-        onOpenChange={setOpenAddDialog}
-        specialty={selectedSpecialty}
-        onSave={(specialty) => {
-          if (selectedSpecialty) {
-            handleUpdateSpecialty(specialty);
-          } else {
-            handleAddSpecialty(specialty);
+        onOpenChange={(open) => {
+          setOpenAddDialog(open);
+          if (!open) {
+            setSelectedSpecialty(null);
           }
         }}
-        medicalQuestions={medicalQuestions}
+        specialty={selectedSpecialty}
+        onSave={handleSaveSpecialty}
+        isLoading={isCreating || isUpdating}
       />
     </DashboardLayout>
   );

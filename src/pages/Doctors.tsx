@@ -15,7 +15,7 @@ import AddDoctorDialog from "@/components/doctors/AddDoctorDialog";
 import { useDoctorsData } from "@/hooks/useDoctorsData";
 import ExportButton from "@/components/shared/ExportButton";
 import Pagination from "@/components/shared/Pagination";
-import DoctorRegistrationStep1Dialog, { DoctorRegistrationStep1Data } from "@/components/doctors/registration/DoctorRegistrationStep1Dialog";
+import DoctorRegistrationDialog, { DoctorRegistrationData } from "@/components/doctors/DoctorRegistrationDialog";
 import { toast } from "@/hooks/use-toast";
 import api from "@/lib/api";
 
@@ -53,6 +53,7 @@ const Doctors = () => {
     totalDoctors,
     perPage,
     goToPage,
+    fetchDoctors,
   } = useDoctorsData();
 
   // Export columns configuration for doctors
@@ -70,7 +71,7 @@ const Doctors = () => {
   ];
 
   // معالجة إرسال بيانات تسجيل الطبيب
-  const handleDoctorRegistration = async (data: DoctorRegistrationStep1Data) => {
+  const handleDoctorRegistration = async (data: DoctorRegistrationData) => {
     setIsRegistrationLoading(true);
     
     try {
@@ -89,6 +90,11 @@ const Doctors = () => {
       
       formData.append('start_time', formatDateTime(data.start_time));
       formData.append('end_time', formatDateTime(data.end_time));
+      
+      // إضافة سنوات الخبرة إذا كانت موجودة
+      if (data.yearOfExper) {
+        formData.append('yearOfExper', data.yearOfExper);
+      }
       
       // إضافة الشهادات
       if (data.certificate_images && data.certificate_images.length > 0) {
@@ -114,7 +120,8 @@ const Doctors = () => {
         
         // إغلاق النافذة وتحديث قائمة الأطباء
         setIsRegistrationDialogOpen(false);
-        // يمكن إضافة استدعاء لتحديث قائمة الأطباء هنا
+        // تحديث قائمة الأطباء
+        fetchDoctors(currentPage);
       }
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -246,7 +253,7 @@ const Doctors = () => {
       />
 
       {/* مودال تسجيل طبيب */}
-      <DoctorRegistrationStep1Dialog
+      <DoctorRegistrationDialog
         open={isRegistrationDialogOpen}
         onOpenChange={setIsRegistrationDialogOpen}
         onSubmit={handleDoctorRegistration}
