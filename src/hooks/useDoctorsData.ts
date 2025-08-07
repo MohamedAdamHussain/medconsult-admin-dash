@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Doctor, FilterOption } from '../types/doctors';
 import { toast } from '@/hooks/use-toast';
-import { safeGet } from '@/lib/api';
+import api, { safeGet } from '@/lib/api';
 
 // // بيانات عينة للأطباء
 // const doctorsData = [
@@ -297,7 +297,7 @@ export const useDoctorsData = () => {
   // تطبيق الفلاتر والبحث
   const filteredDoctors = doctors.filter(doctor => {
     // تطبيق البحث
-    const matchesSearch = doctor.name.includes(searchQuery) ||
+    const matchesSearch = doctor.name?.includes(searchQuery) ||
       doctor.specialty.includes(searchQuery) ||
       doctor.city.includes(searchQuery);
 
@@ -372,10 +372,15 @@ export const useDoctorsData = () => {
       });
       
       // TODO: إضافة استدعاء API هنا عندما يتوفر endpoint
-      // const response = await api.post('/admin/doctors', newDoctorData);
-      // if (response.data) {
-      //   fetchDoctors(); // تحديث قائمة الأطباء
-      // }
+      const response = await api.post('/admin/doctors', newDoctorData);
+      if (response.data) {
+        fetchDoctors(); // تحديث قائمة الأطباء
+      }
+      // مؤقتاً نعرض رسالة نجاح
+      toast({
+        title: "تم إضافة الطبيب بنجاح",
+        description: `تم إضافة الطبيب ${newDoctorData.name} إلى النظام`,
+      });
     } catch (error: any) {
       toast({
         title: "خطأ في إضافة الطبيب",
