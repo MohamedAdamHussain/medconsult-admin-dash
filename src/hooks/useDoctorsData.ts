@@ -297,6 +297,7 @@ export const useDoctorsData = () => {
   // تطبيق الفلاتر والبحث
   const filteredDoctors = doctors.filter(doctor => {
     // تطبيق البحث
+    console.log(doctor)
     const matchesSearch = doctor.name?.includes(searchQuery) ||
       doctor.specialty.includes(searchQuery) ||
       doctor.city.includes(searchQuery);
