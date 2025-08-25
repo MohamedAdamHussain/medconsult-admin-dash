@@ -31,7 +31,15 @@ import { useState } from "react";
 
 const App = () => {
   // Create a new QueryClient instance within the component
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        retry: 1,
+        staleTime: 5 * 60 * 1000, // 5 minutes
+      },
+    },
+  }));
 
   return (
     <BrowserRouter>
@@ -82,11 +90,11 @@ const App = () => {
                   <Complaints />
                 </ProtectedRoute>
               } />
-              <Route path="/charities" element={
+              {/* <Route path="/charities" element={
                 <ProtectedRoute>
                   <Charities />
                 </ProtectedRoute>
-              } />
+              } /> */}
               <Route path="/specialties" element={
                 <ProtectedRoute>
                   <Specialties />

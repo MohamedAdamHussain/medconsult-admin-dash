@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const { data, error } = await safePost('http://127.0.0.1:8000/api/login', { email, password });
+      const { data, error } = await safePost('/login', { email, password });
       if (error) {
         return { success: false, error };
       }

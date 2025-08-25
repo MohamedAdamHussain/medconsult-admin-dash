@@ -18,11 +18,11 @@ import Pagination from "@/components/shared/Pagination";
 import DoctorRegistrationDialog, { DoctorRegistrationData } from "@/components/doctors/DoctorRegistrationDialog";
 import { toast } from "@/hooks/use-toast";
 import api from "@/lib/api";
+import { useMutation } from "@tanstack/react-query";
 
 const Doctors = () => {
   // حالة نوافذ تسجيل الطبيب
   const [isRegistrationDialogOpen, setIsRegistrationDialogOpen] = useState(false);
-  const [isRegistrationLoading, setIsRegistrationLoading] = useState(false);
 
   const {
     searchQuery,
@@ -70,11 +70,9 @@ const Doctors = () => {
     { key: "contacts.email", title: "البريد الإلكتروني" },
   ];
 
-  // معالجة إرسال بيانات تسجيل الطبيب
-  const handleDoctorRegistration = async (data: DoctorRegistrationData) => {
-    setIsRegistrationLoading(true);
-    
-    try {
+  // استخدام React Query لتسجيل الطبيب
+  const { mutate: registerDoctor, isPending: isRegistering } = useMutation({
+    mutationFn: async (data: DoctorRegistrationData) => {
       // إنشاء FormData لإرسال الملفات
       const formData = new FormData();
       formData.append('email', data.email);
@@ -104,35 +102,38 @@ const Doctors = () => {
       };
       
       // إرسال البيانات إلى API
-      const response = await api.post('/register-ductor', formData, {
+      return api.post('/register-ductor', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-      
+    },
+    onSuccess: (response) => {
       console.log(response.data);
       
-      if (response.data) {
-        toast({
-          title: "تم التسجيل بنجاح",
-          description: "تم تسجيل الطبيب بنجاح",
-        });
-        
-        // إغلاق النافذة وتحديث قائمة الأطباء
-        setIsRegistrationDialogOpen(false);
-        // تحديث قائمة الأطباء
-        fetchDoctors(currentPage);
-      }
-    } catch (error: any) {
+      toast({
+        title: "تم التسجيل بنجاح",
+        description: "تم تسجيل الطبيب بنجاح",
+      });
+      
+      // إغلاق النافذة وتحديث قائمة الأطباء
+      setIsRegistrationDialogOpen(false);
+      // تحديث قائمة الأطباء باستخدام React Query
+      fetchDoctors(currentPage);
+    },
+    onError: (error: any) => {
       console.error('Registration error:', error);
       toast({
         title: "خطأ في التسجيل",
         description: error.response?.data?.message || "حدث خطأ أثناء تسجيل الطبيب",
         variant: "destructive",
       });
-    } finally {
-      setIsRegistrationLoading(false);
     }
+  });
+
+  // معالجة إرسال بيانات تسجيل الطبيب
+  const handleDoctorRegistration = (data: DoctorRegistrationData) => {
+    registerDoctor(data);
   };
 
   return (
@@ -152,18 +153,20 @@ const Doctors = () => {
         <div className="flex flex-row-reverse gap-2 w-full md:w-auto justify-start md:justify-end">
           <Button
             onClick={() => setIsRegistrationDialogOpen(true)}
-            className="flex items-center gap-2 bg-secondary-main text-white hover:bg-green-600 px-4 py-2 rounded-lg shadow"
+            className="flex items-center gap-2 bg-primary-main text-white hover:bg-blue-700 px-4 py-2 rounded-lg shadow"
+            disabled={isRegistering}
           >
-            <UserPlus size={16} />
+            {isRegistering ? <Loader2 size={16} className="animate-spin mr-2" /> : <UserPlus size={16} />}
             تسجيل طبيب جديد
           </Button>
-          <Button
+          {/* <Button
             onClick={() => setAddDialogOpen(true)}
             className="flex items-center gap-2 bg-primary-main text-white hover:bg-blue-700 px-4 py-2 rounded-lg shadow"
+            disabled={isLoading}
           >
             <Plus size={16} />
             إضافة طبيب
-          </Button>
+          </Button> */}
           <ExportButton
             data={doctors}
             columns={doctorExportColumns}
@@ -257,7 +260,7 @@ const Doctors = () => {
         open={isRegistrationDialogOpen}
         onOpenChange={setIsRegistrationDialogOpen}
         onSubmit={handleDoctorRegistration}
-        isLoading={isRegistrationLoading}
+        isLoading={isRegistering}
       />
     </DashboardLayout>
   );

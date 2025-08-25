@@ -1,9 +1,23 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Eye, Edit, Ban, AlertTriangle, User } from 'lucide-react';
+import { MoreHorizontal, Eye, Edit, Ban, AlertTriangle, User, UserCheck, UserX, Bell, Trash2 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import StatusBadge from '@/components/dashboard/StatusBadge';
 import { Patient } from '@/types/patients';
 
 interface PatientsListProps {
@@ -11,22 +25,18 @@ interface PatientsListProps {
   onViewDetails: (patient: Patient) => void;
   onEditPatient: (patient: Patient) => void;
   onUpdateStatus: (patientId: string, status: Patient['status']) => void;
+  onDeletePatient?: (patientId: string) => void;
+  onSendNotification?: (patientId: string) => void;
 }
 
-const PatientsList = ({ patients, onViewDetails, onEditPatient, onUpdateStatus }: PatientsListProps) => {
-  const getStatusBadge = (status: string) => {
-    const statusConfig: Record<string, { label: string, className: string }> = {
-      active: { label: 'نشط', className: 'bg-green-100 text-green-800' },
-      blocked: { label: 'محظور', className: 'bg-red-100 text-red-800' },
-      suspended: { label: 'معلق', className: 'bg-yellow-100 text-yellow-800' },
-      'مفعل': { label: 'نشط', className: 'bg-green-100 text-green-800' },
-      'غير مفعل': { label: 'محظور', className: 'bg-red-100 text-red-800' }
-    };
-
-    const config = statusConfig[status] || statusConfig.blocked;
-    return <Badge className={config.className}>{config.label}</Badge>;
-  };
-
+const PatientsList = ({ 
+  patients, 
+  onViewDetails, 
+  onEditPatient, 
+  onUpdateStatus, 
+  onDeletePatient, 
+  onSendNotification 
+}: PatientsListProps) => {
   const getGenderLabel = (gender: string) => {
     return gender === 'male' ? 'ذكر' : 'أنثى';
   };
@@ -50,104 +60,103 @@ const PatientsList = ({ patients, onViewDetails, onEditPatient, onUpdateStatus }
     }
   };
 
-  if (patients.length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-8 text-center">
-          <User className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500">لا توجد مرضى مطابقين للبحث</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {patients.map((patient) => (
-        <Card key={patient.id} className="hover:shadow-lg transition-shadow">
-          <CardHeader className="pb-3">
-            <div className="flex justify-between items-start">
-              <CardTitle className="text-lg text-right">{patient.name}</CardTitle>
-              {getStatusBadge(patient.status)}
-            </div>
-          </CardHeader>
-          
-          <CardContent className="space-y-3">
-            <div className="text-sm text-gray-600 text-right space-y-1">
-              <div>الجنس: {getGenderLabel(patient.gender)}</div>
-              <div>العمر: {calculateAge(patient.dateOfBirth || patient.birthday)} {calculateAge(patient.dateOfBirth || patient.birthday) !== 'غير محدد' ? 'سنة' : ''}</div>
-              {patient.phone && <div>الهاتف: {patient.phone}</div>}
-              {patient.address && <div>العنوان: {patient.address}</div>}
-              {patient.height && <div>الطول: {patient.height} سم</div>}
-              {patient.weight && <div>الوزن: {patient.weight} كجم</div>}
-              {patient.registrationDate && (
-                <div>تاريخ التسجيل: {new Date(patient.registrationDate).toLocaleDateString('ar-SA')}</div>
-              )}
-              {patient.totalConsultations !== undefined && (
-                <div>عدد الاستشارات: {patient.totalConsultations}</div>
-              )}
-              {patient.lastConsultationDate && (
-                <div>آخر استشارة: {new Date(patient.lastConsultationDate).toLocaleDateString('ar-SA')}</div>
-              )}
-            </div>
-
-            <div className="flex gap-2 pt-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onViewDetails(patient)}
-                className="flex-1"
-              >
-                <Eye className="h-4 w-4 ml-1" />
-                عرض
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => onEditPatient(patient)}
-                className="flex-1"
-              >
-                <Edit className="h-4 w-4 ml-1" />
-                تعديل
-              </Button>
-
-              {patient.status === 'active' && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onUpdateStatus(patient.id, 'suspended')}
-                  className="px-2"
-                >
-                  <AlertTriangle className="h-4 w-4" />
-                </Button>
-              )}
-
-              {patient.status !== 'blocked' && (
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => onUpdateStatus(patient.id, 'blocked')}
-                  className="px-2"
-                >
-                  <Ban className="h-4 w-4" />
-                </Button>
-              )}
-
-              {patient.status !== 'active' && (
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={() => onUpdateStatus(patient.id, 'active')}
-                  className="px-2"
-                >
-                  تفعيل
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="unified-card">
+      <div className="overflow-hidden rounded-lg border border-border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>اسم المريض</TableHead>
+              <TableHead>البريد الإلكتروني</TableHead>
+              <TableHead>الهاتف</TableHead>
+              <TableHead>الجنس</TableHead>
+              <TableHead>العمر</TableHead>
+              <TableHead>الحالة</TableHead>
+              <TableHead className="text-center">الإجراءات</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {patients.map((patient) => (
+              <TableRow key={patient.id}>
+                <TableCell className="font-medium">
+                  {patient.fullName || patient.name}
+                </TableCell>
+                <TableCell>{patient.email}</TableCell>
+                <TableCell>{patient.phoneNumber || patient.phone || 'غير محدد'}</TableCell>
+                <TableCell>{getGenderLabel(patient.gender)}</TableCell>
+                <TableCell>
+                  {calculateAge(patient.dateOfBirth || patient.birthday)}
+                  {calculateAge(patient.dateOfBirth || patient.birthday) !== 'غير محدد' ? ' سنة' : ''}
+                </TableCell>
+                <TableCell>
+                  <StatusBadge 
+                    status={patient.status === 'active' || patient.status === 'مفعل' ? 'approved' : 'rejected'} 
+                    text={patient.status === 'active' || patient.status === 'مفعل' ? 'مفعل' : 'غير مفعل'} 
+                  />
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => onViewDetails(patient)}
+                      className="action-button action-button-secondary"
+                    >
+                      عرض التفاصيل
+                    </Button>
+                    
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="action-button action-button-ghost">
+                          <MoreHorizontal size={16} />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="dropdown-content">
+                        <DropdownMenuItem onClick={() => onUpdateStatus(patient.id, patient.status === 'active' || patient.status === 'مفعل' ? 'blocked' : 'active')} className="dropdown-item">
+                          {patient.status === 'active' || patient.status === 'مفعل' ? (
+                            <>
+                              <UserX size={16} />
+                              <span>تعطيل</span>
+                            </>
+                          ) : (
+                            <>
+                              <UserCheck size={16} />
+                              <span>تفعيل</span>
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        {onSendNotification && (
+                          <DropdownMenuItem onClick={() => onSendNotification(patient.id)} className="dropdown-item">
+                            <Bell size={16} />
+                            <span>إرسال إشعار</span>
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem onClick={() => onEditPatient(patient)} className="dropdown-item">
+                          <Edit size={16} />
+                          <span>تعديل البيانات</span>
+                        </DropdownMenuItem>
+                        {onDeletePatient && (
+                          <DropdownMenuItem onClick={() => onDeletePatient(patient.id)} className="dropdown-item text-destructive">
+                            <Trash2 size={16} />
+                            <span>حذف</span>
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+            {patients.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  لا توجد نتائج مطابقة لبحثك
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };

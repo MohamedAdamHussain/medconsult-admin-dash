@@ -583,10 +583,10 @@ const DoctorApplications = () => {
               <X size={16} />
               <span>رفض</span>
             </Button>
-            <Button variant="outline" className="flex items-center gap-2">
+            {/* <Button variant="outline" className="flex items-center gap-2">
               <MessageSquare size={16} />
               <span>طلب تعديل</span>
-            </Button>
+            </Button> */}
             <Button className="flex items-center gap-2">
               <Check size={16} />
               <span>قبول</span>

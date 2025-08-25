@@ -6,16 +6,18 @@ alwaysApply: true
 # MedConsult Admin Dashboard Information
 
 ## Summary
-A React-based administrative dashboard for the MedConsult platform, providing interfaces for managing doctors, patients, appointments, complaints, charities, and other medical consultation services. Built with modern web technologies for efficient healthcare administration.
+Panel de administración basado en React para la plataforma MedConsult, que proporciona interfaces para gestionar médicos, pacientes, citas, quejas, organizaciones benéficas y otros servicios de consulta médica. Construido con tecnologías web modernas para una administración eficiente de servicios de salud.
 
 ## Structure
-- **src/**: Core application source code containing components, pages, hooks, and utilities
-- **public/**: Static assets including icons and placeholder images
-- **components/**: Reusable UI components organized by feature (doctors, patients, auth, etc.)
-- **pages/**: Main application views for different administrative sections
-- **hooks/**: Custom React hooks for state management and API interactions
-- **lib/**: Utility functions and API service configuration
-- **types/**: TypeScript type definitions for various data models
+- **src/**: Código fuente principal organizado en componentes, páginas, hooks y utilidades
+  - **components/**: Componentes UI reutilizables organizados por funcionalidad
+  - **pages/**: Vistas principales para diferentes secciones administrativas
+  - **hooks/**: Custom hooks para gestión de estado e interacciones con API
+  - **lib/**: Funciones de utilidad y configuración de servicios API
+  - **types/**: Definiciones de tipos TypeScript para modelos de datos
+  - **utils/**: Funciones auxiliares y herramientas
+- **public/**: Activos estáticos incluyendo iconos e imágenes
+- **dist/**: Archivos compilados para producción
 
 ## Language & Runtime
 **Language**: TypeScript/JavaScript
@@ -29,11 +31,13 @@ A React-based administrative dashboard for the MedConsult platform, providing in
 - React Router 6.26.2
 - TanStack React Query 5.56.2
 - Axios 1.10.0
-- Shadcn UI (Radix UI components)
+- Shadcn UI (componentes Radix UI)
 - Tailwind CSS 3.4.11
 - Recharts 2.12.7
 - Zod 3.23.8
 - React Hook Form 7.53.0
+- jsPDF 3.0.1
+- XLSX 0.18.5
 
 **Development Dependencies**:
 - Vite 5.4.1
@@ -44,37 +48,45 @@ A React-based administrative dashboard for the MedConsult platform, providing in
 
 ## Build & Installation
 ```bash
-# Install dependencies
+# Instalar dependencias
 npm i
 
-# Start development server
+# Iniciar servidor de desarrollo
 npm run dev
 
-# Build for production
+# Construir para producción
 npm run build
 
-# Preview production build
+# Construir para desarrollo
+npm run build:dev
+
+# Vista previa de la build
 npm run preview
 ```
 
 ## API Integration
-**Base URL**: Configured via environment variable `VITE_API_URL` with fallback to `http://localhost:8000/api`
-**Authentication**: JWT-based with token stored in localStorage
-**Request Timeout**: 10 seconds
-**Error Handling**: Comprehensive error handling with automatic logout on 401 responses
+**Base URL**: Configurado vía variable de entorno `VITE_API_URL` con fallback a `http://localhost:8000/api`
+**Authentication**: Basado en JWT con token almacenado en localStorage
+**Request Timeout**: 10 segundos
+**Error Handling**: Manejo integral de errores con cierre de sesión automático en respuestas 401
 
 ## Main Files & Resources
 **Entry Point**: src/main.tsx
 **App Configuration**: src/App.tsx
-**Routing**: React Router with protected routes via ProtectedRoute component
-**State Management**: React Query for server state, React Context for authentication
-**API Service**: src/lib/api.ts with interceptors for authentication and error handling
+**Routing**: React Router con rutas protegidas mediante componente ProtectedRoute
+**State Management**: React Query para estado del servidor, React Context para autenticación
+**API Service**: src/lib/api.ts con interceptores para autenticación y manejo de errores
+**Configuration Files**:
+- vite.config.ts (configuración del servidor en puerto 8080)
+- tsconfig.json (configuración de TypeScript)
+- tailwind.config.ts (configuración de Tailwind CSS)
 
 ## Features
-- **Authentication**: Login system with protected routes
-- **User Management**: Admin, doctor, and patient management interfaces
-- **Medical Services**: Appointments, medical questions, and specialties management
-- **Financial Tracking**: Financial reports and transaction monitoring
-- **Content Management**: Gallery and notification systems
-- **Analytics**: KPI dashboards and activity logging
-- **Charity Management**: Interface for managing charity organizations
+- **Authentication**: Sistema de login con rutas protegidas
+- **User Management**: Interfaces para gestión de administradores, médicos y pacientes
+- **Medical Services**: Gestión de citas, preguntas médicas y especialidades
+- **Financial Tracking**: Informes financieros y monitoreo de transacciones
+- **Content Management**: Sistemas de galería y notificaciones
+- **Analytics**: Dashboards KPI y registro de actividades
+- **Charity Management**: Interfaz para gestionar organizaciones benéficas
+- **Subscription Management**: Gestión de planes y suscripciones de usuarios

@@ -53,7 +53,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     // جلب إحصائيات المستخدمين حسب الدور
-    safeGet('http://localhost:8000/api/admin/users/count-by-role')
+    safeGet('/admin/users/count-by-role')
       .then(({ data, error }) => {
         if (data && data.data) {
           setUserCounts(data.data);
@@ -92,7 +92,7 @@ const Dashboard = () => {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <StatsCard 
-          title="الأطباء النشطين" 
+          title="الأطباء المسجلين" 
           value={userCounts.doctor} 
           icon={<Users className="h-6 w-6" />} 
           trend={{ value: 0, isPositive: true }}
@@ -104,13 +104,13 @@ const Dashboard = () => {
           trend={{ value: 0, isPositive: true }}
         />
         <StatsCard 
-          title="الاستشارات (أخر 7 أيام)" 
+          title="الاستشارات" 
           value="532" 
           icon={<MessageSquare className="h-6 w-6" />} 
           trend={{ value: 5, isPositive: true }}
         />
         <StatsCard 
-          title="الشكاوى المفتوحة" 
+          title="الشكاو" 
           value="17" 
           icon={<AlertTriangle className="h-6 w-6" />} 
           trend={{ value: 3, isPositive: false }}

@@ -37,7 +37,7 @@ const navItems = [
   { name: "الإشعارات", href: "/notifications", icon: Bell },
   { name: "الشكاوى", href: "/complaints", icon: Shield },
   { name: "المشرفين", href: "/admins", icon: Users },
-  { name: "الجمعيات الخيرية", href: "/charities", icon: Archive },
+  // { name: "الجمعيات الخيرية", href: "/charities", icon: Archive },
   { name: "التخصصات الطبية", href: "/specialties", icon: FileBarChart },
   { name: "الأسئلة الطبية", href: "/medical-questions", icon: FileText },
   { name: "إدارة الـ Gallery", href: "/gallery", icon: GalleryHorizontal },

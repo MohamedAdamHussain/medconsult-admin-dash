@@ -127,7 +127,7 @@ const PaymentSettings = () => {
         </CardContent>
       </Card>
 
-      {/* Subscription Settings */}
+      {/* Subscription Settings
       <Card>
         <CardHeader>
           <CardTitle className="text-right flex items-center gap-2">
@@ -178,7 +178,7 @@ const PaymentSettings = () => {
             </div>
           )}
         </CardContent>
-      </Card>
+      </Card> */}
 
       <div className="flex justify-end">
         <Button onClick={handleSave} className="flex items-center gap-2">

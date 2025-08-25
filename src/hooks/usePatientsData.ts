@@ -19,6 +19,7 @@ export const usePatientsData = () => {
 
   // جلب بيانات المرضى مع دعم الصفحات
   const fetchPatients = async (page: number = 1) => {
+    
     setIsLoading(true);
     setError(null);
     

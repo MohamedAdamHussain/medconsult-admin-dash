@@ -143,19 +143,19 @@ const Financial = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
         <StatsCard 
           title="إجمالي الإيرادات" 
-          value={`${totalRevenue.toLocaleString()} ريال`} 
+          value={`${totalRevenue.toLocaleString()} ليرة`} 
           icon={<DollarSign className="h-6 w-6" />} 
           trend={{ value: 8, isPositive: true }}
         />
         <StatsCard 
-          title="المبالغ المستحقة" 
-          value={`${pendingAmount.toLocaleString()} ريال`} 
+          title="المبالغ المستحقة للمنصة" 
+          value={`${pendingAmount.toLocaleString()} ليرة`} 
           icon={<ArrowDown className="h-6 w-6" />} 
           trend={{ value: 12, isPositive: false }}
         />
         <StatsCard 
-          title="المبالغ المدفوعة" 
-          value={`${paidAmount.toLocaleString()} ريال`} 
+          title="المبالغ المدفوعة للأطباء" 
+          value={`${paidAmount.toLocaleString()} ليرة`} 
           icon={<ArrowUp className="h-6 w-6" />} 
           trend={{ value: 15, isPositive: true }}
         />
@@ -165,7 +165,7 @@ const Financial = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <DashboardChart 
           title="الإيرادات الشهرية" 
-          type="bar" 
+          type="line" 
           data={monthlyRevenueData} 
         />
         <DashboardChart 
@@ -236,7 +236,7 @@ const Financial = () => {
                 <TableHead className="text-center">المبلغ المستحق</TableHead>
                 <TableHead className="text-center">تاريخ الإضافة</TableHead>
                 <TableHead className="text-center">حالة الدفع</TableHead>
-                <TableHead className="text-center">الإجراءات</TableHead>
+                {/* <TableHead className="text-center">الإجراءات</TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -258,7 +258,7 @@ const Financial = () => {
                       {item.status === 'paid' ? 'تم الدفع' : 'قيد الدفع'}
                     </span>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <div className="flex justify-center">
                       <Button 
                         size="sm" 
@@ -268,7 +268,7 @@ const Financial = () => {
                         {item.status === 'paid' ? 'تم الدفع' : 'تأكيد الدفع'}
                       </Button>
                     </div>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
