@@ -112,7 +112,7 @@ const PatientsList = ({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="dropdown-content">
-                        <DropdownMenuItem onClick={() => onUpdateStatus(patient.id, patient.status === 'active' || patient.status === 'مفعل' ? 'blocked' : 'active')} className="dropdown-item">
+                        <DropdownMenuItem onClick={() => onUpdateStatus(String(patient.id), patient.status === 'active' || patient.status === 'مفعل' ? 'blocked' : 'active')} className="dropdown-item">
                           {patient.status === 'active' || patient.status === 'مفعل' ? (
                             <>
                               <UserX size={16} />
@@ -126,7 +126,7 @@ const PatientsList = ({
                           )}
                         </DropdownMenuItem>
                         {onSendNotification && (
-                          <DropdownMenuItem onClick={() => onSendNotification(patient.id)} className="dropdown-item">
+                          <DropdownMenuItem onClick={() => onSendNotification(String(patient.id))} className="dropdown-item">
                             <Bell size={16} />
                             <span>إرسال إشعار</span>
                           </DropdownMenuItem>
@@ -136,7 +136,7 @@ const PatientsList = ({
                           <span>تعديل البيانات</span>
                         </DropdownMenuItem>
                         {onDeletePatient && (
-                          <DropdownMenuItem onClick={() => onDeletePatient(patient.id)} className="dropdown-item text-destructive">
+                          <DropdownMenuItem onClick={() => onDeletePatient(String(patient.id))} className="dropdown-item text-destructive">
                             <Trash2 size={16} />
                             <span>حذف</span>
                           </DropdownMenuItem>
