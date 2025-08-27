@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Loader2, Plus, UserPlus } from "lucide-react";
+import { AlertTriangle, Loader2, Plus, UserPlus, User } from "lucide-react";
 import DoctorDetails from "@/components/doctors/DoctorDetails";
 import DoctorsList from "@/components/doctors/DoctorsList";
 import SearchAndFilter from "@/components/doctors/SearchAndFilter";
@@ -214,22 +214,47 @@ const Doctors = () => {
       {/* قائمة الأطباء */}
       {!isLoading && !error && (
         <>
-          <DoctorsList
-            doctors={doctors}
-            onViewDetails={viewDoctorDetails}
-            onToggleStatus={toggleDoctorStatus}
-            onSendNotification={sendNotification}
-            onDeleteDoctor={deleteDoctor}
-          />
-          
-          {/* مكون التنقل بين الصفحات */}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={goToPage}
-            totalItems={totalDoctors}
-            itemsPerPage={perPage}
-          />
+          {doctors.length > 0 ? (
+            <>
+              <DoctorsList
+                doctors={doctors}
+                onViewDetails={viewDoctorDetails}
+                onToggleStatus={toggleDoctorStatus}
+                onSendNotification={sendNotification}
+                onDeleteDoctor={deleteDoctor}
+              />
+              
+              {/* مكون التنقل بين الصفحات */}
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={goToPage}
+                  totalItems={totalDoctors}
+                  itemsPerPage={perPage}
+                />
+              )}
+            </>
+          ) : (
+            <div className="unified-card">
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="mb-4 rounded-full bg-muted p-4">
+                  <User className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">لا توجد أطباء</h3>
+                <p className="text-muted-foreground mb-6 max-w-md">
+                  لم يتم العثور على أي أطباء مطابقين لمعايير البحث المحددة.
+                </p>
+                <Button 
+                  onClick={() => setAddDialogOpen(true)}
+                  className="action-button action-button-primary"
+                >
+                  <Plus size={16} />
+                  إضافة أول طبيب
+                </Button>
+              </div>
+            </div>
+          )}
         </>
       )}
 

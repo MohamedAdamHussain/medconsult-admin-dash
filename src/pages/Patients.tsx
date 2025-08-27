@@ -5,7 +5,7 @@ import PatientDetails from '@/components/patients/PatientDetails';
 import PatientsFilter from '@/components/patients/PatientsFilter';
 import PatientForm from '@/components/patients/PatientForm';
 import AddEditPatientDialog from '@/components/patients/AddEditPatientDialog';
-import { usePatients } from '@/hooks/usePatients';
+import { usePatientsData } from '@/hooks/usePatientsData';
 import { Patient, CreatePatientRequest, UpdatePatientRequest } from '@/types/patients';
 import {
   Dialog,
@@ -33,14 +33,18 @@ const Patients = () => {
     patients,
     isLoading,
     error,
-    refetch,
-    createPatient,
-    updatePatient,
-    deletePatient,
-    isCreating,
-    isUpdating,
-    isDeleting,
-  } = usePatients();
+    currentPage,
+    totalPages,
+    totalPatients,
+    perPage,
+    goToPage,
+    fetchPatients,
+    addPatient,
+    updatePatient: updatePatientData,
+    viewPatientDetails,
+    editPatient,
+    updatePatientStatus,
+  } = usePatientsData();
 
   // فتح نافذة التعديل مع بيانات المريض المحدد
   const handleEditPatient = (patient: Patient) => {
@@ -49,19 +53,21 @@ const Patients = () => {
   };
 
   // معالجة حفظ المريض (إنشاء أو تحديث)
-  const handleSavePatient = (data: CreatePatientRequest | { id: number; data: UpdatePatientRequest }) => {
-    if ('id' in data) {
+  const handleSavePatient = (data: any) => {
+    if (selectedPatient) {
       // تحديث مريض موجود
-      updatePatient(data);
+      updatePatientData(String(selectedPatient.id), data);
     } else {
       // تسجيل مريض جديد
-      createPatient(data);
+      addPatient(data);
     }
+    setOpenAddDialog(false);
+    setSelectedPatient(null);
   };
 
   // معالجة حذف المريض
-  const handleDeletePatient = (id: number) => {
-    deletePatient(id);
+  const handleDeletePatient = (id: string) => {
+    console.log('Delete patient:', id);
   };
 
   // فلترة المرضى
@@ -115,7 +121,7 @@ const Patients = () => {
           <Button 
             onClick={() => {
               console.log("Refetching patients");
-              refetch()}}
+              fetchPatients(currentPage)}}
             variant="outline"
             disabled={isLoading}
             className="flex items-center gap-2 px-4 py-2 rounded-lg shadow"
@@ -135,13 +141,8 @@ const Patients = () => {
               setOpenAddDialog(true);
             }}
             className="flex items-center gap-2 bg-primary-main text-white hover:bg-blue-700 px-4 py-2 rounded-lg shadow"
-            disabled={isCreating}
           >
-            {isCreating ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Plus size={16} />
-            )}
+            <Plus size={16} />
             تسجيل مريض جديد
           </Button>
         </div>
@@ -231,24 +232,53 @@ const Patients = () => {
 
       {/* قائمة المرضى */}
       {!isLoading && !error && (
-        <PatientsList 
-          patients={filteredPatients}
-          onViewDetails={(patient) => {
-            setSelectedPatient(patient);
-            setIsDetailsDialogOpen(true);
-          }}
-          onEditPatient={handleEditPatient}
-          onUpdateStatus={(id, status) => {
-            // يمكن إضافة وظيفة تحديث الحالة لاحقاً
-            console.log('Update status:', id, status);
-          }}
-          onDeletePatient={(id) => {
-            handleDeletePatient(Number(id));
-          }}
-          onSendNotification={(id) => {
-            console.log('Send notification to patient:', id);
-          }}
-        />
+        <>
+          {filteredPatients.length > 0 ? (
+            <>
+              <PatientsList 
+                patients={filteredPatients}
+                onViewDetails={viewPatientDetails}
+                onEditPatient={editPatient}
+                onUpdateStatus={updatePatientStatus}
+                onDeletePatient={handleDeletePatient}
+                onSendNotification={(id) => {
+                  console.log('Send notification to patient:', id);
+                }}
+              />
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={goToPage}
+                  totalItems={totalPatients}
+                  itemsPerPage={perPage}
+                />
+              )}
+            </>
+          ) : (
+            <div className="unified-card">
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="mb-4 rounded-full bg-muted p-4">
+                  <AlertTriangle className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">لا توجد مرضى</h3>
+                <p className="text-muted-foreground mb-6 max-w-md">
+                  لم يتم العثور على أي مرضى مطابقين لمعايير البحث المحددة.
+                </p>
+                <Button 
+                  onClick={() => {
+                    setSelectedPatient(null);
+                    setOpenAddDialog(true);
+                  }}
+                  className="action-button action-button-primary"
+                >
+                  <Plus size={16} />
+                  تسجيل أول مريض
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
       )}
       
       {/* نافذة إضافة/تعديل المريض */}
@@ -262,7 +292,7 @@ const Patients = () => {
         }}
         patient={selectedPatient}
         onSave={handleSavePatient}
-        isLoading={isCreating || isUpdating}
+        isLoading={false}
       />
 
       {/* نافذة تفاصيل المريض */}
