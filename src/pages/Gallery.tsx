@@ -1,132 +1,107 @@
 
-import { useState, useEffect } from "react";
+import React from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { Card, CardContent } from "@/components/ui/card";
-import MediaUploader from "@/components/gallery/MediaUploader";
-import MediaGrid from "@/components/gallery/MediaGrid";
-import { MediaItem } from "@/types/media";
-import { toast } from "sonner";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Eye, EyeOff, Plus, Image } from "lucide-react";
+import BannerUploader from "@/components/gallery/BannerUploader";
+import BannerGrid from "@/components/gallery/BannerGrid";
+import { useMedicalBanners } from "@/hooks/useMedicalBanners";
 
 const Gallery = () => {
-  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    banners,
+    isLoading,
+    createBanner,
+    updateBanner,
+    deleteBanner,
+    toggleActive,
+    isCreating,
+    isUpdating,
+    isDeleting,
+    isToggling,
+  } = useMedicalBanners();
 
-  // في بيئة إنتاجية حقيقية، هذه البيانات ستأتي من قاعدة بيانات
-  useEffect(() => {
-    // محاكاة لجلب البيانات من الخادم
-    setIsLoading(true);
-    
-    // بيانات تجريبية (في الإنتاج ستأتي من API)
-    const demoData: MediaItem[] = [
-      {
-        id: '1',
-        title: 'صورة طبيب',
-        type: 'image',
-        url: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-        createdAt: new Date().toISOString(),
-        size: 1024 * 500, // 500KB
-      },
-      {
-        id: '2',
-        title: 'فيديو توضيحي',
-        type: 'video',
-        url: 'https://player.vimeo.com/external/403295268.sd.mp4?s=3446f36caba72ff9967a77939c9e4ac3feac9fd0&profile_id=164&oauth2_token_id=57447761',
-        thumbnailUrl: 'https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?w=200&auto=format&fit=crop&q=60&ixlib=rb-4.0.3',
-        createdAt: new Date().toISOString(),
-        size: 1024 * 1024 * 5, // 5MB
-      },
-      {
-        id: '3',
-        title: 'دليل المستخدم',
-        type: 'file',
-        url: '/placeholder.svg',
-        thumbnailUrl: '/placeholder.svg',
-        createdAt: new Date().toISOString(),
-        size: 1024 * 1024 * 2, // 2MB
-        fileType: 'pdf'
-      }
-    ];
-    
-    setTimeout(() => {
-      setMediaItems(demoData);
-      setIsLoading(false);
-    }, 800);
-  }, []);
-
-  const handleUpload = (files: File[]) => {
-    setIsLoading(true);
-    
-    // محاكاة لعملية الرفع
-    setTimeout(() => {
-      const newItems: MediaItem[] = files.map((file, index) => {
-        const isImage = file.type.startsWith('image/');
-        const isVideo = file.type.startsWith('video/');
-        const isPDF = file.type === 'application/pdf';
-        
-        let fileType: 'image' | 'video' | 'file' = 'file';
-        if (isImage) fileType = 'image';
-        if (isVideo) fileType = 'video';
-        
-        // إنشاء URL مؤقت للملف المحلي
-        const url = URL.createObjectURL(file);
-        
-        return {
-          id: `new-${Date.now()}-${index}`,
-          title: file.name,
-          type: fileType,
-          url: url,
-          thumbnailUrl: isImage ? url : (isVideo ? '/placeholder.svg' : '/placeholder.svg'),
-          createdAt: new Date().toISOString(),
-          size: file.size,
-          fileType: isPDF ? 'pdf' : undefined
-        };
-      });
-      
-      setMediaItems(prev => [...newItems, ...prev]);
-      setIsLoading(false);
-      toast.success(`تم رفع ${files.length} ملف بنجاح`);
-    }, 1500);
-  };
-
-  const handleDelete = (id: string) => {
-    setMediaItems(prev => prev.filter(item => item.id !== id));
-    toast.success('تم حذف الملف بنجاح');
-  };
-
-  const handleReorder = (items: MediaItem[]) => {
-    setMediaItems(items);
-    toast.success('تم إعادة ترتيب الملفات بنجاح');
-  };
+  const activeBanners = banners.filter(banner => banner.is_active);
+  const inactiveBanners = banners.filter(banner => !banner.is_active);
+  const expiredBanners = banners.filter(banner => 
+    banner.expires_at && new Date(banner.expires_at) < new Date()
+  );
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        {/* العنوان والإحصائيات */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-right">إدارة الوسائط</h1>
+            <h1 className="text-2xl font-bold text-right">إدارة البانرات الطبية</h1>
             <p className="text-muted-foreground text-right">
-              قم بتحميل وإدارة الصور والفيديوهات والملفات المستخدمة في التطبيق
+              قم بإدارة البانرات الإعلانية والترويجية للمنصة الطبية
             </p>
+          </div>
+          
+          <div className="flex gap-2">
+            <Badge variant="default" className="flex items-center gap-1">
+              <Eye className="h-3 w-3" />
+              مفعل: {activeBanners.length}
+            </Badge>
+            <Badge variant="secondary" className="flex items-center gap-1">
+              <EyeOff className="h-3 w-3" />
+              معطل: {inactiveBanners.length}
+            </Badge>
+            {expiredBanners.length > 0 && (
+              <Badge variant="destructive" className="flex items-center gap-1">
+                منتهي الصلاحية: {expiredBanners.length}
+              </Badge>
+            )}
           </div>
         </div>
 
-        <Card>
-          <CardContent className="pt-6">
-            <MediaUploader onUpload={handleUpload} isLoading={isLoading} />
-          </CardContent>
-        </Card>
+        {/* التبويبات */}
+        <Tabs defaultValue="upload" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="upload" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              إضافة بانر جديد
+            </TabsTrigger>
+            <TabsTrigger value="manage" className="flex items-center gap-2">
+              <Image className="h-4 w-4" />
+              إدارة البانرات ({banners.length})
+            </TabsTrigger>
+          </TabsList>
 
-        <Card>
-          <CardContent className="pt-6">
-            <MediaGrid 
-              items={mediaItems} 
-              isLoading={isLoading} 
-              onDelete={handleDelete}
-              onReorder={handleReorder}
+          {/* إضافة بانر جديد */}
+          <TabsContent value="upload">
+            <BannerUploader 
+              onUpload={createBanner} 
+              isLoading={isCreating} 
             />
-          </CardContent>
-        </Card>
+          </TabsContent>
+
+          {/* إدارة البانرات */}
+          <TabsContent value="manage">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Image className="h-5 w-5" />
+                  جميع البانرات
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <BannerGrid 
+                  banners={banners}
+                  isLoading={isLoading}
+                  onDelete={deleteBanner}
+                  onToggleActive={toggleActive}
+                  onUpdate={(id, data) => updateBanner({ id, data })}
+                  isDeleting={isDeleting}
+                  isToggling={isToggling}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   );
