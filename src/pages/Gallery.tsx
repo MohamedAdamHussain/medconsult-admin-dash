@@ -1,94 +1,107 @@
 
-import { useState, useEffect } from "react";
+import React from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { Card, CardContent } from "@/components/ui/card";
-import MediaUploader from "@/components/gallery/MediaUploader";
-import MediaGrid from "@/components/gallery/MediaGrid";
-import { MediaItem } from "@/types/media";
-import { toast } from "sonner";
-import { useGalleryData } from "@/hooks/useGalleryData";
-import { createBanner, deleteBanner, resolveImageUrl } from "@/services/banners";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Eye, EyeOff, Plus, Image } from "lucide-react";
+import BannerUploader from "@/components/gallery/BannerUploader";
+import BannerGrid from "@/components/gallery/BannerGrid";
+import { useMedicalBanners } from "@/hooks/useMedicalBanners";
 
 const Gallery = () => {
-  const { items, setItems, isLoading } = useGalleryData();
+  const {
+    banners,
+    isLoading,
+    createBanner,
+    updateBanner,
+    deleteBanner,
+    toggleActive,
+    isCreating,
+    isUpdating,
+    isDeleting,
+    isToggling,
+  } = useMedicalBanners();
 
-  const handleUpload = async (
-    itemsToUpload: { file: File; meta: { title: string; link?: string; is_active?: boolean; expires_at?: string | null } }[]
-  ) => {
-    if (itemsToUpload.length === 0) return;
-    let successCount = 0;
-    for (const { file, meta } of itemsToUpload) {
-      const { data, error } = await createBanner({
-        title: meta.title || file.name,
-        image: file,
-        link: meta.link ?? undefined,
-        is_active: meta.is_active,
-        expires_at: meta.expires_at ?? undefined,
-      });
-      if (error) {
-        toast.error(error.message);
-        continue;
-      }
-      successCount += 1;
-      const newItem: MediaItem = {
-        id: String(data!.id),
-        title: data!.title,
-        type: 'image',
-        url: resolveImageUrl(data!.image_url),
-        thumbnailUrl: resolveImageUrl(data!.image_url),
-        createdAt: data!.created_at ?? new Date().toISOString(),
-        size: 0,
-      };
-      setItems((prev) => [newItem, ...prev]);
-    }
-    if (successCount > 0) {
-      toast.success(`تم رفع ${successCount} ملف بنجاح`);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    const { error } = await deleteBanner(Number(id));
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-    setItems(prev => prev.filter(item => item.id !== id));
-    toast.success('تم حذف الملف بنجاح');
-  };
-
-  const handleReorder = (reordered: MediaItem[]) => {
-    setItems(reordered);
-    toast.success('تم إعادة ترتيب الملفات بنجاح');
-  };
+  const activeBanners = banners.filter(banner => banner.is_active);
+  const inactiveBanners = banners.filter(banner => !banner.is_active);
+  const expiredBanners = banners.filter(banner => 
+    banner.expires_at && new Date(banner.expires_at) < new Date()
+  );
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        {/* العنوان والإحصائيات */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-right">إدارة الوسائط</h1>
+            <h1 className="text-2xl font-bold text-right">إدارة البانرات الطبية</h1>
             <p className="text-muted-foreground text-right">
-              قم بتحميل وإدارة الصور والفيديوهات والملفات المستخدمة في التطبيق
+              قم بإدارة البانرات الإعلانية والترويجية للمنصة الطبية
             </p>
+          </div>
+          
+          <div className="flex gap-2">
+            <Badge variant="default" className="flex items-center gap-1">
+              <Eye className="h-3 w-3" />
+              مفعل: {activeBanners.length}
+            </Badge>
+            <Badge variant="secondary" className="flex items-center gap-1">
+              <EyeOff className="h-3 w-3" />
+              معطل: {inactiveBanners.length}
+            </Badge>
+            {expiredBanners.length > 0 && (
+              <Badge variant="destructive" className="flex items-center gap-1">
+                منتهي الصلاحية: {expiredBanners.length}
+              </Badge>
+            )}
           </div>
         </div>
 
-        <Card>
-          <CardContent className="pt-6">
-            <MediaUploader onUpload={handleUpload} isLoading={isLoading} />
-          </CardContent>
-        </Card>
+        {/* التبويبات */}
+        <Tabs defaultValue="upload" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="upload" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              إضافة بانر جديد
+            </TabsTrigger>
+            <TabsTrigger value="manage" className="flex items-center gap-2">
+              <Image className="h-4 w-4" />
+              إدارة البانرات ({banners.length})
+            </TabsTrigger>
+          </TabsList>
 
-        <Card>
-          <CardContent className="pt-6">
-            <MediaGrid 
-              items={items} 
-              isLoading={isLoading} 
-              onDelete={handleDelete}
-              onReorder={handleReorder}
+          {/* إضافة بانر جديد */}
+          <TabsContent value="upload">
+            <BannerUploader 
+              onUpload={createBanner} 
+              isLoading={isCreating} 
             />
-          </CardContent>
-        </Card>
+          </TabsContent>
+
+          {/* إدارة البانرات */}
+          <TabsContent value="manage">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Image className="h-5 w-5" />
+                  جميع البانرات
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <BannerGrid 
+                  banners={banners}
+                  isLoading={isLoading}
+                  onDelete={deleteBanner}
+                  onToggleActive={toggleActive}
+                  onUpdate={(id, data) => updateBanner({ id, data })}
+                  isDeleting={isDeleting}
+                  isToggling={isToggling}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   );

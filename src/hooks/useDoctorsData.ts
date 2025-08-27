@@ -256,7 +256,7 @@ export const useDoctorsData = () => {
   } = useQuery({
     queryKey: ['doctors', currentPage],
     queryFn: () => fetchDoctorsData(currentPage),
-    keepPreviousData: true, // للحفاظ على البيانات السابقة أثناء تحميل الصفحة الجديدة
+    placeholderData: (prev) => prev, // البديل الجديد لـ keepPreviousData
   });
 
   // استخراج البيانات المطلوبة

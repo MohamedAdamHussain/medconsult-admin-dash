@@ -86,7 +86,7 @@ const DoctorRegistrationDialog: React.FC<DoctorRegistrationDialogProps> = ({
             toast({
               title: "لا توجد تخصصات طبية",
               description: "لم يتم العثور على أي تخصصات طبية. يرجى إضافة تخصصات أولاً.",
-              variant: "warning",
+              variant: "destructive",
             });
           }
         } else {
