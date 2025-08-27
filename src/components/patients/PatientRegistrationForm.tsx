@@ -92,7 +92,16 @@ const PatientRegistrationForm = ({ open, onOpenChange }: PatientRegistrationForm
   // معالجة إرسال النموذج
   const onSubmit = (data: FormData) => {
     const registrationData: PatientRegistrationRequest = {
-      ...data,
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      password_confirmation: data.password_confirmation,
+      phone: data.phone,
+      gender: data.gender,
+      birthday: data.birthday,
+      address: data.address,
+      height: data.height,
+      weight: data.weight,
       general_diseases: generalDiseases,
       chronic_diseases: chronicDiseases,
       allergies,

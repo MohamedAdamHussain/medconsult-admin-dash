@@ -187,8 +187,8 @@ const Doctors = () => {
         onAddFilter={addFilter}
         onRemoveFilter={removeFilter}
         onClearFilters={clearFilters}
-        specialties={specialties}
-        cities={cities}
+        specialties={specialties as string[]}
+        cities={cities as string[]}
       />
 
       {/* رسالة تحميل */}
@@ -251,8 +251,8 @@ const Doctors = () => {
         open={addDialogOpen}
         onOpenChange={setAddDialogOpen}
         onAddDoctor={addDoctor}
-        specialties={specialties}
-        cities={cities}
+        specialties={specialties as string[]}
+        cities={cities as string[]}
       />
 
       {/* مودال تسجيل طبيب */}
