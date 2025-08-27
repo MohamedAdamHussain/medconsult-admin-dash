@@ -5,14 +5,22 @@ import { Input } from "@/components/ui/input";
 import { Upload, File, FileImage, FileVideo } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
+interface UploadItemMeta {
+  title: string;
+  link?: string;
+  is_active?: boolean;
+  expires_at?: string | null;
+}
+
 interface MediaUploaderProps {
-  onUpload: (files: File[]) => void;
+  onUpload: (items: { file: File; meta: UploadItemMeta }[]) => void;
   isLoading: boolean;
 }
 
 const MediaUploader = ({ onUpload, isLoading }: MediaUploaderProps) => {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [metas, setMetas] = useState<UploadItemMeta[]>([]);
   const [previewOpen, setPreviewOpen] = useState(false);
   
   const inputRef = useRef<HTMLInputElement>(null);
@@ -36,6 +44,7 @@ const MediaUploader = ({ onUpload, isLoading }: MediaUploaderProps) => {
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const filesArray = Array.from(e.dataTransfer.files);
       setSelectedFiles(filesArray);
+      setMetas(filesArray.map((f) => ({ title: f.name, is_active: true, link: '', expires_at: null })));
       setPreviewOpen(true);
     }
   };
@@ -46,14 +55,17 @@ const MediaUploader = ({ onUpload, isLoading }: MediaUploaderProps) => {
     if (e.target.files && e.target.files.length > 0) {
       const filesArray = Array.from(e.target.files);
       setSelectedFiles(filesArray);
+      setMetas(filesArray.map((f) => ({ title: f.name, is_active: true, link: '', expires_at: null })));
       setPreviewOpen(true);
     }
   };
 
   const handleSubmit = () => {
     if (selectedFiles.length > 0) {
-      onUpload(selectedFiles);
+      const payload = selectedFiles.map((file, idx) => ({ file, meta: metas[idx] ?? { title: file.name } }));
+      onUpload(payload);
       setSelectedFiles([]);
+      setMetas([]);
       setPreviewOpen(false);
     }
   };
@@ -124,13 +136,65 @@ const MediaUploader = ({ onUpload, isLoading }: MediaUploaderProps) => {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="max-h-[400px] overflow-y-auto">
+          <div className="max-h-[400px] overflow-y-auto space-y-4">
             {selectedFiles.map((file, index) => (
-              <div key={index} className="flex items-center py-2 border-b">
-                {getFileIcon(file)}
-                <div className="flex-1 px-4">
-                  <p className="font-medium truncate" dir="auto">{file.name}</p>
-                  <p className="text-sm text-gray-500">{formatFileSize(file.size)}</p>
+              <div key={index} className="border rounded-md p-3">
+                <div className="flex items-center mb-3">
+                  {getFileIcon(file)}
+                  <div className="flex-1 px-4">
+                    <p className="font-medium truncate" dir="auto">{file.name}</p>
+                    <p className="text-sm text-gray-500">{formatFileSize(file.size)}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-right">
+                  <div>
+                    <label className="text-sm">العنوان</label>
+                    <Input
+                      value={metas[index]?.title ?? ''}
+                      onChange={(e) => {
+                        const copy = [...metas];
+                        copy[index] = { ...(copy[index] ?? {}), title: e.target.value };
+                        setMetas(copy);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm">الرابط (اختياري)</label>
+                    <Input
+                      value={metas[index]?.link ?? ''}
+                      onChange={(e) => {
+                        const copy = [...metas];
+                        copy[index] = { ...(copy[index] ?? {}), link: e.target.value };
+                        setMetas(copy);
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm">تاريخ الانتهاء (اختياري)</label>
+                    <Input
+                      type="date"
+                      value={(metas[index]?.expires_at ?? '') as string}
+                      onChange={(e) => {
+                        const copy = [...metas];
+                        copy[index] = { ...(copy[index] ?? {}), expires_at: e.target.value || null };
+                        setMetas(copy);
+                      }}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      id={`active-${index}`}
+                      type="checkbox"
+                      className="h-4 w-4"
+                      checked={!!metas[index]?.is_active}
+                      onChange={(e) => {
+                        const copy = [...metas];
+                        copy[index] = { ...(copy[index] ?? {}), is_active: e.target.checked };
+                        setMetas(copy);
+                      }}
+                    />
+                    <label htmlFor={`active-${index}`} className="text-sm">مفعل</label>
+                  </div>
                 </div>
               </div>
             ))}
