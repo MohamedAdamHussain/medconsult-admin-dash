@@ -9,8 +9,11 @@ import {
   User, 
   MessageSquare, 
   AlertTriangle, 
-  FileText
+  FileText,
+  Stethoscope,
+  Crown
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import api, { safeGet } from '@/lib/api';
 
 // Sample chart data
@@ -37,6 +40,7 @@ const complaintData = [
 ];
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [apiData, setApiData] = useState<any>(null);
   const [apiError, setApiError] = useState<any>(null);
   const [userCounts, setUserCounts] = useState<{ doctor: number; patient: number; admin: number }>({ doctor: 0, patient: 0, admin: 0 });
@@ -90,7 +94,7 @@ const Dashboard = () => {
       )}
       
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         <StatsCard 
           title="الأطباء المسجلين" 
           value={userCounts.doctor} 
@@ -103,22 +107,28 @@ const Dashboard = () => {
           icon={<User className="h-6 w-6" />} 
           trend={{ value: 0, isPositive: true }}
         />
+        <div 
+          className="cursor-pointer transition-transform hover:scale-105"
+          onClick={() => navigate('/all/consultations/general')}
+        >
+          <StatsCard 
+            title="الاستشارات العامة" 
+            value="324" 
+            icon={<Stethoscope className="h-6 w-6" />} 
+            trend={{ value: 8, isPositive: true }}
+          />
+        </div>
         <StatsCard 
-          title="الاستشارات" 
-          value="532" 
-          icon={<MessageSquare className="h-6 w-6" />} 
-          trend={{ value: 5, isPositive: true }}
+          title="الاستشارات الخاصة" 
+          value="208" 
+          icon={<Crown className="h-6 w-6" />} 
+          trend={{ value: 12, isPositive: true }}
         />
         <StatsCard 
-          title="الشكاو" 
+          title="الشكاوى" 
           value="17" 
           icon={<AlertTriangle className="h-6 w-6" />} 
           trend={{ value: 3, isPositive: false }}
-        />
-        <StatsCard 
-          title="طلبات قيد المراجعة" 
-          value="32" 
-          icon={<FileText className="h-6 w-6" />} 
         />
       </div>
       
