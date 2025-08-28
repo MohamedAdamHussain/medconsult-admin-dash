@@ -27,6 +27,7 @@ import MedicalQuestions from "./pages/MedicalQuestions";
 import Appointments from "./pages/Appointments";
 import SubscriptionPlans from "./pages/SubscriptionPlans";
 import Subscriptions from "./pages/Subscriptions";
+import GeneralConsultations from "./pages/GeneralConsultations";
 import { useState } from "react";
 
 const App = () => {
@@ -128,6 +129,11 @@ const App = () => {
               <Route path="/appointments" element={
                 <ProtectedRoute>
                   <Appointments />
+                </ProtectedRoute>
+              } />
+              <Route path="/all/consultations/general" element={
+                <ProtectedRoute>
+                  <GeneralConsultations />
                 </ProtectedRoute>
               } />
                 <Route path="/subscription-plans" element={
