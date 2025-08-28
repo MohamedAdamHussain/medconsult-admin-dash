@@ -16,7 +16,7 @@ const createBanner = async (data: CreateBannerRequest): Promise<MedicalBanner> =
   formData.append('title', data.title);
   formData.append('image', data.image);
   if (data.link) formData.append('link', data.link);
-  if (data.is_active !== undefined) formData.append('is_active', data.is_active.toString());
+  if (data.is_active !== undefined) formData.append('is_active', data.is_active.toString() == "true" ? "1" : "0");
   if (data.expires_at) formData.append('expires_at', data.expires_at);
 
   const response = await api.post('/medical-banners', formData, {
