@@ -13,9 +13,13 @@ export interface Consultation {
   reminder_before_minutes: number;
   created_at: string;
   updated_at: string;
-  user: any | null;
+  user: {
+    id?: number;
+    name?: string | null;
+  } | null;
   doctor: {
     id: number;
+    name?: string | null;
     user_id: number;
     bio: string;
     activatePoint: string;
@@ -49,4 +53,31 @@ export interface Consultation {
 export interface ConsultationsResponse {
   status: string;
   data: Consultation[];
+}
+
+export interface PaginationLink {
+  url: string | null;
+  label: string;
+  active: boolean;
+}
+
+export interface PaginatedData<T> {
+  current_page: number;
+  data: T[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  links: PaginationLink[];
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number;
+  total: number;
+}
+
+export interface PaginatedConsultationsResponse {
+  status: string;
+  data: PaginatedData<Consultation>;
 }

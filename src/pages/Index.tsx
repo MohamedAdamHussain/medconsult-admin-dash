@@ -1,50 +1,69 @@
-
-import React, { useEffect, useState } from 'react';
-import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import StatsCard from '@/components/dashboard/StatsCard';
-import AlertItem from '@/components/dashboard/AlertItem';
-import DashboardChart from '@/components/dashboard/DashboardChart';
-import { 
-  Users, 
-  User, 
-  MessageSquare, 
-  AlertTriangle, 
+import React, { useEffect, useState } from "react";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import StatsCard from "@/components/dashboard/StatsCard";
+import AlertItem from "@/components/dashboard/AlertItem";
+import DashboardChart from "@/components/dashboard/DashboardChart";
+import {
+  Users,
+  User,
+  MessageSquare,
+  AlertTriangle,
   FileText,
   Stethoscope,
-  Crown
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import api, { safeGet } from '@/lib/api';
+  Crown,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import api, { safeGet } from "@/lib/api";
 
 // Sample chart data
 const specialtyData = [
-  { name: 'باطنية', value: 45 },
-  { name: 'جلدية', value: 30 },
-  { name: 'عظام', value: 25 },
-  { name: 'نفسية', value: 20 },
-  { name: 'أطفال', value: 18 },
-  { name: 'أسنان', value: 15 }
+  { name: "باطنية", value: 45 },
+  { name: "جلدية", value: 30 },
+  { name: "عظام", value: 25 },
+  { name: "نفسية", value: 20 },
+  { name: "أطفال", value: 18 },
+  { name: "أسنان", value: 15 },
 ];
 
 const engagementData = [
-  { name: 'استجابة عالية', value: 65, color: '#28a745' },
-  { name: 'استجابة متوسطة', value: 25, color: '#ffc107' },
-  { name: 'استجابة منخفضة', value: 10, color: '#dc3545' }
+  { name: "استجابة عالية", value: 65, color: "#28a745" },
+  { name: "استجابة متوسطة", value: 25, color: "#ffc107" },
+  { name: "استجابة منخفضة", value: 10, color: "#dc3545" },
 ];
 
-const complaintData = [
-  { name: 'تقنية', value: 40, color: '#007BFF' },
-  { name: 'سلوك طبيب', value: 30, color: '#dc3545' },
-  { name: 'دفع', value: 20, color: '#ffc107' },
-  { name: 'أخرى', value: 10, color: '#6c757d' }
-];
+// سيتم جلب بيانات الشكاوى ديناميكيًا حسب نوع الشكوى (مريض/طبيب)
+type ComplaintsByTypeResponse = {
+  type: "patient" | "doctor";
+  count: number;
+  complaints: unknown[];
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [apiData, setApiData] = useState<any>(null);
   const [apiError, setApiError] = useState<any>(null);
-  const [userCounts, setUserCounts] = useState<{ doctor: number; patient: number; admin: number }>({ doctor: 0, patient: 0, admin: 0 });
+  const [userCounts, setUserCounts] = useState<{
+    doctor: number;
+    patient: number;
+    admin: number;
+  }>({ doctor: 0, patient: 0, admin: 0 });
   const [userCountsError, setUserCountsError] = useState<any>(null);
+  const [generalConsultationCount, setGeneralConsultationCount] =
+    useState<number>(0);
+  const [generalConsultationCountError, setGeneralConsultationCountError] =
+    useState<any>(null);
+  const [specialConsultationCount, setSpecialConsultationCount] =
+    useState<number>(0);
+  const [specialConsultationCountError, setSpecialConsultationCountError] =
+    useState<any>(null);
+  const [complaintsCount, setComplaintsCount] =
+    useState<number>(0);
+  const [complaintsCountError, setComplaintsCountError] =
+    useState<any>(null);
+  const [patientComplaintsCount, setPatientComplaintsCount] =
+    useState<number>(0);
+  const [doctorComplaintsCount, setDoctorComplaintsCount] = useState<number>(0);
+  const [complaintsError, setComplaintsError] = useState<any>(null);
 
   // useEffect(() => {
   //   // مثال عملي لاستدعاء API مع معالجة الأخطاء
@@ -57,21 +76,64 @@ const Dashboard = () => {
 
   useEffect(() => {
     // جلب إحصائيات المستخدمين حسب الدور
-    safeGet('/admin/users/count-by-role')
+    safeGet("/admin/users/count-by-role").then(({ data, error }) => {
+      if (data && data.data) {
+        setUserCounts(data.data);
+      }
+      setUserCountsError(error);
+    });
+  }, []);
+  useEffect(() => {
+    safeGet("/admin/consultations/general/count").then(({ data, error }) => {
+      if (data && data.General_consultations_count) {
+        setGeneralConsultationCount(data.General_consultations_count);
+      }
+      setGeneralConsultationCountError(error);
+    });
+  }, []);
+  useEffect(() => {
+    safeGet("/admin/consultations/special/count").then(({ data, error }) => {
+      if (data && data.Special_consultations_count) {
+        setSpecialConsultationCount(data.Special_consultations_count);
+      }
+      setSpecialConsultationCountError(error);
+    });
+  }, []);
+  useEffect(() => {
+    safeGet('/complaints/count')
       .then(({ data, error }) => {
-        if (data && data.data) {
-          setUserCounts(data.data);
+        if (data && data.count) {
+          setComplaintsCount(data.count);
         }
-        setUserCountsError(error);
+        setComplaintsCountError(error);
       });
+  }, []);
+
+  useEffect(() => {
+    // جلب عدد الشكاوى من المرضى
+    safeGet<ComplaintsByTypeResponse>(
+      "/admin/complaintsByType?type=patient"
+    ).then(({ data, error }) => {
+      if (data) setPatientComplaintsCount(data.count || 50);
+      if (error) setComplaintsError(error);
+    });
+    // جلب عدد الشكاوى من الأطباء
+    safeGet<ComplaintsByTypeResponse>(
+      "/admin/complaintsByType?type=doctor"
+    ).then(({ data, error }) => {
+      if (data) setDoctorComplaintsCount(data.count || 50);
+      if (error) setComplaintsError(error);
+    });
   }, []);
   return (
     <DashboardLayout>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-right">لوحة التحكم</h1>
-        <p className="text-gray-500 mt-1 text-right">مرحبًا بك في لوحة تحكم منصة الاستشارات الطبية</p>
+        <p className="text-gray-500 mt-1 text-right">
+          مرحبًا بك في لوحة تحكم منصة الاستشارات الطبية
+        </p>
       </div>
-      
+
       {/* عرض نتيجة استدعاء الـ API */}
       <div className="mb-4">
         {apiError && (
@@ -81,109 +143,117 @@ const Dashboard = () => {
         )}
         {apiData && (
           <div className="bg-green-100 text-green-700 p-2 rounded mb-2 text-right">
-            نتيجة الـ API: {typeof apiData === 'object' ? JSON.stringify(apiData) : String(apiData)}
+            نتيجة الـ API:{" "}
+            {typeof apiData === "object"
+              ? JSON.stringify(apiData)
+              : String(apiData)}
           </div>
         )}
       </div>
-      
+
       {/* عرض رسالة خطأ في حال فشل جلب الإحصائيات */}
       {userCountsError && (
         <div className="bg-red-100 text-red-700 p-2 rounded mb-2 text-right">
           {userCountsError.message}
         </div>
       )}
-      
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-        <StatsCard 
-          title="الأطباء المسجلين" 
-          value={userCounts.doctor} 
-          icon={<Users className="h-6 w-6" />} 
+        <StatsCard
+          title="الأطباء المسجلين"
+          value={userCounts.doctor}
+          icon={<Users className="h-6 w-6" />}
           trend={{ value: 0, isPositive: true }}
         />
-        <StatsCard 
-          title="المرضى المسجلين" 
-          value={userCounts.patient} 
-          icon={<User className="h-6 w-6" />} 
+        <StatsCard
+          title="المرضى المسجلين"
+          value={userCounts.patient}
+          icon={<User className="h-6 w-6" />}
           trend={{ value: 0, isPositive: true }}
         />
-        <div 
+        <div
           className="cursor-pointer transition-transform hover:scale-105"
-          onClick={() => navigate('/all/consultations/general')}
+          onClick={() => navigate("/all/consultations/general")}
         >
-          <StatsCard 
-            title="الاستشارات العامة" 
-            value="324" 
-            icon={<Stethoscope className="h-6 w-6" />} 
+          <StatsCard
+            title="الاستشارات العامة"
+            value={generalConsultationCount}
+            icon={<Stethoscope className="h-6 w-6" />}
             trend={{ value: 8, isPositive: true }}
           />
         </div>
-        <StatsCard 
-          title="الاستشارات الخاصة" 
-          value="208" 
-          icon={<Crown className="h-6 w-6" />} 
+        <StatsCard
+          title="الاستشارات الخاصة"
+          value={specialConsultationCount}
+          icon={<Crown className="h-6 w-6" />}
           trend={{ value: 12, isPositive: true }}
         />
-        <StatsCard 
-          title="الشكاوى" 
-          value="17" 
-          icon={<AlertTriangle className="h-6 w-6" />} 
+        <StatsCard
+          title="الشكاوى"
+          value={complaintsCount}
+          icon={<AlertTriangle className="h-6 w-6" />}
           trend={{ value: 3, isPositive: false }}
         />
       </div>
-      
+
       {/* Charts and Alerts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Charts Section */}
         <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Complaints by Type chart moved to the top */}
-          <DashboardChart 
-            title="الشكاوى حسب النوع" 
-            type="pie" 
-            data={complaintData} 
-            colors={['#007BFF', '#dc3545', '#ffc107', '#6c757d']}
+          <DashboardChart
+            title="الشكاوى حسب المصدر"
+            type="pie"
+            data={[
+              { name: "شكاوى المرضى", value: patientComplaintsCount },
+              { name: "شكاوى الأطباء", value: doctorComplaintsCount },
+            ]}
+            colors={["#007BFF", "#dc3545"]}
           />
-          <DashboardChart 
-            title="نسب تفاعل الأطباء" 
-            type="pie" 
-            data={engagementData} 
-            colors={['#28a745', '#ffc107', '#dc3545']}
+          <DashboardChart
+            title="نسب تفاعل الأطباء"
+            type="pie"
+            data={engagementData}
+            colors={["#28a745", "#ffc107", "#dc3545"]}
           />
           <div className="md:col-span-2">
             {/* Consultations by Specialty chart moved to the bottom */}
-            <DashboardChart 
-              title="الاستشارات حسب التخصص" 
-              type="line" 
-              data={specialtyData} 
+            <DashboardChart
+              title="الاستشارات حسب التخصص"
+              type="line"
+              data={specialtyData}
             />
           </div>
         </div>
-        
+
         {/* Alerts Section */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-xl shadow-md p-6 h-full">
-            <h3 className="text-xl font-medium mb-4 text-right">تنبيهات مهمة</h3>
-            
+            <h3 className="text-xl font-medium mb-4 text-right">
+              تنبيهات مهمة
+            </h3>
+
             <div className="space-y-4">
-              <AlertItem 
+              <AlertItem
                 type="info"
                 title="طلبات تسجيل جديدة"
                 message="هناك 8 طلبات تسجيل جديدة بحاجة إلى مراجعة"
                 time="منذ 45 دقيقة"
               />
-              <AlertItem 
+              <AlertItem
                 type="warning"
                 title="شكوى عاجلة"
                 message="تم استلام شكوى عاجلة من مريض حول مشكلة تقنية"
                 time="منذ ساعتين"
               />
-              <AlertItem 
+              <AlertItem
                 type="error"
                 title="مشكلة في الدفع"
                 message="تعذر إكمال 3 عمليات دفع بسبب خطأ تقني"
                 time="منذ 3 ساعات"
               />
-              <AlertItem 
+              <AlertItem
                 type="success"
                 title="تم قبول طبيب جديد"
                 message="تم قبول د. أحمد محمد في تخصص الباطنية"

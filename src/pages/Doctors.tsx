@@ -13,6 +13,7 @@ import DoctorsList from "@/components/doctors/DoctorsList";
 import SearchAndFilter from "@/components/doctors/SearchAndFilter";
 import AddDoctorDialog from "@/components/doctors/AddDoctorDialog";
 import { useDoctorsData } from "@/hooks/useDoctorsData";
+import useDoctorDetails from "@/hooks/useDoctorDetails";
 import ExportButton from "@/components/shared/ExportButton";
 import Pagination from "@/components/shared/Pagination";
 import DoctorRegistrationDialog, { DoctorRegistrationData } from "@/components/doctors/DoctorRegistrationDialog";
@@ -55,6 +56,11 @@ const Doctors = () => {
     goToPage,
     fetchDoctors,
   } = useDoctorsData();
+
+  // استخدام الهوك الجديد لجلب تفاصيل الطبيب
+  const { data: doctorDetails, isLoading: isLoadingDetails, error: detailsError } = useDoctorDetails(
+    detailsDialogOpen && selectedDoctor ? selectedDoctor.id : null
+  );
 
   // Export columns configuration for doctors
   const doctorExportColumns = [
@@ -121,11 +127,11 @@ const Doctors = () => {
       // تحديث قائمة الأطباء باستخدام React Query
       fetchDoctors(currentPage);
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('Registration error:', error);
       toast({
         title: "خطأ في التسجيل",
-        description: error.response?.data?.message || "حدث خطأ أثناء تسجيل الطبيب",
+        description: error.message || "حدث خطأ أثناء تسجيل الطبيب",
         variant: "destructive",
       });
     }
@@ -267,7 +273,24 @@ const Doctors = () => {
             </DialogTitle>
           </DialogHeader>
 
-          {selectedDoctor && <DoctorDetails doctor={selectedDoctor} />}
+          {isLoadingDetails && (
+            <div className="flex flex-col items-center justify-center py-8 text-blue-600 font-bold gap-2">
+              <Loader2 className="animate-spin h-8 w-8 mb-2" />
+              <span>يتم الآن تحميل تفاصيل الطبيب، يرجى الانتظار...</span>
+            </div>
+          )}
+
+          {detailsError && (
+            <div className="flex flex-col items-center justify-center py-8 text-red-600 font-bold gap-2">
+              <AlertTriangle className="h-8 w-8 mb-2" />
+              <span>تعذر تحميل تفاصيل الطبيب</span>
+              <span className="text-xs text-red-400 mt-1">{(detailsError as Error)?.message}</span>
+            </div>
+          )}
+
+          {!isLoadingDetails && !detailsError && doctorDetails?.data && (
+            <DoctorDetails doctor={doctorDetails.data} />
+          )}
         </DialogContent>
       </Dialog>
 
