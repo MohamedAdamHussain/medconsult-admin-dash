@@ -17,6 +17,7 @@ import {
   Settings,
   LogOut,
   Calendar,
+  Stethoscope,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,7 @@ const navItems = [
   { name: "إدارة الأطباء", href: "/doctors", icon: Users },
   { name: "إدارة المرضى", href: "/patients", icon: User },
   { name: "طلبات تسجيل الأطباء", href: "/doctor-applications", icon: FileText },
+  { name: "الاستشارات العامة", href: "/all/consultations/general", icon: Stethoscope },
   { name: "المواعيد", href: "/appointments", icon: Calendar },
   { name: "الإشعارات", href: "/notifications", icon: Bell },
   { name: "الشكاوى", href: "/complaints", icon: Shield },
