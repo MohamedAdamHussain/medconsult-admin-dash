@@ -22,7 +22,7 @@ export const useSystemNotifications = () => {
         variant: 'destructive',
       });
     } else if (result.data) {
-      setNotifications(result.data.data || []);
+      setNotifications(result.data || []);
     }
     
     setLoading(false);
