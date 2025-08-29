@@ -1,28 +1,27 @@
 import { useState, useEffect } from 'react';
 import { safeGet, safePatch } from '@/lib/api';
-import { SystemNotification, NotificationsResponse } from '@/types/notifications';
+import { SystemNotification } from '@/types/notifications';
 import { toast } from '@/hooks/use-toast';
 
-export const useSystemNotifications = () => {
+interface UnreadNotificationsResponse {
+  data?: SystemNotification[];
+}
+
+export const useUnreadNotifications = () => {
   const [notifications, setNotifications] = useState<SystemNotification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchNotifications = async () => {
+  const fetchUnreadNotifications = async () => {
     setLoading(true);
     setError(null);
     
-    const result = await safeGet<NotificationsResponse>('/admin/notifications');
+    const result = await safeGet<SystemNotification[]>('/admin/unread-notifications');
     
     if (result.error) {
       setError(result.error.message);
-      toast({
-        title: 'خطأ',
-        description: 'فشل في تحميل التنبيهات',
-        variant: 'destructive',
-      });
     } else if (result.data) {
-      setNotifications(result.data || []);
+      setNotifications(Array.isArray(result.data) ? result.data : []);
     }
     
     setLoading(false);
@@ -38,13 +37,8 @@ export const useSystemNotifications = () => {
         variant: 'destructive',
       });
     } else {
-      setNotifications(prev => 
-        prev.map(notification => 
-          notification.id === notificationId 
-            ? { ...notification, read_at: new Date().toISOString() }
-            : notification
-        )
-      );
+      // إزالة التنبيه من القائمة
+      setNotifications(prev => prev.filter(n => n.id !== notificationId));
       toast({
         title: 'تم بنجاح',
         description: 'تم تحديد التنبيه كمقروء',
@@ -52,15 +46,31 @@ export const useSystemNotifications = () => {
     }
   };
 
+  const getNotificationTitle = (notification: SystemNotification): string => {
+    if (notification.notifiable_type === "App\\Models\\User") {
+      return "طلبات تسجيل جديدة";
+    }
+    return "تنبيه النظام";
+  };
+
+  const getNotificationColor = (notification: SystemNotification): string => {
+    if (notification.notifiable_type === "App\\Models\\User") {
+      return "blue";
+    }
+    return "gray";
+  };
+
   useEffect(() => {
-    fetchNotifications();
+    fetchUnreadNotifications();
   }, []);
 
   return {
     notifications,
     loading,
     error,
-    refetch: fetchNotifications,
+    refetch: fetchUnreadNotifications,
     markAsRead,
+    getNotificationTitle,
+    getNotificationColor,
   };
 };
