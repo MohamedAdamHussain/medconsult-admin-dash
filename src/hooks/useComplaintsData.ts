@@ -80,10 +80,10 @@ export const useComplaintsData = () => {
     setError(null);
     // جلب الشكاوى من الـ API
     safeGet('/complaints').then(({ data, error }) => {
-      if (data && Array.isArray(data.data)) {
+      if (data && Array.isArray((data as any).data)) {
         
         // تحويل بيانات الـ API إلى الشكل المطلوب
-        const mapped = data.data.map((item: any) => ({
+        const mapped = (data as any).data.map((item: any) => ({
           id: String(item.data.id),
           type: item.data.type || 'other',
           status: item.data.type === 'resolved' ? 'closed' : (item.data.type === 'pending' ? 'open' : item.data.type),

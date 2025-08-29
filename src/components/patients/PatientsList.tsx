@@ -79,14 +79,14 @@ const PatientsList = ({
             {patients.map((patient) => (
               <TableRow key={patient.id}>
                 <TableCell className="font-medium">
-                  {patient.fullName || patient.name}
+                  {patient.user?.fullName || patient.name || 'غير محدد'}
                 </TableCell>
-                <TableCell>{patient.email}</TableCell>
-                <TableCell>{patient.phoneNumber || patient.phone || 'غير محدد'}</TableCell>
-                <TableCell>{getGenderLabel(patient.gender)}</TableCell>
+                <TableCell>{patient.user?.email || 'غير محدد'}</TableCell>
+                <TableCell>{patient.user?.phoneNumber || patient.phone || 'غير محدد'}</TableCell>
+                <TableCell>{getGenderLabel(patient.user?.gender || patient.gender || 'male')}</TableCell>
                 <TableCell>
-                  {calculateAge(patient.dateOfBirth || patient.birthday)}
-                  {calculateAge(patient.dateOfBirth || patient.birthday) !== 'غير محدد' ? ' سنة' : ''}
+                  {calculateAge(patient.user?.birthday || patient.dateOfBirth || patient.birthday)}
+                  {calculateAge(patient.user?.birthday || patient.dateOfBirth || patient.birthday) !== 'غير محدد' ? ' سنة' : ''}
                 </TableCell>
                 <TableCell>
                   <StatusBadge 

@@ -32,9 +32,9 @@ export const usePatientsData = () => {
         return;
       }
       
-      if (data && Array.isArray(data.data)) {
+      if (data && Array.isArray((data as any).data)) {
         // تحويل بيانات الـ API إلى الشكل المطلوب
-        const mapped = data.data.map((item: any, index: number) => ({
+        const mapped = (data as any).data.map((item: any, index: number) => ({
           id: (index + 1 + ((page - 1) * perPage)).toString(), // إنشاء معرف مؤقت
           name: item.name,
           email: item.email,
@@ -51,10 +51,10 @@ export const usePatientsData = () => {
         }));
         
         setPatientsData(mapped);
-        setCurrentPage(data.current_page || page);
-        setTotalPages(data.last_page || 1);
-        setTotalPatients(data.total || 0);
-        setPerPage(data.per_page || 20);
+        setCurrentPage((data as any)?.current_page || page);
+        setTotalPages((data as any)?.last_page || 1);
+        setTotalPatients((data as any)?.total || 0);
+        setPerPage((data as any)?.per_page || 20);
       }
     } catch (err) {
       setError({
@@ -106,9 +106,13 @@ export const usePatientsData = () => {
     return patients.filter(patient => {
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        if (!patient.name.toLowerCase().includes(searchLower) &&
-            !patient.email.toLowerCase().includes(searchLower) &&
-            !patient.phone.includes(filters.search)) {
+        const patientName = patient.user?.fullName || patient.fullName || patient.name || '';
+        const patientEmail = patient.user?.email || patient.email || '';
+        const patientPhone = patient.user?.phoneNumber || patient.phoneNumber || patient.phone || '';
+        
+        if (!patientName.toLowerCase().includes(searchLower) &&
+            !patientEmail.toLowerCase().includes(searchLower) &&
+            !patientPhone.includes(filters.search)) {
           return false;
         }
       }
@@ -117,7 +121,8 @@ export const usePatientsData = () => {
         return false;
       }
 
-      if (filters.gender && patient.gender !== filters.gender) {
+      const patientGender = patient.user?.gender || patient.gender;
+      if (filters.gender && patientGender !== filters.gender) {
         return false;
       }
 
@@ -149,14 +154,14 @@ export const usePatientsData = () => {
 
   const updatePatientStatus = (patientId: string, status: Patient['status']) => {
     setPatientsData(prev => prev.map(patient => 
-      patient.id === patientId ? { ...patient, status } : patient
+      String(patient.id) === String(patientId) ? { ...patient, status } : patient
     ));
   };
 
   const addPatient = (patientData: Omit<Patient, 'id' | 'registrationDate' | 'totalConsultations'>) => {
     const newPatient: Patient = {
       ...patientData,
-      id: Date.now().toString(),
+      id: Date.now(),
       registrationDate: new Date().toISOString().split('T')[0],
       totalConsultations: 0
     };
@@ -167,7 +172,7 @@ export const usePatientsData = () => {
 
   const updatePatient = (patientId: string, updates: Partial<Patient>) => {
     setPatientsData(prev => prev.map(patient => 
-      patient.id === patientId ? { ...patient, ...updates } : patient
+      String(patient.id) === String(patientId) ? { ...patient, ...updates } : patient
     ));
     setIsEditDialogOpen(false);
   };

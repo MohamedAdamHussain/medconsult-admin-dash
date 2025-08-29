@@ -7,7 +7,7 @@ export interface Patient {
   weight?: number; // in kg
   created_at: string;
   updated_at: string;
-  user: {
+  user?: {
     id: number;
     fullName: string;
     email: string;
@@ -25,7 +25,13 @@ export interface Patient {
   
   // Legacy fields for compatibility with existing code
   name?: string;
+  fullName?: string;
+  email?: string;
   phone?: string;
+  phoneNumber?: string;
+  address?: string;
+  gender?: string;
+  birthday?: string;
   dateOfBirth?: string;
   photo?: string;
   profileImage?: string;

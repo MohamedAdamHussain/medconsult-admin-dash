@@ -14,7 +14,7 @@ export function useGeneralConsultations(page: number = 1) {
       }
       return data;
     },
-    keepPreviousData: true,
+    placeholderData: (prevData) => prevData,
   });
 }
 

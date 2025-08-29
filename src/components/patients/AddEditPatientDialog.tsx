@@ -42,15 +42,16 @@ const AddEditPatientDialog = ({
   // إعداد البيانات عند فتح النافذة للتعديل
   useEffect(() => {
     if (patient) {
-      setFullName(patient.fullName || patient.name || '');
-      setEmail(patient.email);
+      setFullName(patient.user?.fullName || patient.fullName || patient.name || '');
+      setEmail(patient.user?.email || patient.email || '');
       setPassword(''); // لا نعرض كلمة المرور الحالية
-      setPhoneNumber(patient.phoneNumber || patient.phone || '');
-      setAddress(patient.address || '');
-      setGender(patient.gender || '');
+      setPhoneNumber(patient.user?.phoneNumber || patient.phoneNumber || patient.phone || '');
+      setAddress(patient.user?.address || patient.address || '');
+      setGender(patient.user?.gender || patient.gender || '');
       
-      if (patient.birthday) {
-        setBirthday(new Date(patient.birthday));
+      const birthdayValue = patient.user?.birthday || patient.birthday;
+      if (birthdayValue) {
+        setBirthday(new Date(birthdayValue));
       }
       
       if (patient.photo || patient.profileImage) {

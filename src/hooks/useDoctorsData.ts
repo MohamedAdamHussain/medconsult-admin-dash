@@ -261,8 +261,8 @@ export const useDoctorsData = () => {
 
   // استخراج البيانات المطلوبة
   const doctors = useMemo(() => {
-    if (!doctorsData?.data) return [];
-    return doctorsData.data.map((item: any, index: number) => ({
+    if (!(doctorsData as any)?.data) return [];
+    return (doctorsData as any).data.map((item: any, index: number) => ({
       id: index + 1 + ((currentPage - 1) * perPage), // إنشاء معرف مؤقت
       name: item.name,
       contacts: { email: item.email },
@@ -275,8 +275,8 @@ export const useDoctorsData = () => {
   }, [doctorsData, currentPage, perPage]);
 
   // استخراج معلومات الصفحات
-  const totalPages = doctorsData?.last_page || 1;
-  const totalDoctors = doctorsData?.total || 0;
+  const totalPages = (doctorsData as any)?.last_page || 1;
+  const totalDoctors = (doctorsData as any)?.total || 0;
 
   // دالة لإعادة جلب البيانات
   const fetchDoctors = (page: number = 1) => {
