@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -36,7 +37,7 @@ const navItems = [
   { name: "طلبات تسجيل الأطباء", href: "/doctor-applications", icon: FileText },
   { name: "الاستشارات العامة", href: "/all/consultations/general", icon: Stethoscope },
   { name: "المواعيد", href: "/appointments", icon: Calendar },
-  { name: "الإشعارات", href: "/notifications", icon: Bell },
+  { name: "تنبيهات النظام", href: "/admin/notifications", icon: Bell },
   { name: "الشكاوى", href: "/complaints", icon: Shield },
   { name: "المشرفين", href: "/admins", icon: Users },
   // { name: "الجمعيات الخيرية", href: "/charities", icon: Archive },
