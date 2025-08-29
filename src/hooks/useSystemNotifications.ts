@@ -21,8 +21,8 @@ export const useSystemNotifications = () => {
         description: 'فشل في تحميل التنبيهات',
         variant: 'destructive',
       });
-    } else if (result.data) {
-      setNotifications(result.data || []);
+    } else if (result.data && Array.isArray(result.data.data)) {
+      setNotifications(result.data.data);
     }
     
     setLoading(false);
