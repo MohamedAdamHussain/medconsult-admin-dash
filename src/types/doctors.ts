@@ -24,7 +24,7 @@ export interface Doctor {
   address: string | null;
   created_at: string;
   updated_at: string;
-  user: {
+  user?: {
     id: number;
     fullName: string;
     email: string;
@@ -39,7 +39,7 @@ export interface Doctor {
     created_at: string;
     updated_at: string;
   };
-  specialties: Array<{
+  specialties?: Array<{
     id: number;
     doctor_id: number;
     medical_tag_id: number;
@@ -65,6 +65,16 @@ export interface Doctor {
       updated_at: string;
     };
   }>;
+  
+  // Legacy compatibility fields
+  name?: string;
+  specialty?: string;
+  status?: string;
+  city?: string;
+  contacts?: {
+    phone?: string;
+    email?: string;
+  };
 }
 
 export interface DoctorDetailsResponse {

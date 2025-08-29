@@ -164,7 +164,7 @@ const MediaUploader = ({ onUpload, isLoading }: MediaUploaderProps) => {
                       value={metas[index]?.link ?? ''}
                       onChange={(e) => {
                         const copy = [...metas];
-                        copy[index] = { ...(copy[index] ?? {}), link: e.target.value };
+                        copy[index] = { ...(copy[index] ?? { title: '' }), link: e.target.value };
                         setMetas(copy);
                       }}
                     />
@@ -176,7 +176,7 @@ const MediaUploader = ({ onUpload, isLoading }: MediaUploaderProps) => {
                       value={(metas[index]?.expires_at ?? '') as string}
                       onChange={(e) => {
                         const copy = [...metas];
-                        copy[index] = { ...(copy[index] ?? {}), expires_at: e.target.value || null };
+                        copy[index] = { ...(copy[index] ?? { title: '' }), expires_at: e.target.value || null };
                         setMetas(copy);
                       }}
                     />
@@ -189,7 +189,7 @@ const MediaUploader = ({ onUpload, isLoading }: MediaUploaderProps) => {
                       checked={!!metas[index]?.is_active}
                       onChange={(e) => {
                         const copy = [...metas];
-                        copy[index] = { ...(copy[index] ?? {}), is_active: e.target.checked };
+                        copy[index] = { ...(copy[index] ?? { title: '' }), is_active: e.target.checked };
                         setMetas(copy);
                       }}
                     />

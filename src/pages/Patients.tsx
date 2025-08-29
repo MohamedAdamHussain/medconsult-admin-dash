@@ -75,12 +75,12 @@ const Patients = () => {
     return patients.filter(patient => {
       // فلترة حسب البحث
       const matchesSearch = !search || 
-        (patient.fullName || patient.name || '').toLowerCase().includes(search.toLowerCase()) ||
-        patient.email.toLowerCase().includes(search.toLowerCase()) ||
-        (patient.phoneNumber || patient.phone || '').includes(search);
+        (patient.user?.fullName || patient.fullName || patient.name || '').toLowerCase().includes(search.toLowerCase()) ||
+        (patient.user?.email || patient.email || '').toLowerCase().includes(search.toLowerCase()) ||
+        (patient.user?.phoneNumber || patient.phoneNumber || patient.phone || '').includes(search);
 
       // فلترة حسب الجنس
-      const matchesGender = filterGender === 'all' || patient.gender === filterGender;
+      const matchesGender = filterGender === 'all' || (patient.user?.gender || patient.gender) === filterGender;
 
       // فلترة حسب الحالة
       const matchesStatus = filterStatus === 'all' || patient.status === filterStatus;

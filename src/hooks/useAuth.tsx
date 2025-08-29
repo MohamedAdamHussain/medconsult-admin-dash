@@ -54,10 +54,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // يفترض أن الـ API يرجع توكن وبيانات المستخدم
       // عدل حسب استجابة الـ API الفعلية
       const userData = {
-        id: data.user?.id || '',
-        email: data.user?.email || email,
-        name: data.user?.name || '',
-        token: data.token.token || '',
+        id: (data as any)?.user?.id || '',
+        email: (data as any)?.user?.email || email,
+        name: (data as any)?.user?.name || '',
+        token: (data as any)?.token?.token || '',
       };
       setUser(userData);
       localStorage.setItem('medconsult_user', JSON.stringify(userData));

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -30,7 +29,7 @@ import { Doctor } from '@/types/doctors';
 interface AddDoctorDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddDoctor: (doctor: Omit<Doctor, 'id'>) => void;
+  onAddDoctor: (doctor: Partial<Doctor>) => void;
   specialties: string[];
   cities: string[];
 }
@@ -70,44 +69,65 @@ const AddDoctorDialog: React.FC<AddDoctorDialogProps> = ({
       certificates.push(data.certificate2);
     }
 
-    const newDoctor: Omit<Doctor, 'id'> = {
-      name: data.name,
+    const newDoctor: Partial<Doctor> = {
+      user: {
+        id: 0,
+        fullName: data.name,
+        email: data.email,
+        email_verified_at: null,
+        phoneNumber: data.phone,
+        photoPath: '',
+        address: data.address || '',
+        birthday: '',
+        gender: data.gender || 'male',
+        role: 'doctor',
+        isVerified: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
       specialty: data.specialty,
       specialties: [{
-        id: '1',
-        name: data.specialty,
-        consultationPrice: 0,
-        experienceYears: 0,
-        description: ''
+        id: 1,
+        doctor_id: 0,
+        medical_tag_id: 1,
+        start_time: '09:00',
+        end_time: '17:00',
+        yearOfExper: '1',
+        photo: null,
+        consultation_fee: '100',
+        description: null,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        medical_tag: {
+          id: 1,
+          name: data.specialty,
+          name_ar: data.specialty,
+          description: '',
+          icon: '',
+          is_active: true,
+          order: 1,
+          deleted_at: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }
       }],
       rating: 0,
       status: 'active',
       city: data.city,
-      joinDate: new Date().toISOString().split('T')[0],
-      patients: 0,
-      consultations: 0,
-      activityPoints: 0,
-      age: parseInt(data.age) || 30,
-      gender: data.gender || 'male',
-      documents: {
-        certificates: certificates,
-        license: data.license,
-        id: data.idDocument,
-        syndicate: data.syndicate,
-      },
-      contacts: {
-        phone: data.phone,
-        email: data.email,
-      },
-      socialMedia: {
-        facebook: data.facebook || undefined,
-        twitter: data.twitter || undefined,
-        instagram: data.instagram || undefined,
-        linkedin: data.linkedin || undefined,
-      },
-      clinicLocation: {
-        address: data.address,
-      }
+      bio: '',
+      activatePoint: '',
+      work_days: null,
+      work_time_in: null,
+      work_time_out: null,
+      certificate_images: '',
+      time_for_waiting: null,
+      facebook_url: data.facebook || null,
+      instagram_url: data.instagram || null,
+      twitter_url: data.twitter || null,
+      address: data.address || null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
 
     onAddDoctor(newDoctor);
@@ -289,148 +309,6 @@ const AddDoctorDialog: React.FC<AddDoctorDialogProps> = ({
                   </FormItem>
                 )}
               />
-            </div>
-
-            {/* الوثائق */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-right">الوثائق المطلوبة</h3>
-              
-              <FormField
-                control={form.control}
-                name="certificate"
-                rules={{ required: "شهادة التخصص مطلوبة" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-right block">شهادة التخصص الأولى</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="شهادة تخصص طب القلب" className="text-right" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="certificate2"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-right block">شهادة التخصص الثانية (اختيارية)</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="شهادة تخصص إضافية" className="text-right" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="license"
-                rules={{ required: "ترخيص المزاولة مطلوب" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-right block">ترخيص مزاولة المهنة</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="ترخيص مزاولة المهنة" className="text-right" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="idDocument"
-                rules={{ required: "بطاقة الهوية مطلوبة" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-right block">بطاقة الهوية</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="بطاقة الهوية" className="text-right" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="syndicate"
-                rules={{ required: "بطاقة النقابة مطلوبة" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-right block">بطاقة النقابة</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="بطاقة النقابة" className="text-right" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {/* وسائل التواصل الاجتماعي (اختيارية) */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-right">وسائل التواصل الاجتماعي (اختيارية)</h3>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="facebook"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-right block">فيسبوك</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="https://facebook.com/..." className="text-right" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="twitter"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-right block">تويتر</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="https://twitter.com/..." className="text-right" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="instagram"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-right block">إنستجرام</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="https://instagram.com/..." className="text-right" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="linkedin"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-right block">لينكد إن</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="https://linkedin.com/..." className="text-right" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
             </div>
 
             <div className="flex gap-2 justify-end">

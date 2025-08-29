@@ -54,20 +54,20 @@ const DoctorsList: React.FC<DoctorsListProps> = ({
           <TableBody>
             {doctors.map((doctor) => (
               <TableRow key={doctor.id}>
-                <TableCell className="font-medium">{doctor.name}</TableCell>
-                <TableCell>{doctor.contacts?.email || doctor.email}</TableCell>
-                <TableCell>{doctor.specialty || 'غير محدد'}</TableCell>
+                <TableCell className="font-medium">{doctor.user?.fullName || 'غير محدد'}</TableCell>
+                <TableCell>{doctor.user?.email || 'غير محدد'}</TableCell>
+                <TableCell>{doctor.specialties?.[0]?.medical_tag?.name_ar || 'غير محدد'}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">
                     <span className="text-amber-500">★</span>
                     <span>{doctor.rating}</span>
                   </div>
                 </TableCell>
-                <TableCell>{doctor.city}</TableCell>
+                <TableCell>{doctor.user?.address || 'غير محدد'}</TableCell>
                 <TableCell>
                   <StatusBadge 
-                    status={doctor.status === 'active' ? 'approved' : 'rejected'} 
-                    text={doctor.status === 'active' ? 'مفعل' : 'غير مفعل'} 
+                    status={doctor.user?.isVerified ? 'approved' : 'rejected'} 
+                    text={doctor.user?.isVerified ? 'مفعل' : 'غير مفعل'} 
                   />
                 </TableCell>
                 <TableCell>
@@ -89,7 +89,7 @@ const DoctorsList: React.FC<DoctorsListProps> = ({
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="dropdown-content">
                         <DropdownMenuItem onClick={() => onToggleStatus(doctor.id)} className="dropdown-item">
-                          {doctor.status === 'active' ? (
+                          {doctor.user?.isVerified ? (
                             <>
                               <UserX size={16} />
                               <span>تعطيل</span>
