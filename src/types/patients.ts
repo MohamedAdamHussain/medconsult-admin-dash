@@ -1,32 +1,45 @@
 
 export interface Patient {
-  id?: string | number;
-  fullName?: string; // للتوافق مع API
-  name?: string; // للتوافق مع الكود الموجود
-  email: string;
-  phoneNumber?: string; // للتوافق مع API
-  phone?: string; // للتوافق مع الكود الموجود
-  dateOfBirth?: string;
-  birthday?: string; // للتوافق مع API
-  gender: 'male' | 'female' | string;
-  address?: string;
-  photo?: string; // صورة شخصية من API
-  profileImage?: string; // للتوافق مع الكود الموجود
-  registrationDate?: string;
-  status?: string; // 'مفعل' | 'غير مفعل' من API أو 'active' | 'blocked' | 'suspended' داخليًا
-  created_at?: string;
-  updated_at?: string;
-  
-  // Medical Information
+  id: number;
+  user_id: number;
+  fakeName?: string;
   height?: number; // in cm
   weight?: number; // in kg
+  created_at: string;
+  updated_at: string;
+  user: {
+    id: number;
+    fullName: string;
+    email: string;
+    email_verified_at: string | null;
+    phoneNumber: string;
+    photoPath: string;
+    address: string;
+    birthday: string;
+    gender: string;
+    role: string;
+    isVerified: number;
+    created_at: string;
+    updated_at: string;
+  };
+  
+  // Legacy fields for compatibility with existing code
+  name?: string;
+  phone?: string;
+  dateOfBirth?: string;
+  photo?: string;
+  profileImage?: string;
+  registrationDate?: string;
+  status?: string;
+  
+  // Medical Information
   generalDiseases?: string[];
   chronicDiseases?: string[];
   allergies?: string[];
   permanentMedications?: string[];
   previousSurgeries?: string[];
   radiologyImages?: string[];
-  medicalImages?: string[]; // صور طبية (Base64 أو URL مؤقت)
+  medicalImages?: string[];
   
   // Statistics
   totalConsultations?: number;

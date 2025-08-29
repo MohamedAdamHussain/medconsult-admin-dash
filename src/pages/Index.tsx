@@ -14,16 +14,10 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api, { safeGet } from "@/lib/api";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-// Sample chart data
-const specialtyData = [
-  { name: "باطنية", value: 45 },
-  { name: "جلدية", value: 30 },
-  { name: "عظام", value: 25 },
-  { name: "نفسية", value: 20 },
-  { name: "أطفال", value: 18 },
-  { name: "أسنان", value: 15 },
-];
+// لا توجد بيانات ثابتة؛ يتم الجلب من الواجهة الخلفية فقط
 
 const engagementData = [
   { name: "استجابة عالية", value: 65, color: "#28a745" },
@@ -38,32 +32,49 @@ type ComplaintsByTypeResponse = {
   complaints: unknown[];
 };
 
+type UsersCountByRoleResponse = {
+  data: { doctor: number; patient: number; admin: number };
+};
+
+type GeneralConsultationsCountResponse = {
+  General_consultations_count: number;
+};
+
+type SpecialConsultationsCountResponse = {
+  Special_consultations_count: number;
+};
+
+type ComplaintsCountResponse = { count: number };
+
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [apiData, setApiData] = useState<any>(null);
-  const [apiError, setApiError] = useState<any>(null);
+  const [apiData, setApiData] = useState<unknown>(null);
+  const [apiError, setApiError] = useState<{ message: string } | null>(null);
   const [userCounts, setUserCounts] = useState<{
     doctor: number;
     patient: number;
     admin: number;
   }>({ doctor: 0, patient: 0, admin: 0 });
-  const [userCountsError, setUserCountsError] = useState<any>(null);
+  const [userCountsError, setUserCountsError] = useState<{ message: string } | null>(null);
   const [generalConsultationCount, setGeneralConsultationCount] =
     useState<number>(0);
   const [generalConsultationCountError, setGeneralConsultationCountError] =
-    useState<any>(null);
+    useState<{ message: string } | null>(null);
   const [specialConsultationCount, setSpecialConsultationCount] =
     useState<number>(0);
   const [specialConsultationCountError, setSpecialConsultationCountError] =
-    useState<any>(null);
+    useState<{ message: string } | null>(null);
   const [complaintsCount, setComplaintsCount] =
     useState<number>(0);
   const [complaintsCountError, setComplaintsCountError] =
-    useState<any>(null);
+    useState<{ message: string } | null>(null);
   const [patientComplaintsCount, setPatientComplaintsCount] =
     useState<number>(0);
   const [doctorComplaintsCount, setDoctorComplaintsCount] = useState<number>(0);
-  const [complaintsError, setComplaintsError] = useState<any>(null);
+  const [complaintsError, setComplaintsError] = useState<{ message: string } | null>(null);
+  const [specialtyConsultations, setSpecialtyConsultations] = useState<{ name: string; value: number }[]>([]);
+  const [specialtyConsultationsError, setSpecialtyConsultationsError] = useState<{ message: string } | null>(null);
+  const [isSpecialtiesDialogOpen, setIsSpecialtiesDialogOpen] = useState(false);
 
   // useEffect(() => {
   //   // مثال عملي لاستدعاء API مع معالجة الأخطاء
@@ -76,7 +87,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     // جلب إحصائيات المستخدمين حسب الدور
-    safeGet("/admin/users/count-by-role").then(({ data, error }) => {
+    safeGet<UsersCountByRoleResponse>("/admin/users/count-by-role").then(({ data, error }) => {
       if (data && data.data) {
         setUserCounts(data.data);
       }
@@ -84,25 +95,25 @@ const Dashboard = () => {
     });
   }, []);
   useEffect(() => {
-    safeGet("/admin/consultations/general/count").then(({ data, error }) => {
-      if (data && data.General_consultations_count) {
+    safeGet<GeneralConsultationsCountResponse>("/admin/consultations/general/count").then(({ data, error }) => {
+      if (data && data.General_consultations_count !== undefined) {
         setGeneralConsultationCount(data.General_consultations_count);
       }
       setGeneralConsultationCountError(error);
     });
   }, []);
   useEffect(() => {
-    safeGet("/admin/consultations/special/count").then(({ data, error }) => {
-      if (data && data.Special_consultations_count) {
+    safeGet<SpecialConsultationsCountResponse>("/admin/consultations/special/count").then(({ data, error }) => {
+      if (data && data.Special_consultations_count !== undefined) {
         setSpecialConsultationCount(data.Special_consultations_count);
       }
       setSpecialConsultationCountError(error);
     });
   }, []);
   useEffect(() => {
-    safeGet('/complaints/count')
+    safeGet<ComplaintsCountResponse>('/complaints/count')
       .then(({ data, error }) => {
-        if (data && data.count) {
+        if (data && data.count !== undefined) {
           setComplaintsCount(data.count);
         }
         setComplaintsCountError(error);
@@ -114,15 +125,31 @@ const Dashboard = () => {
     safeGet<ComplaintsByTypeResponse>(
       "/admin/complaintsByType?type=patient"
     ).then(({ data, error }) => {
-      if (data) setPatientComplaintsCount(data.count || 50);
+      if (data) setPatientComplaintsCount(data.count || 0);
       if (error) setComplaintsError(error);
     });
     // جلب عدد الشكاوى من الأطباء
     safeGet<ComplaintsByTypeResponse>(
       "/admin/complaintsByType?type=doctor"
     ).then(({ data, error }) => {
-      if (data) setDoctorComplaintsCount(data.count || 50);
+      if (data) setDoctorComplaintsCount(data.count || 0);
       if (error) setComplaintsError(error);
+    });
+  }, []);
+
+  useEffect(() => {
+    // جلب الاستشارات حسب التخصص
+    safeGet<{ status: boolean; data: Array<{ medical_tag_id: number; consultations_count: number; medical_tag: { name: string; name_ar: string } }> }>(
+      'admin/consultations/count-by-specialty'
+    ).then(({ data, error }) => {
+      if (data && Array.isArray(data.data)) {
+        const mapped = data.data.map((item) => ({
+          name: item.medical_tag?.name_ar || item.medical_tag?.name || `#${item.medical_tag_id}`,
+          value: Number(item.consultations_count) || 0,
+        }));
+        setSpecialtyConsultations(mapped);
+      }
+      setSpecialtyConsultationsError(error);
     });
   }, []);
   return (
@@ -218,12 +245,25 @@ const Dashboard = () => {
             colors={["#28a745", "#ffc107", "#dc3545"]}
           />
           <div className="md:col-span-2">
-            {/* Consultations by Specialty chart moved to the bottom */}
-            <DashboardChart
-              title="الاستشارات حسب التخصص"
-              type="line"
-              data={specialtyData}
-            />
+            {/* Consultations by Specialty - Top 5 and view all */}
+            <div className="relative">
+              <div className="absolute left-4 top-4">
+                <button
+                  onClick={() => setIsSpecialtiesDialogOpen(true)}
+                  className="text-sm text-primary underline"
+                >
+                  عرض الكل
+                </button>
+              </div>
+              <div className="cursor-pointer" onClick={() => setIsSpecialtiesDialogOpen(true)}>
+                <DashboardChart
+                  title="الاستشارات حسب التخصص (أكبر 5)"
+                  type="line"
+                  data={[...specialtyConsultations].sort((a,b)=>b.value-a.value).slice(0,5)}
+                  colors={["#007BFF"]}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -263,6 +303,28 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Dialog: All specialties list */}
+      <Dialog open={isSpecialtiesDialogOpen} onOpenChange={setIsSpecialtiesDialogOpen}>
+        <DialogContent className="sm:max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="text-right">الاستشارات حسب التخصص</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh]">
+            <div className="space-y-2">
+              {[...specialtyConsultations].sort((a,b)=>b.value-a.value).map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
+                  <span className="font-medium">{item.name}</span>
+                  <span className="text-muted-foreground">{item.value}</span>
+                </div>
+              ))}
+              {specialtyConsultations.length === 0 && (
+                <div className="text-center py-6 text-muted-foreground">لا توجد بيانات</div>
+              )}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 };

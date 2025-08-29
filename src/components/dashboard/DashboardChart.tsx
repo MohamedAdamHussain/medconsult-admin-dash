@@ -39,6 +39,9 @@ interface DashboardChartProps {
   colors?: string[];
   height?: number;
   dataKeys?: string[];
+  layout?: 'vertical' | 'horizontal';
+  nameKey?: string;
+  valueKey?: string;
 }
 
 const defaultColors = ['#007BFF', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8'];
@@ -49,7 +52,10 @@ const DashboardChart = ({
   data, 
   colors = defaultColors, 
   height = 300,
-  dataKeys = ['value'] 
+  dataKeys = ['value'],
+  layout = 'horizontal',
+  nameKey = 'name',
+  valueKey = 'value',
 }: DashboardChartProps) => {
   return (
     <div className="bg-white rounded-xl shadow-md p-4 h-full">
@@ -58,22 +64,37 @@ const DashboardChart = ({
       <div style={{ height: `${height}px` }} dir="ltr">
         <ResponsiveContainer width="100%" height="100%">
           {type === 'bar' ? (
-            <BarChart
-              data={data}
-              margin={{
-                top: 20,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="value" fill="#007BFF" />
-            </BarChart>
+            layout === 'vertical' ? (
+              <BarChart
+                layout="vertical"
+                data={data as BarChartData[]}
+                margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" />
+                <YAxis type="category" dataKey={nameKey} width={120} tickFormatter={(v) => truncateLabel(String(v))} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={valueKey} fill="#007BFF" />
+              </BarChart>
+            ) : (
+              <BarChart
+                data={data}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey={nameKey} tickFormatter={(v) => truncateLabel(String(v))} angle={-25} textAnchor="end" height={60} />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={valueKey} fill="#007BFF" />
+              </BarChart>
+            )
           ) : type === 'line' ? (
             <LineChart
               data={data}
@@ -85,7 +106,7 @@ const DashboardChart = ({
               }}
             >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
+              <XAxis dataKey={nameKey} tickFormatter={(v) => truncateLabel(String(v))} />
               <YAxis />
               <Tooltip />
               <Legend />
@@ -110,8 +131,8 @@ const DashboardChart = ({
                 labelLine={false}
                 outerRadius={100}
                 fill="#8884d8"
-                dataKey="value"
-                nameKey="name"
+                dataKey={valueKey}
+                nameKey={nameKey}
                 label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
               >
                 {data.map((_entry, index) => (
@@ -127,5 +148,10 @@ const DashboardChart = ({
     </div>
   );
 };
+
+function truncateLabel(value: string, max: number = 12): string {
+  if (value.length <= max) return value;
+  return value.slice(0, max - 1) + '…';
+}
 
 export default DashboardChart;

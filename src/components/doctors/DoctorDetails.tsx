@@ -155,7 +155,7 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
                 <div className="mt-4 pt-4 border-t">
                   <div className="text-gray-500 mb-2">نبذة عن الطبيب</div>
                   <p className="text-gray-700 text-sm leading-relaxed">{doctor.bio}</p>
-                </div>
+                    </div>
               )}
             </div>
           </CardContent>
@@ -164,14 +164,14 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
 
       {/* أوقات العمل */}
       {(doctor.work_time_in || doctor.work_time_out) && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-xl">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-xl">
               <Clock size={20} />
               <span>أوقات العمل</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {doctor.work_time_in && (
                 <div className="flex items-center justify-between">
@@ -192,23 +192,23 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
                     <span className="font-medium">{doctor.work_days}</span>
                   </div>
                 </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-      {/* وسائل التواصل الاجتماعي */}
+        {/* وسائل التواصل الاجتماعي */}
       {hasSocialMedia && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <span>🌐</span>
-              <span>وسائل التواصل الاجتماعي</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <span>🌐</span>
+                <span>وسائل التواصل الاجتماعي</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
               {doctor.facebook_url && (
                 <div className="flex items-center justify-between">
                   <span className="text-gray-500 flex items-center gap-2">
@@ -241,23 +241,23 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
               )}
               {doctor.twitter_url && (
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-500 flex items-center gap-2">
+                      <span className="text-gray-500 flex items-center gap-2">
                     <span>🐦</span>
                     <span>Twitter</span>
-                  </span>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
+                      </span>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
                     onClick={() => window.open(doctor.twitter_url!, '_blank')}
-                  >
-                    زيارة
-                  </Button>
-                </div>
+                      >
+                        زيارة
+                      </Button>
+                    </div>
               )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
       {/* قسم التخصصات */}
       <Card>
@@ -272,25 +272,25 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
             {doctor.specialties && doctor.specialties.length > 0 ? (
               doctor.specialties.map((specialty, index) => (
                 <div key={index} className="border rounded-lg p-4 bg-gradient-to-r from-blue-50 to-indigo-50">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
                         <Badge variant="outline" className="font-semibold bg-blue-100 text-blue-800">
-                          تخصص #{index + 1}
-                        </Badge>
+                        تخصص #{index + 1}
+                      </Badge>
                         <h4 className="font-bold text-lg text-blue-900">{specialty.medical_tag.name_ar || specialty.medical_tag.name}</h4>
-                      </div>
+                    </div>
                       {specialty.medical_tag.description && (
                         <p className="text-gray-600 text-sm">{specialty.medical_tag.description}</p>
                       )}
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-500">سعر الاستشارة</span>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">سعر الاستشارة</span>
                         <span className="font-semibold text-green-600">{parseFloat(specialty.consultation_fee) > 0 ? `${specialty.consultation_fee} ريال` : 'مجاناً'}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-500">سنوات الخبرة</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">سنوات الخبرة</span>
                         <span className="font-semibold">{specialty.yearOfExper} سنة</span>
                       </div>
                       <div className="flex items-center justify-between">
@@ -298,10 +298,10 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
                         <Badge variant={specialty.is_active ? "default" : "secondary"}>
                           {specialty.is_active ? 'نشط' : 'غير نشط'}
                         </Badge>
-                      </div>
                     </div>
                   </div>
                 </div>
+              </div>
               ))
             ) : (
               <div className="text-center py-8 text-gray-500">
@@ -315,27 +315,27 @@ const DoctorDetails: React.FC<DoctorDetailsProps> = ({ doctor }) => {
 
       {/* الشهادات */}
       {doctor.certificate_images && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-xl">
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-xl">
               <Award size={20} />
               <span>الشهادات والوثائق</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-3">
-                <h5 className="font-semibold text-sm text-gray-700">شهادات التخصص</h5>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="space-y-3">
+              <h5 className="font-semibold text-sm text-gray-700">شهادات التخصص</h5>
                 {doctor.certificate_images && doctor.certificate_images !== '[]' && (
                   <div className="p-3 border rounded-md flex justify-between items-center bg-blue-50">
                     <div className="text-sm font-medium">شهادة التخصص</div>
-                    <Button variant="outline" size="sm">عرض</Button>
-                  </div>
-                )}
+                <Button variant="outline" size="sm">عرض</Button>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            )}
+              </div>
+          </div>
+        </CardContent>
+      </Card>
       )}
     </div>
   );
