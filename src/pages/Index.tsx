@@ -3,6 +3,8 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import StatsCard from "@/components/dashboard/StatsCard";
 import AlertItem from "@/components/dashboard/AlertItem";
 import DashboardChart from "@/components/dashboard/DashboardChart";
+import UnreadNotificationItem from "@/components/dashboard/UnreadNotificationItem";
+import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import {
   Users,
   User,
@@ -48,6 +50,13 @@ type ComplaintsCountResponse = { count: number };
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { 
+    notifications: unreadNotifications, 
+    loading: notificationsLoading, 
+    markAsRead, 
+    getNotificationTitle, 
+    getNotificationColor 
+  } = useUnreadNotifications();
   const [apiData, setApiData] = useState<unknown>(null);
   const [apiError, setApiError] = useState<{ message: string } | null>(null);
   const [userCounts, setUserCounts] = useState<{
@@ -275,30 +284,26 @@ const Dashboard = () => {
             </h3>
 
             <div className="space-y-4">
-              <AlertItem
-                type="info"
-                title="طلبات تسجيل جديدة"
-                message="هناك 8 طلبات تسجيل جديدة بحاجة إلى مراجعة"
-                time="منذ 45 دقيقة"
-              />
-              <AlertItem
-                type="warning"
-                title="شكوى عاجلة"
-                message="تم استلام شكوى عاجلة من مريض حول مشكلة تقنية"
-                time="منذ ساعتين"
-              />
-              <AlertItem
-                type="error"
-                title="مشكلة في الدفع"
-                message="تعذر إكمال 3 عمليات دفع بسبب خطأ تقني"
-                time="منذ 3 ساعات"
-              />
-              <AlertItem
-                type="success"
-                title="تم قبول طبيب جديد"
-                message="تم قبول د. أحمد محمد في تخصص الباطنية"
-                time="منذ 5 ساعات"
-              />
+              {notificationsLoading ? (
+                <div className="text-center py-4 text-gray-500">
+                  جارٍ تحميل التنبيهات...
+                </div>
+              ) : unreadNotifications.length > 0 ? (
+                unreadNotifications.map((notification) => (
+                  <UnreadNotificationItem
+                    key={notification.id}
+                    notification={notification}
+                    title={getNotificationTitle(notification)}
+                    color={getNotificationColor(notification)}
+                    onMarkAsRead={markAsRead}
+                  />
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <div className="text-lg font-medium mb-2">لا توجد تنبيهات</div>
+                  <p className="text-sm">جميع التنبيهات مقروءة</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
