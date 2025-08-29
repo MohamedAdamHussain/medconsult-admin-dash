@@ -5,6 +5,7 @@ import AlertItem from "@/components/dashboard/AlertItem";
 import DashboardChart from "@/components/dashboard/DashboardChart";
 import UnreadNotificationItem from "@/components/dashboard/UnreadNotificationItem";
 import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
+import { useResponseRates } from "@/hooks/useResponseRates";
 import {
   Users,
   User,
@@ -84,6 +85,8 @@ const Dashboard = () => {
   const [specialtyConsultations, setSpecialtyConsultations] = useState<{ name: string; value: number }[]>([]);
   const [specialtyConsultationsError, setSpecialtyConsultationsError] = useState<{ message: string } | null>(null);
   const [isSpecialtiesDialogOpen, setIsSpecialtiesDialogOpen] = useState(false);
+  const [isResponseRatesDialogOpen, setIsResponseRatesDialogOpen] = useState(false);
+  const { responseRates } = useResponseRates();
 
   // useEffect(() => {
   //   // مثال عملي لاستدعاء API مع معالجة الأخطاء
@@ -247,12 +250,32 @@ const Dashboard = () => {
             ]}
             colors={["#007BFF", "#dc3545"]}
           />
-          <DashboardChart
-            title="نسب تفاعل الأطباء"
-            type="pie"
-            data={engagementData}
-            colors={["#28a745", "#ffc107", "#dc3545"]}
-          />
+          <div className="relative">
+            <div className="absolute left-4 top-4">
+              <button
+                onClick={() => setIsResponseRatesDialogOpen(true)}
+                className="text-sm text-primary underline"
+              >
+                عرض الكل
+              </button>
+            </div>
+            <div className="cursor-pointer" onClick={() => setIsResponseRatesDialogOpen(true)}>
+              <DashboardChart
+                title="معدلات الاستجابة حسب التخصص (أكبر 5)"
+                type="line"
+                data={[...responseRates]
+                  .sort((a, b) => parseInt(b.response_rate) - parseInt(a.response_rate))
+                  .slice(0, 5)
+                  .map(item => ({
+                    name: item.medical_tag,
+                    استشارات: item.total_consultations,
+                    استجابات: item.responded_consultations,
+                  }))}
+                colors={["#007BFF", "#28a745"]}
+                dataKeys={["استشارات", "استجابات"]}
+              />
+            </div>
+          </div>
           <div className="md:col-span-2">
             {/* Consultations by Specialty - Top 5 and view all */}
             <div className="relative">
@@ -324,6 +347,40 @@ const Dashboard = () => {
                 </div>
               ))}
               {specialtyConsultations.length === 0 && (
+                <div className="text-center py-6 text-muted-foreground">لا توجد بيانات</div>
+              )}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog: All response rates list */}
+      <Dialog open={isResponseRatesDialogOpen} onOpenChange={setIsResponseRatesDialogOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-right">معدلات الاستجابة حسب التخصص</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh]">
+            <div className="space-y-2">
+              {[...responseRates].sort((a, b) => parseInt(b.response_rate) - parseInt(a.response_rate)).map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex-1">
+                    <span className="font-medium">{item.medical_tag}</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="text-muted-foreground">
+                      استشارات: {item.total_consultations}
+                    </span>
+                    <span className="text-muted-foreground">
+                      استجابات: {item.responded_consultations}
+                    </span>
+                    <span className="font-medium text-primary">
+                      {item.response_rate}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {responseRates.length === 0 && (
                 <div className="text-center py-6 text-muted-foreground">لا توجد بيانات</div>
               )}
             </div>
