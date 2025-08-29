@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { safeGet, safePatch } from '@/lib/api';
+import { safeGet, safePatch, safePost } from '@/lib/api';
 import { SystemNotification, NotificationsResponse } from '@/types/notifications';
 import { toast } from '@/hooks/use-toast';
 
@@ -29,7 +29,8 @@ export const useSystemNotifications = () => {
   };
 
   const markAsRead = async (notificationId: string) => {
-    const result = await safePatch<{ message: string }>(`/admin/notifications/${notificationId}`);
+    console.log('Marking as read:', notificationId);
+    const result = await safePost<{ message: string }>(`/admin/notifications/${notificationId}/mark-as-read`);
     
     if (result.error) {
       toast({

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { safeGet, safePatch } from '@/lib/api';
+import { safeGet, safePatch, safePost } from '@/lib/api';
 import { SystemNotification } from '@/types/notifications';
 import { toast } from '@/hooks/use-toast';
 
@@ -28,7 +28,7 @@ export const useUnreadNotifications = () => {
   };
 
   const markAsRead = async (notificationId: string) => {
-    const result = await safePatch<{ message: string }>(`/admin/notifications/${notificationId}`);
+    const result = await safePost<{ message: string }>(`/admin/notifications/${notificationId}/mark-as-read`);
     
     if (result.error) {
       toast({
@@ -47,15 +47,21 @@ export const useUnreadNotifications = () => {
   };
 
   const getNotificationTitle = (notification: SystemNotification): string => {
-    if (notification.notifiable_type === "App\\Models\\User") {
+    if (notification.type === "App\\Notifications\\NewDoctorRegistrationsNotification") {
       return "طلبات تسجيل جديدة";
+    }
+    if (notification.type === "App\\Notifications\\ComplaintCreatedNotification") {
+      return "شكوى جديدة";
     }
     return "تنبيه النظام";
   };
 
   const getNotificationColor = (notification: SystemNotification): string => {
-    if (notification.notifiable_type === "App\\Models\\User") {
+    if (notification.type === "App\\Notifications\\NewDoctorRegistrationsNotification") {
       return "blue";
+    }
+    if (notification.type === "App\\Notifications\\ComplaintCreatedNotification") {
+      return "yellow";
     }
     return "gray";
   };
