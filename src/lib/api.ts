@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { toast } from '@/hooks/use-toast';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://baraa.mahmoudalhabash.com/api", // يمكنك تغيير العنوان لاحقًا
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api", // يمكنك تغيير العنوان لاحقًا
   // يمكن إضافة إعدادات أخرى هنا مثل headers أو timeout
   timeout: 10000, // 10 ثواني كحد أقصى للانتظار
 });
