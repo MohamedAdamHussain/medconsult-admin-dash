@@ -57,9 +57,24 @@ const DashboardChart = ({
   nameKey = 'name',
   valueKey = 'value',
 }: DashboardChartProps) => {
+  // Handle loading and empty states
+  if (!data || data.length === 0) {
+    return (
+      <div className="bg-white rounded-xl shadow-md p-4 h-full flex flex-col">
+        {title && <h3 className="text-lg font-medium mb-4 text-right">{title}</h3>}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center text-muted-foreground">
+            <div className="text-sm">لا توجد بيانات</div>
+            <p className="text-xs mt-1">لم يتم العثور على أي بيانات لعرضها</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-md p-4 h-full">
-      <h3 className="text-lg font-medium mb-4 text-right">{title}</h3>
+      {title && <h3 className="text-lg font-medium mb-4 text-right">{title}</h3>}
       
       <div style={{ height: `${height}px` }} dir="ltr">
         <ResponsiveContainer width="100%" height="100%">
