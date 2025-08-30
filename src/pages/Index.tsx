@@ -3,6 +3,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import StatsCard from "@/components/dashboard/StatsCard";
 import AlertItem from "@/components/dashboard/AlertItem";
 import DashboardChart from "@/components/dashboard/DashboardChart";
+import ChartDialog from "@/components/dashboard/ChartDialog";
 import UnreadNotificationItem from "@/components/dashboard/UnreadNotificationItem";
 import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { useResponseRates } from "@/hooks/useResponseRates";
@@ -86,7 +87,8 @@ const Dashboard = () => {
   const [specialtyConsultationsError, setSpecialtyConsultationsError] = useState<{ message: string } | null>(null);
   const [isSpecialtiesDialogOpen, setIsSpecialtiesDialogOpen] = useState(false);
   const [isResponseRatesDialogOpen, setIsResponseRatesDialogOpen] = useState(false);
-  const { responseRates } = useResponseRates();
+  const [isComplaintsDialogOpen, setIsComplaintsDialogOpen] = useState(false);
+  const { responseRates, loading: responseRatesLoading, error: responseRatesError } = useResponseRates();
 
   // useEffect(() => {
   //   // مثال عملي لاستدعاء API مع معالجة الأخطاء
@@ -241,20 +243,32 @@ const Dashboard = () => {
         {/* Charts Section */}
         <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Complaints by Type chart moved to the top */}
-          <DashboardChart
-            title="الشكاوى حسب المصدر"
-            type="pie"
-            data={[
-              { name: "شكاوى المرضى", value: patientComplaintsCount },
-              { name: "شكاوى الأطباء", value: doctorComplaintsCount },
-            ]}
-            colors={["#007BFF", "#dc3545"]}
-          />
           <div className="relative">
-            <div className="absolute left-4 top-4">
+            <div className="absolute left-4 top-4 z-10">
+              <button
+                onClick={() => setIsComplaintsDialogOpen(true)}
+                className="text-sm text-primary underline bg-white/80 backdrop-blur-sm px-2 py-1 rounded"
+              >
+                عرض الكل
+              </button>
+            </div>
+            <div className="cursor-pointer" onClick={() => setIsComplaintsDialogOpen(true)}>
+              <DashboardChart
+                title="الشكاوى حسب المصدر"
+                type="pie"
+                data={[
+                  { name: "شكاوى المرضى", value: patientComplaintsCount },
+                  { name: "شكاوى الأطباء", value: doctorComplaintsCount },
+                ]}
+                colors={["#007BFF", "#dc3545"]}
+              />
+            </div>
+          </div>
+          <div className="relative">
+            <div className="absolute left-4 top-4 z-10">
               <button
                 onClick={() => setIsResponseRatesDialogOpen(true)}
-                className="text-sm text-primary underline"
+                className="text-sm text-primary underline bg-white/80 backdrop-blur-sm px-2 py-1 rounded"
               >
                 عرض الكل
               </button>
@@ -263,7 +277,7 @@ const Dashboard = () => {
               <DashboardChart
                 title="معدلات الاستجابة حسب التخصص (أكبر 5)"
                 type="line"
-                data={[...responseRates]
+                data={responseRatesLoading ? [] : [...responseRates]
                   .sort((a, b) => parseInt(b.response_rate) - parseInt(a.response_rate))
                   .slice(0, 5)
                   .map(item => ({
@@ -279,10 +293,10 @@ const Dashboard = () => {
           <div className="md:col-span-2">
             {/* Consultations by Specialty - Top 5 and view all */}
             <div className="relative">
-              <div className="absolute left-4 top-4">
+              <div className="absolute left-4 top-4 z-10">
                 <button
                   onClick={() => setIsSpecialtiesDialogOpen(true)}
-                  className="text-sm text-primary underline"
+                  className="text-sm text-primary underline bg-white/80 backdrop-blur-sm px-2 py-1 rounded"
                 >
                   عرض الكل
                 </button>
@@ -332,61 +346,82 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Dialog: All specialties list */}
-      <Dialog open={isSpecialtiesDialogOpen} onOpenChange={setIsSpecialtiesDialogOpen}>
-        <DialogContent className="sm:max-w-xl">
-          <DialogHeader>
-            <DialogTitle className="text-right">الاستشارات حسب التخصص</DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="max-h-[60vh]">
-            <div className="space-y-2">
-              {[...specialtyConsultations].sort((a,b)=>b.value-a.value).map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
-                  <span className="font-medium">{item.name}</span>
-                  <span className="text-muted-foreground">{item.value}</span>
-                </div>
-              ))}
-              {specialtyConsultations.length === 0 && (
-                <div className="text-center py-6 text-muted-foreground">لا توجد بيانات</div>
-              )}
-            </div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
+      {/* Chart Dialogs */}
+      <ChartDialog
+        open={isSpecialtiesDialogOpen}
+        onOpenChange={setIsSpecialtiesDialogOpen}
+        title="الاستشارات حسب التخصص"
+        chartType="bar"
+        data={[...specialtyConsultations].sort((a,b)=>b.value-a.value)}
+        loading={false}
+        error={specialtyConsultationsError?.message}
+        colors={["#007BFF"]}
+        renderDataItem={(item, index) => (
+          <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+            <span className="font-medium">{item.name}</span>
+            <span className="text-muted-foreground">{item.value} استشارة</span>
+          </div>
+        )}
+      />
 
-      {/* Dialog: All response rates list */}
-      <Dialog open={isResponseRatesDialogOpen} onOpenChange={setIsResponseRatesDialogOpen}>
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-right">معدلات الاستجابة حسب التخصص</DialogTitle>
-          </DialogHeader>
-          <ScrollArea className="max-h-[60vh]">
-            <div className="space-y-2">
-              {[...responseRates].sort((a, b) => parseInt(b.response_rate) - parseInt(a.response_rate)).map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex-1">
-                    <span className="font-medium">{item.medical_tag}</span>
-                  </div>
-                  <div className="flex items-center gap-4 text-sm">
-                    <span className="text-muted-foreground">
-                      استشارات: {item.total_consultations}
-                    </span>
-                    <span className="text-muted-foreground">
-                      استجابات: {item.responded_consultations}
-                    </span>
-                    <span className="font-medium text-primary">
-                      {item.response_rate}
-                    </span>
-                  </div>
-                </div>
-              ))}
-              {responseRates.length === 0 && (
-                <div className="text-center py-6 text-muted-foreground">لا توجد بيانات</div>
-              )}
+      <ChartDialog
+        open={isResponseRatesDialogOpen}
+        onOpenChange={setIsResponseRatesDialogOpen}
+        title="معدلات الاستجابة حسب التخصص"
+        chartType="line"
+        data={[...responseRates]
+          .sort((a, b) => parseInt(b.response_rate) - parseInt(a.response_rate))
+          .map(item => ({
+            name: item.medical_tag,
+            استشارات: item.total_consultations,
+            استجابات: item.responded_consultations,
+          }))}
+        loading={responseRatesLoading}
+        error={responseRatesError?.message}
+        colors={["#007BFF", "#28a745"]}
+        dataKeys={["استشارات", "استجابات"]}
+        renderDataItem={(item, index) => {
+          const originalItem = responseRates.find(r => r.medical_tag === item.name);
+          return (
+            <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+              <div className="flex-1">
+                <span className="font-medium">{item.name}</span>
+              </div>
+              <div className="flex items-center gap-4 text-sm">
+                <span className="text-muted-foreground">
+                  استشارات: {item.استشارات}
+                </span>
+                <span className="text-muted-foreground">
+                  استجابات: {item.استجابات}
+                </span>
+                <span className="font-medium text-primary">
+                  {originalItem?.response_rate || '0%'}
+                </span>
+              </div>
             </div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
+          );
+        }}
+      />
+
+      <ChartDialog
+        open={isComplaintsDialogOpen}
+        onOpenChange={setIsComplaintsDialogOpen}
+        title="الشكاوى حسب المصدر"
+        chartType="pie"
+        data={[
+          { name: "شكاوى المرضى", value: patientComplaintsCount },
+          { name: "شكاوى الأطباء", value: doctorComplaintsCount },
+        ]}
+        loading={false}
+        error={complaintsError?.message}
+        colors={["#007BFF", "#dc3545"]}
+        renderDataItem={(item, index) => (
+          <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+            <span className="font-medium">{item.name}</span>
+            <span className="text-muted-foreground">{item.value} شكوى</span>
+          </div>
+        )}
+      />
     </DashboardLayout>
   );
 };
