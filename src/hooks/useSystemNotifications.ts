@@ -13,6 +13,8 @@ export const useSystemNotifications = () => {
     setError(null);
     
     const result = await safeGet<NotificationsResponse>('/admin/notifications');
+
+    console.log(result);
     
     if (result.error) {
       setError(result.error.message);
@@ -21,8 +23,8 @@ export const useSystemNotifications = () => {
         description: 'فشل في تحميل التنبيهات',
         variant: 'destructive',
       });
-    } else if (result.data && Array.isArray(result.data.data)) {
-      setNotifications(result.data.data);
+    } else if (result.data && Array.isArray(result.data)) {
+      setNotifications(result.data);
     }
     
     setLoading(false);
