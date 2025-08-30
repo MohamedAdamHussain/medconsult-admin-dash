@@ -87,6 +87,7 @@ const Dashboard = () => {
   const [specialtyConsultationsError, setSpecialtyConsultationsError] = useState<{ message: string } | null>(null);
   const [isSpecialtiesDialogOpen, setIsSpecialtiesDialogOpen] = useState(false);
   const [isResponseRatesDialogOpen, setIsResponseRatesDialogOpen] = useState(false);
+  const [isComplaintsDialogOpen, setIsComplaintsDialogOpen] = useState(false);
   const { responseRates, loading: responseRatesLoading, error: responseRatesError } = useResponseRates();
 
   // useEffect(() => {
@@ -242,15 +243,27 @@ const Dashboard = () => {
         {/* Charts Section */}
         <div className="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Complaints by Type chart moved to the top */}
-          <DashboardChart
-            title="الشكاوى حسب المصدر"
-            type="pie"
-            data={[
-              { name: "شكاوى المرضى", value: patientComplaintsCount },
-              { name: "شكاوى الأطباء", value: doctorComplaintsCount },
-            ]}
-            colors={["#007BFF", "#dc3545"]}
-          />
+          <div className="relative">
+            <div className="absolute left-4 top-4 z-10">
+              <button
+                onClick={() => setIsComplaintsDialogOpen(true)}
+                className="text-sm text-primary underline bg-white/80 backdrop-blur-sm px-2 py-1 rounded"
+              >
+                عرض الكل
+              </button>
+            </div>
+            <div className="cursor-pointer" onClick={() => setIsComplaintsDialogOpen(true)}>
+              <DashboardChart
+                title="الشكاوى حسب المصدر"
+                type="pie"
+                data={[
+                  { name: "شكاوى المرضى", value: patientComplaintsCount },
+                  { name: "شكاوى الأطباء", value: doctorComplaintsCount },
+                ]}
+                colors={["#007BFF", "#dc3545"]}
+              />
+            </div>
+          </div>
           <div className="relative">
             <div className="absolute left-4 top-4 z-10">
               <button
@@ -388,6 +401,26 @@ const Dashboard = () => {
             </div>
           );
         }}
+      />
+
+      <ChartDialog
+        open={isComplaintsDialogOpen}
+        onOpenChange={setIsComplaintsDialogOpen}
+        title="الشكاوى حسب المصدر"
+        chartType="pie"
+        data={[
+          { name: "شكاوى المرضى", value: patientComplaintsCount },
+          { name: "شكاوى الأطباء", value: doctorComplaintsCount },
+        ]}
+        loading={false}
+        error={complaintsError?.message}
+        colors={["#007BFF", "#dc3545"]}
+        renderDataItem={(item, index) => (
+          <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+            <span className="font-medium">{item.name}</span>
+            <span className="text-muted-foreground">{item.value} شكوى</span>
+          </div>
+        )}
       />
     </DashboardLayout>
   );
