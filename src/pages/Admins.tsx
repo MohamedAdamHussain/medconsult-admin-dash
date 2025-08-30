@@ -9,8 +9,12 @@ import {
   Trash2,
   Check,
   X,
-  Search
+  Search,
+  Loader2
 } from 'lucide-react';
+import { useAdmins } from '@/hooks/useAdmins';
+import { format } from 'date-fns';
+import { ar } from 'date-fns/locale';
 import {
   Table,
   TableBody,
@@ -43,46 +47,20 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-// Sample admin data
-const admins = [
-  {
-    id: 1,
-    name: 'أحمد محمد',
-    email: 'ahmed@medconsult.com',
-    lastLogin: '2025-05-19 10:30',
-    status: 'active',
-  },
-  {
-    id: 2,
-    name: 'سارة علي',
-    email: 'sara@medconsult.com',
-    lastLogin: '2025-05-18 15:45',
-    status: 'active',
-  },
-  {
-    id: 3,
-    name: 'محمد أحمد',
-    email: 'mohamed@medconsult.com',
-    lastLogin: '2025-05-17 09:20',
-    status: 'active',
-  },
-  {
-    id: 4,
-    name: 'فاطمة حسن',
-    email: 'fatima@medconsult.com',
-    lastLogin: '2025-05-15 14:10',
-    status: 'inactive',
-  },
-];
-
 const Admins = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   
-  const filteredAdmins = admins.filter(admin => 
-    admin.name.includes(searchQuery) || 
-    admin.email.includes(searchQuery)
-  );
+  const { data: adminsData, isLoading, error } = useAdmins({
+    page: currentPage,
+    search: searchQuery
+  });
+
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
 
   return (
     <DashboardLayout>
@@ -97,7 +75,7 @@ const Admins = () => {
           <Input
             placeholder="بحث عن مشرف"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
             className="pl-10 text-right"
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
@@ -121,56 +99,100 @@ const Admins = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-right">#</TableHead>
-                <TableHead className="text-right">اسم المشرف</TableHead>
-                <TableHead className="text-right">البريد الإلكتروني</TableHead>
-                <TableHead className="text-right">آخر دخول</TableHead>
-                <TableHead className="text-right">الحالة</TableHead>
-                <TableHead className="text-right">الإجراءات</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredAdmins.map((admin) => (
-                <TableRow key={admin.id}>
-                  <TableCell>{admin.id}</TableCell>
-                  <TableCell className="font-medium">{admin.name}</TableCell>
-                  <TableCell>{admin.email}</TableCell>
-                  <TableCell>{admin.lastLogin}</TableCell>
-                  <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      admin.status === 'active' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {admin.status === 'active' ? 'نشط' : 'غير نشط'}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                      {admin.status === 'active' ? (
-                        <Button variant="ghost" size="icon">
-                          <X className="h-4 w-4 text-destructive" />
-                        </Button>
-                      ) : (
-                        <Button variant="ghost" size="icon">
-                          <Check className="h-4 w-4 text-green-600" />
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          {isLoading ? (
+            <div className="flex justify-center items-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin" />
+              <span className="mr-2">جارٍ التحميل...</span>
+            </div>
+          ) : error ? (
+            <div className="text-center py-8 text-destructive">
+              حدث خطأ في تحميل البيانات
+            </div>
+          ) : !adminsData?.data.length ? (
+            <div className="text-center py-8 text-muted-foreground">
+              لا توجد مشرفين
+            </div>
+          ) : (
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-right">#</TableHead>
+                    <TableHead className="text-right">اسم المشرف</TableHead>
+                    <TableHead className="text-right">البريد الإلكتروني</TableHead>
+                    <TableHead className="text-right">تاريخ التسجيل</TableHead>
+                    <TableHead className="text-right">الحالة</TableHead>
+                    <TableHead className="text-right">الإجراءات</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {adminsData.data.map((admin) => (
+                    <TableRow key={admin.id}>
+                      <TableCell>{admin.id}</TableCell>
+                      <TableCell className="font-medium">{admin.fullName}</TableCell>
+                      <TableCell>{admin.email}</TableCell>
+                      <TableCell>
+                        {format(new Date(admin.created_at), 'yyyy-MM-dd HH:mm', { locale: ar })}
+                      </TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          admin.isVerified === 1
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-red-100 text-red-800'
+                        }`}>
+                          {admin.isVerified === 1 ? 'مفعل' : 'غير مفعل'}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Button variant="ghost" size="icon">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon">
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                          {admin.isVerified === 1 ? (
+                            <Button variant="ghost" size="icon">
+                              <X className="h-4 w-4 text-destructive" />
+                            </Button>
+                          ) : (
+                            <Button variant="ghost" size="icon">
+                              <Check className="h-4 w-4 text-green-600" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              
+              {/* Pagination */}
+              {adminsData.last_page > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    السابق
+                  </Button>
+                  <span className="text-sm text-muted-foreground">
+                    صفحة {adminsData.current_page} من {adminsData.last_page}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage === adminsData.last_page}
+                  >
+                    التالي
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
         </CardContent>
       </Card>
       
